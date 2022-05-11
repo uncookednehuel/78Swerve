@@ -16,8 +16,8 @@ public class SwerveChassis extends SubsystemBase {
 
   //abreviations: LU (left upper), RU (right upper), LD (left down), RD (right down)
   protected SwerveModule m_moduleLU, m_moduleRU, m_moduleLD, m_moduleRD;
-  protected PigeonIMU m_pigeon;
   private final double offsetLU, offsetRU, offsetLD, offsetRD;
+  protected PigeonIMU m_pigeon;
 
   //  KINEMATICS
   private final Translation2d wheelLU, wheelRU, wheelLD, wheelRD;

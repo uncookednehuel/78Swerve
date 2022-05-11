@@ -18,7 +18,7 @@ public class RobotContainer {
 
     m_driveController = new XboxController(Constants.driverController);
 
-    m_chassis.setDefaultCommand(new SwerveDrive(m_chassis));
+    m_chassis.setDefaultCommand(new SwerveDrive(m_chassis, m_driveController));
   }
 
   /**
