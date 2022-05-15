@@ -50,16 +50,13 @@ public class SwerveChassis extends SubsystemBase {
     maxVoltage = Constants.maxVoltage;
     m_kinematics = new SwerveDriveKinematics(wheelLU, wheelRU, wheelLD, wheelRD);
   }
-
+  
   @Override
   public void periodic() {
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, maxSpeed);
 
-    m_moduleLU.set(states[0].speedMetersPerSecond / maxSpeed * maxVoltage, states[0].angle.getRadians());
-    m_moduleRU.set(states[1].speedMetersPerSecond / maxSpeed * maxVoltage, states[1].angle.getRadians());
-    m_moduleLD.set(states[2].speedMetersPerSecond / maxSpeed * maxVoltage, states[2].angle.getRadians());
-    m_moduleRD.set(states[3].speedMetersPerSecond / maxSpeed * maxVoltage, states[3].angle.getRadians());
+    setStates(states);
   }
 
   public void zeroGyro() {
@@ -72,5 +69,16 @@ public class SwerveChassis extends SubsystemBase {
 
   public void setSpeeds (ChassisSpeeds speeds) {
     m_speeds = speeds;
+  }
+
+  public void setStates (SwerveModuleState[] states) {
+    if (states.length != 4) {
+      throw new IllegalArgumentException("Input array size should be 4");
+    } else {
+      m_moduleLU.set(states[0].speedMetersPerSecond / maxSpeed * maxVoltage, states[0].angle.getRadians());
+      m_moduleRU.set(states[1].speedMetersPerSecond / maxSpeed * maxVoltage, states[1].angle.getRadians());
+      m_moduleLD.set(states[2].speedMetersPerSecond / maxSpeed * maxVoltage, states[2].angle.getRadians());
+      m_moduleRD.set(states[3].speedMetersPerSecond / maxSpeed * maxVoltage, states[3].angle.getRadians());
+    }
   }
 }
