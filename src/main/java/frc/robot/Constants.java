@@ -43,4 +43,8 @@ public final class Constants {
     public static final double maxSpeed = 6380.0 / 60.0 * SdsModuleConfigurations.MK4_L2.getDriveReduction() * SdsModuleConfigurations.MK4_L2.getWheelDiameter() * Math.PI; //meters per second
     public static final double maxVoltage = 12.0;
     public static final Mk4SwerveModuleHelper.GearRatio swerveGearRatio = Mk4SwerveModuleHelper.GearRatio.L2;
+
+    //  PATH FOLLOWING
+    public static final double maxVel = 1; //in meters per second
+    public static final double maxAcc = 1; //in meters per second squared
 }
