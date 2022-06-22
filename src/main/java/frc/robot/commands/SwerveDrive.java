@@ -30,10 +30,10 @@ public class SwerveDrive extends CommandBase {
   @Override
   public void execute() {
 
-    Vector2d adjustedSpeeds = triggerAdjust(m_control.getLeftX(), m_control.getLeftY(), upAdjust, downAdjust);
+    // Vector2d adjustedSpeeds = triggerAdjust(m_control.getLeftX(), m_control.getLeftY(), upAdjust, downAdjust);
     m_chassis.setSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(
-      adjustedSpeeds.y, 
-      adjustedSpeeds.x, 
+      m_control.getLeftY(),
+      m_control.getLeftX(), 
       m_control.getRightX(), 
       m_chassis.getGyroRot()));
 

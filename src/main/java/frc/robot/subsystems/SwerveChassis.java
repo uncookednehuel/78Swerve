@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -24,15 +25,26 @@ public class SwerveChassis extends SubsystemBase {
 
   protected double maxSpeed;
   protected double maxVoltage;
-  protected ChassisSpeeds m_speeds;
+  protected ChassisSpeeds m_speeds = new ChassisSpeeds();
   protected SwerveDriveKinematics m_kinematics;
 
   public SwerveChassis() {
 
-    offsetLU = 0;
-    offsetRU = 0;
-    offsetLD = 0;
-    offsetRD = 0;
+    //double radConst = 0.78539816339744830961566084581988; //1 eighth of 2pi
+    // offsetLU = 1.536857001862927; //+ (radConst * 3);
+    // offsetRU = 1.986505120311905; //+ (radConst * 5);
+    // offsetLD = 3.443786868803264; //+ (radConst * 7);
+    // offsetRD = 2.782497338525689; //+ (radConst);
+
+    offsetLU = 1.59677812638971;
+    offsetRU = 3.520006539201332;
+    offsetLD = 2.879473686459834;
+    offsetRD = 2.124563391221613;
+
+    // offsetLU = 0;
+    // offsetRU = 0;
+    // offsetLD = 0;
+    // offsetRD = 0;
 
     m_moduleLU = Mk4SwerveModuleHelper.createFalcon500(Constants.swerveGearRatio, Constants.driveLUD, Constants.driveLUH, Constants.encLU, offsetLU);
     m_moduleRU = Mk4SwerveModuleHelper.createFalcon500(Constants.swerveGearRatio, Constants.driveRUD, Constants.driveRUH, Constants.encRU, offsetRU);
@@ -57,6 +69,11 @@ public class SwerveChassis extends SubsystemBase {
     SwerveDriveKinematics.desaturateWheelSpeeds(states, maxSpeed);
 
     setStates(states);
+
+    SmartDashboard.putNumber("LU ENC", m_moduleLU.getSteerAngle());
+    SmartDashboard.putNumber("RU ENC", m_moduleRU.getSteerAngle());
+    SmartDashboard.putNumber("LD ENC", m_moduleLD.getSteerAngle());
+    SmartDashboard.putNumber("RD ENC", m_moduleRD.getSteerAngle());
   }
 
   public void zeroGyro() {
