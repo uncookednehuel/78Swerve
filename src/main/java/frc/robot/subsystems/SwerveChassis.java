@@ -9,6 +9,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -24,20 +27,27 @@ public class SwerveChassis extends SubsystemBase {
 
   protected double maxSpeed;
   protected double maxVoltage;
-  protected ChassisSpeeds m_speeds;
+  protected ChassisSpeeds m_speeds = new ChassisSpeeds();
   protected SwerveDriveKinematics m_kinematics;
 
   public SwerveChassis() {
+    ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
-    offsetLU = 0;
-    offsetRU = 0;
-    offsetLD = 0;
-    offsetRD = 0;
+    offsetLU = Math.toRadians(0.0) * -1;
+    offsetRU = Math.toRadians(0.0) * -1;
+    offsetLD = Math.toRadians(0.0) * -1;
+    offsetRD = Math.toRadians(0.0) * -1;
 
-    m_moduleLU = Mk4SwerveModuleHelper.createFalcon500(Constants.swerveGearRatio, Constants.driveLUD, Constants.driveLUH, Constants.encLU, offsetLU);
-    m_moduleRU = Mk4SwerveModuleHelper.createFalcon500(Constants.swerveGearRatio, Constants.driveRUD, Constants.driveRUH, Constants.encRU, offsetRU);
-    m_moduleLD = Mk4SwerveModuleHelper.createFalcon500(Constants.swerveGearRatio, Constants.driveLDD, Constants.driveLDH, Constants.encLD, offsetLD);
-    m_moduleRD = Mk4SwerveModuleHelper.createFalcon500(Constants.swerveGearRatio, Constants.driveRDD, Constants.driveRDH, Constants.encRD, offsetRD);
+    m_moduleLU = Mk4SwerveModuleHelper.createFalcon500(tab.getLayout("Up Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(0, 0),
+    Constants.swerveGearRatio, Constants.driveLUD, Constants.driveLUH, Constants.encLU, offsetLU);
+
+    m_moduleRU = Mk4SwerveModuleHelper.createFalcon500(tab.getLayout("Up Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
+    Constants.swerveGearRatio, Constants.driveRUD, Constants.driveRUH, Constants.encRU, offsetRU);
+
+    m_moduleLD = Mk4SwerveModuleHelper.createFalcon500(tab.getLayout("Down Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
+      Constants.swerveGearRatio, Constants.driveLDD, Constants.driveLDH, Constants.encLD, offsetLD);
+    m_moduleRD = Mk4SwerveModuleHelper.createFalcon500(tab.getLayout("Down Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
+      Constants.swerveGearRatio, Constants.driveRDD, Constants.driveRDH, Constants.encRD, offsetRD);
 
     m_pigeon = new PigeonIMU(Constants.pigeonIMU);
 

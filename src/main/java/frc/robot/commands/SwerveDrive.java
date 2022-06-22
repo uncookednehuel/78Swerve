@@ -4,24 +4,26 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveChassis;
 
 public class SwerveDrive extends CommandBase {
-  
+
   private SwerveChassis m_chassis;
-  private XboxController m_control;
+  private final DoubleSupplier xSupplier;
+  private final DoubleSupplier ySupplier;
+  private final DoubleSupplier rotSupplier;
 
-  private final double upAdjust = 0.3;
-  private final double downAdjust = 0.4;
+  public SwerveDrive(SwerveChassis chassis, DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rotSupplier) {
+        m_chassis = chassis;
+        this.xSupplier = xSupplier;
+        this.ySupplier = ySupplier;
+        this.rotSupplier = rotSupplier;
 
-  public SwerveDrive(SwerveChassis chassis, XboxController controller) {
-    m_chassis = chassis;
-    m_control = controller;
-    addRequirements(m_chassis);
+        addRequirements(m_chassis);
   }
 
   @Override
@@ -29,14 +31,11 @@ public class SwerveDrive extends CommandBase {
 
   @Override
   public void execute() {
-
-    Vector2d adjustedSpeeds = triggerAdjust(m_control.getLeftX(), m_control.getLeftY(), upAdjust, downAdjust);
     m_chassis.setSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(
-      adjustedSpeeds.y, 
-      adjustedSpeeds.x, 
-      m_control.getRightX(), 
+      xSupplier.getAsDouble(), 
+      ySupplier.getAsDouble(), 
+      rotSupplier.getAsDouble(), 
       m_chassis.getGyroRot()));
-
   }
 
   // Called once the command ends or is interrupted.
@@ -44,19 +43,4 @@ public class SwerveDrive extends CommandBase {
   public void end(boolean interrupted) {
     m_chassis.setSpeeds(new ChassisSpeeds(0.0, 0.0, 0.0));
   }
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
-
-  public Vector2d triggerAdjust(double inX, double inY, double upAdjust, double downAdjust) {
-    double triggers = (m_control.getRightTriggerAxis() * upAdjust) - (m_control.getLeftTriggerAxis() * downAdjust); //calculates the trigger adjustment
-    return new Vector2d(inX * triggers, inY * triggers); //returns a normalized vector
-  }
-  //overcomplicated version i was making, until I realized that joystick inputs are already normalized because in the hardware they go in a circle
-  // double triggers = ((m_control.getRightTriggerAxis() * upAdjust) - (m_control.getLeftTriggerAxis() * downAdjust)); //calculates the trigger adjustment
-  //   double magnitude = Math.sqrt(Math.pow(inX / triggers, 2) + Math.pow(inY / triggers, 2)); //calculates the magnitude of the input vector divided the trigger adjustment
-  //   return new Vector2d(inX / magnitude, inY / magnitude); //returns a normalized vector
 }
