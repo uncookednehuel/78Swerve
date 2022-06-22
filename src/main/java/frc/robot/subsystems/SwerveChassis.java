@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.Constants;
 
 public class SwerveChassis extends SubsystemBase {
@@ -25,8 +26,6 @@ public class SwerveChassis extends SubsystemBase {
   //  KINEMATICS
   private final Translation2d wheelLU, wheelRU, wheelLD, wheelRD;
 
-  protected double maxSpeed;
-  protected double maxVoltage;
   protected ChassisSpeeds m_speeds = new ChassisSpeeds();
   protected SwerveDriveKinematics m_kinematics;
 
@@ -38,15 +37,20 @@ public class SwerveChassis extends SubsystemBase {
     offsetLD = Math.toRadians(0.0) * -1;
     offsetRD = Math.toRadians(0.0) * -1;
 
-    m_moduleLU = Mk4SwerveModuleHelper.createFalcon500(tab.getLayout("Up Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(0, 0),
+    m_moduleLU = Mk4SwerveModuleHelper.createFalcon500(
+      tab.getLayout("Left Up Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(0, 0),
     Constants.swerveGearRatio, Constants.driveLUD, Constants.driveLUH, Constants.encLU, offsetLU);
 
-    m_moduleRU = Mk4SwerveModuleHelper.createFalcon500(tab.getLayout("Up Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
+    m_moduleRU = Mk4SwerveModuleHelper.createFalcon500(
+      tab.getLayout("Right Up Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
     Constants.swerveGearRatio, Constants.driveRUD, Constants.driveRUH, Constants.encRU, offsetRU);
 
-    m_moduleLD = Mk4SwerveModuleHelper.createFalcon500(tab.getLayout("Down Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
+    m_moduleLD = Mk4SwerveModuleHelper.createFalcon500(
+      tab.getLayout("left Down Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
       Constants.swerveGearRatio, Constants.driveLDD, Constants.driveLDH, Constants.encLD, offsetLD);
-    m_moduleRD = Mk4SwerveModuleHelper.createFalcon500(tab.getLayout("Down Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
+
+    m_moduleRD = Mk4SwerveModuleHelper.createFalcon500(
+      tab.getLayout("Right Down Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
       Constants.swerveGearRatio, Constants.driveRDD, Constants.driveRDH, Constants.encRD, offsetRD);
 
     m_pigeon = new PigeonIMU(Constants.pigeonIMU);
@@ -56,15 +60,13 @@ public class SwerveChassis extends SubsystemBase {
     wheelLD = Constants.wheelLD;
     wheelRD = Constants.wheelRD;
 
-    maxSpeed = Constants.maxSpeed;
-    maxVoltage = Constants.maxVoltage;
     m_kinematics = new SwerveDriveKinematics(wheelLU, wheelRU, wheelLD, wheelRD);
   }
   
   @Override
   public void periodic() {
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, maxSpeed);
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.maxSpeed);
 
     setStates(states);
   }
@@ -83,12 +85,12 @@ public class SwerveChassis extends SubsystemBase {
 
   public void setStates (SwerveModuleState[] states) {
     if (states.length != 4) {
-      throw new IllegalArgumentException("Input array size should be 4");
+      throw new IllegalArgumentException("The \"setStates\" input array size should be 4!");
     } else {
-      m_moduleLU.set(states[0].speedMetersPerSecond / maxSpeed * maxVoltage, states[0].angle.getRadians());
-      m_moduleRU.set(states[1].speedMetersPerSecond / maxSpeed * maxVoltage, states[1].angle.getRadians());
-      m_moduleLD.set(states[2].speedMetersPerSecond / maxSpeed * maxVoltage, states[2].angle.getRadians());
-      m_moduleRD.set(states[3].speedMetersPerSecond / maxSpeed * maxVoltage, states[3].angle.getRadians());
+      m_moduleLU.set(states[0].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage, states[0].angle.getRadians());
+      m_moduleRU.set(states[1].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage, states[1].angle.getRadians());
+      m_moduleLD.set(states[2].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage, states[2].angle.getRadians());
+      m_moduleRD.set(states[3].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage, states[3].angle.getRadians());
     }
   }
 }
