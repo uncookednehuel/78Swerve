@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.sensors.Pigeon2;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
@@ -21,7 +22,7 @@ public class SwerveChassis extends SubsystemBase {
   //abreviations: LU (left upper), RU (right upper), LD (left down), RD (right down)
   protected SwerveModule m_moduleLU, m_moduleRU, m_moduleLD, m_moduleRD;
   private final double offsetLU, offsetRU, offsetLD, offsetRD;
-  protected PigeonIMU m_pigeon;
+  protected Pigeon2 m_pigeon;
 
   //  KINEMATICS
   private final Translation2d wheelLU, wheelRU, wheelLD, wheelRD;
@@ -32,7 +33,7 @@ public class SwerveChassis extends SubsystemBase {
   public SwerveChassis() {
     ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
-    offsetLU = Math.toRadians(0.0) * -1;
+    offsetLU = Math.toRadians(0.0) * -1; //put real offsets from smartdashboard
     offsetRU = Math.toRadians(0.0) * -1;
     offsetLD = Math.toRadians(0.0) * -1;
     offsetRD = Math.toRadians(0.0) * -1;
@@ -53,7 +54,7 @@ public class SwerveChassis extends SubsystemBase {
       tab.getLayout("Right Down Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
       Constants.swerveGearRatio, Constants.driveRDD, Constants.driveRDH, Constants.encRD, offsetRD);
 
-    m_pigeon = new PigeonIMU(Constants.pigeonIMU);
+    m_pigeon = new Pigeon2(Constants.pigeonIMU);
 
     wheelLU = Constants.wheelLU;
     wheelRU = Constants.wheelRU;
@@ -72,11 +73,11 @@ public class SwerveChassis extends SubsystemBase {
   }
 
   public void zeroGyro() {
-    m_pigeon.setFusedHeading(0.0);
+    m_pigeon.setYaw(0.0);
   }
 
   public Rotation2d getGyroRot() {
-    return Rotation2d.fromDegrees(m_pigeon.getFusedHeading());
+    return Rotation2d.fromDegrees(m_pigeon.getYaw());
   }
 
   public void setSpeeds (ChassisSpeeds speeds) {

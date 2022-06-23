@@ -35,10 +35,10 @@ public final class Constants {
     //  KINEMATICS
     //keep in mind that the locations for the modules must be relative to the center of the robot. Positive x values represent moving toward the front of the robot whereas positive y values represent moving toward the left of the robot.
     //order for swerve modules is always left upper, right upper, left lower, right lower
-    public static final Translation2d wheelLU = new Translation2d(0, 0);
-    public static final Translation2d wheelRU = new Translation2d(0, 0);
-    public static final Translation2d wheelLD = new Translation2d(0, 0);
-    public static final Translation2d wheelRD = new Translation2d(0, 0);
+    public static final Translation2d wheelLU = new Translation2d(0.5588, 0.5588);
+    public static final Translation2d wheelRU = new Translation2d(0.5588, -0.5588);
+    public static final Translation2d wheelLD = new Translation2d(-0.5588, 0.5588);
+    public static final Translation2d wheelRD = new Translation2d(-0.5588, -0.5588);
 
     public static final double maxSpeed = 6380.0 / 60.0 * SdsModuleConfigurations.MK4_L2.getDriveReduction() * SdsModuleConfigurations.MK4_L2.getWheelDiameter() * Math.PI; //meters per second
     public static final double maxVoltage = 12.0;

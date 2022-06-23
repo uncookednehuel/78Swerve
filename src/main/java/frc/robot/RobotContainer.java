@@ -29,9 +29,9 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    new Button(m_driveController::getBackButton)
+    // new Button(m_driveController::getBackButton)
             // No requirements because we don't need to interrupt anything
-            .whenPressed(m_chassis::zeroGyro);
+            // .whenPressed(m_chassis::zeroGyro);
   }
 
   public Command getAutonomousCommand() {
@@ -51,7 +51,7 @@ public class RobotContainer {
     value = deadband(value, 0.05);
 
     // Square the axis
-    value = Math.copySign(value * value, value);
+    value = Math.copySign(value * 0.3, value);
 
     return value;
   }
