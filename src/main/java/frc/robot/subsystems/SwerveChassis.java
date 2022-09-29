@@ -33,10 +33,10 @@ public class SwerveChassis extends SubsystemBase {
   public SwerveChassis() {
     ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
-    offsetLU = Math.toRadians(0.0) * -1; //put real offsets from smartdashboard
-    offsetRU = Math.toRadians(0.0) * -1;
-    offsetLD = Math.toRadians(0.0) * -1;
-    offsetRD = Math.toRadians(0.0) * -1;
+    offsetLU = Math.toRadians(34.804688) * -1; //put real offsets from smartdashboard
+    offsetRU = Math.toRadians(191.602000) * -1;
+    offsetLD = Math.toRadians(86.044922) * -1;
+    offsetRD = Math.toRadians(354.902000) * -1; // maybe substract 180
 
     m_moduleLU = Mk4SwerveModuleHelper.createFalcon500(
       tab.getLayout("Left Up Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(0, 0),
