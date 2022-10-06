@@ -9,24 +9,45 @@ public final class Constants {
 
     //  MOTOR IDs
     //format: drive(Side L left or R right, Side U up or D down, Type D drive or H heading)
-    public static final int driveLUD = 1;
-    public static final int driveLUH = 2;
+    //for default chassis, roborio at front
+    // public static final int driveLUD = 1;
+    // public static final int driveLUH = 2;
 
-    public static final int driveRUD = 3;
-    public static final int driveRUH = 4;
+    // public static final int driveRUD = 3;
+    // public static final int driveRUH = 4;
     
-    public static final int driveLDD = 5;
-    public static final int driveLDH = 6;
+    // public static final int driveLDD = 5;
+    // public static final int driveLDH = 6;
 
-    public static final int driveRDD = 7;
-    public static final int driveRDH = 8;
+    // public static final int driveRDD = 7;
+    // public static final int driveRDH = 8;
+
+    // //  SENSORS
+    // public static final int encLU = 9;
+    // public static final int encRU = 10;
+    // public static final int encLD = 11;
+    // public static final int encRD = 12;
+
+    // rotated 90 degrees chassis, battery is at back
+    public static final int driveLUD = 5;
+    public static final int driveLUH = 6;
+
+    public static final int driveRUD = 1;
+    public static final int driveRUH = 2;
+    
+    public static final int driveLDD = 7;
+    public static final int driveLDH = 8;
+
+    public static final int driveRDD = 3;
+    public static final int driveRDH = 4;
 
     //  SENSORS
-    public static final int encLU = 9;
-    public static final int encRU = 10;
-    public static final int encLD = 11;
-    public static final int encRD = 12;
+    public static final int encLU = 10;
+    public static final int encRU = 12;
+    public static final int encLD = 9;
+    public static final int encRD = 11;
 
+    
     public static final int pigeonIMU = 0;
     
     //  CONTROLLERS
