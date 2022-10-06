@@ -40,6 +40,15 @@ public final class Constants {
     public static final Translation2d wheelLD = new Translation2d(-0.5588, 0.5588);
     public static final Translation2d wheelRD = new Translation2d(-0.5588, -0.5588);
 
+    // public static final double offsetLU = Math.toRadians(0) * -1; //put real offsets from smartdashboard
+    // public static final double offsetRU = Math.toRadians(23) * -1;
+    // public static final double offsetLD = Math.toRadians(106) * -1;
+    // public static final double offsetRD = Math.toRadians(77) * -1; // maybe substract 180
+    public static final double offsetLU = Math.toRadians(270) * -1; //put real offsets from smartdashboard
+    public static final double offsetRU = Math.toRadians(293) * -1;
+    public static final double offsetLD = Math.toRadians(16) * -1;
+    public static final double offsetRD = Math.toRadians(353) * -1; // maybe substract 180
+
     public static final double maxSpeed = 6380.0 / 60.0 * SdsModuleConfigurations.MK4_L2.getDriveReduction() * SdsModuleConfigurations.MK4_L2.getWheelDiameter() * Math.PI; //meters per second
     public static final double maxVoltage = 12.0;
     public static final Mk4SwerveModuleHelper.GearRatio swerveGearRatio = Mk4SwerveModuleHelper.GearRatio.L2;

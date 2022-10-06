@@ -21,7 +21,6 @@ public class SwerveChassis extends SubsystemBase {
 
   //abreviations: LU (left upper), RU (right upper), LD (left down), RD (right down)
   protected SwerveModule m_moduleLU, m_moduleRU, m_moduleLD, m_moduleRD;
-  private final double offsetLU, offsetRU, offsetLD, offsetRD;
   protected Pigeon2 m_pigeon;
 
   //  KINEMATICS
@@ -31,28 +30,23 @@ public class SwerveChassis extends SubsystemBase {
   protected SwerveDriveKinematics m_kinematics;
 
   public SwerveChassis() {
-    ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
-
-    offsetLU = Math.toRadians(34.804688) * -1; //put real offsets from smartdashboard
-    offsetRU = Math.toRadians(191.602000) * -1;
-    offsetLD = Math.toRadians(86.044922) * -1;
-    offsetRD = Math.toRadians(354.902000) * -1; // maybe substract 180
+    ShuffleboardTab tab = Shuffleboard.getTab("Swerve");
 
     m_moduleLU = Mk4SwerveModuleHelper.createFalcon500(
       tab.getLayout("Left Up Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(0, 0),
-    Constants.swerveGearRatio, Constants.driveLUD, Constants.driveLUH, Constants.encLU, offsetLU);
+    Constants.swerveGearRatio, Constants.driveLUD, Constants.driveLUH, Constants.encLU, Constants.offsetLU);
 
     m_moduleRU = Mk4SwerveModuleHelper.createFalcon500(
       tab.getLayout("Right Up Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
-    Constants.swerveGearRatio, Constants.driveRUD, Constants.driveRUH, Constants.encRU, offsetRU);
+    Constants.swerveGearRatio, Constants.driveRUD, Constants.driveRUH, Constants.encRU, Constants.offsetRU);
 
     m_moduleLD = Mk4SwerveModuleHelper.createFalcon500(
       tab.getLayout("left Down Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
-      Constants.swerveGearRatio, Constants.driveLDD, Constants.driveLDH, Constants.encLD, offsetLD);
+      Constants.swerveGearRatio, Constants.driveLDD, Constants.driveLDH, Constants.encLD, Constants.offsetLD);
 
     m_moduleRD = Mk4SwerveModuleHelper.createFalcon500(
       tab.getLayout("Right Down Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
-      Constants.swerveGearRatio, Constants.driveRDD, Constants.driveRDH, Constants.encRD, offsetRD);
+      Constants.swerveGearRatio, Constants.driveRDD, Constants.driveRDH, Constants.encRD, Constants.offsetRD);
 
     m_pigeon = new Pigeon2(Constants.pigeonIMU);
 
