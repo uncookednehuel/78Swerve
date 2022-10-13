@@ -52,4 +52,15 @@ public final class Constants {
     public static final double maxSpeed = 6380.0 / 60.0 * SdsModuleConfigurations.MK4_L2.getDriveReduction() * SdsModuleConfigurations.MK4_L2.getWheelDiameter() * Math.PI; //meters per second
     public static final double maxVoltage = 12.0;
     public static final Mk4SwerveModuleHelper.GearRatio swerveGearRatio = Mk4SwerveModuleHelper.GearRatio.L2;
+
+     //  PATH FOLLOWING
+     public static final double maxVel = 1; //in meters per second
+     public static final double maxAcc = 1; //in meters per second squared
+     public static final double maxRotVel = 6.28; //6.28 is 1 rotation (it is 2xPI but I don't know why exactly)
+     public static final double maxRotAcc = 3.14; //3.14 is half a rotation
+     public static final double xErrVel = 1; // I don't know what "additional meter per second in the x direction for every meter of error in the x direction" means in the docs
+     public static final double yErrVel = 1;
+ 
+     public static final double kI = 0;
+     public static final double kD = 0;
 }

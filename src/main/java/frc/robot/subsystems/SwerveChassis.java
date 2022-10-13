@@ -5,10 +5,12 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -21,13 +23,15 @@ public class SwerveChassis extends SubsystemBase {
 
   //abreviations: LU (left upper), RU (right upper), LD (left down), RD (right down)
   protected SwerveModule m_moduleLU, m_moduleRU, m_moduleLD, m_moduleRD;
+
+  protected SwerveDriveKinematics m_kinematics;
+  protected SwerveDriveOdometry m_odometry;
   protected Pigeon2 m_pigeon;
 
   //  KINEMATICS
   private final Translation2d wheelLU, wheelRU, wheelLD, wheelRD;
 
   protected ChassisSpeeds m_speeds = new ChassisSpeeds();
-  protected SwerveDriveKinematics m_kinematics;
 
   public SwerveChassis() {
     ShuffleboardTab tab = Shuffleboard.getTab("Swerve");
@@ -56,6 +60,12 @@ public class SwerveChassis extends SubsystemBase {
     wheelRD = Constants.wheelRD;
 
     m_kinematics = new SwerveDriveKinematics(wheelLU, wheelRU, wheelLD, wheelRD);
+
+    m_pigeon = new Pigeon2(Constants.pigeonIMU);
+
+    m_kinematics = new SwerveDriveKinematics(Constants.wheelLU, Constants.wheelRU, Constants.wheelLD, Constants.wheelRD);
+
+    m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroRot(), new Pose2d(0, 0, new Rotation2d())); //we can set starting position and heading
   }
   
   @Override
@@ -72,6 +82,14 @@ public class SwerveChassis extends SubsystemBase {
 
   public Rotation2d getGyroRot() {
     return Rotation2d.fromDegrees(m_pigeon.getYaw());
+  }
+
+  public SwerveDriveKinematics getKinematics () {
+    return m_kinematics;
+  }
+
+  public Pose2d getPose () {
+    return m_odometry.getPoseMeters();
   }
 
   public void setSpeeds (ChassisSpeeds speeds) {

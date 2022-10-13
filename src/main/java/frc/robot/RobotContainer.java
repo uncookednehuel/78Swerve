@@ -1,5 +1,8 @@
 package frc.robot;
 
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
+
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import frc.robot.commands.SwerveDrive;
@@ -35,7 +38,9 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return null;
+    PathPlannerTrajectory trajectory1 = PathFunctions.createTrajectory("Test1.path");
+    PPSwerveControllerCommand command1 = PathFunctions.createSwerveController(trajectory1, m_chassis::getPose, m_chassis.getKinematics(), m_chassis::setStates, m_chassis);
+    return command1;
   }
 
   private static double deadband(double value, double deadband) {
