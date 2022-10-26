@@ -1,5 +1,6 @@
 package frc.robot;
 
+import java.util.HashMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -15,6 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.SwerveChassis;
 
@@ -42,16 +44,28 @@ public class PathFunctions {
     public static PPSwerveControllerCommand createSwerveController (
         PathPlannerTrajectory trajectory, Supplier<Pose2d> poseSupplier, SwerveDriveKinematics kinematics, Consumer<SwerveModuleState[]> outputStates, Subsystem... chassis)
     {
+        HashMap<String, Command> eventMap = new HashMap<>();
+
         return new PPSwerveControllerCommand(
             trajectory,
             poseSupplier,
             kinematics,
             new PIDController(Constants.xErrVel, Constants.kI, Constants.kD),
             new PIDController(Constants.yErrVel, Constants.kI, Constants.kD),
-            new ProfiledPIDController(1, Constants.kI, Constants.kD,
-                new TrapezoidProfile.Constraints(Constants.maxRotVel, Constants.maxRotAcc)), //need to revise this later, I am not sure what is velocity, acceleration, etc.
+            new PIDController(1, Constants.kI, Constants.kD), //need to revise this later, I am not sure what is velocity, acceleration, etc.
             outputStates,
+            eventMap,
             chassis);
+
+            // PathPlannerTrajectory trajectory,
+            // Supplier<Pose2d> poseSupplier,
+            // SwerveDriveKinematics kinematics,
+            // PIDController xController,
+            // PIDController yController,
+            // PIDController rotationController,
+            // Consumer<SwerveModuleState[]> outputModuleStates,
+            // HashMap<String, Command> eventMap,
+            // Subsystem... requirements)
     }
 
     /**

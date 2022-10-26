@@ -71,9 +71,11 @@ public class SwerveChassis extends SubsystemBase {
   @Override
   public void periodic() {
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.maxSpeed);
-
     setStates(states);
+  }
+
+  public void speedsToStates() {
+    
   }
 
   public void zeroGyro() {
@@ -100,6 +102,7 @@ public class SwerveChassis extends SubsystemBase {
     if (states.length != 4) {
       throw new IllegalArgumentException("The \"setStates\" input array size should be 4!");
     } else {
+      SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.maxSpeed);
       m_moduleLU.set(states[0].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage, states[0].angle.getRadians());
       m_moduleRU.set(states[1].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage, states[1].angle.getRadians());
       m_moduleLD.set(states[2].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage, states[2].angle.getRadians());
