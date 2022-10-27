@@ -70,12 +70,15 @@ public class SwerveChassis extends SubsystemBase {
   
   @Override
   public void periodic() {
-    SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds);
-    setStates(states);
+  }
+
+    public void resetOdometry(Pose2d pose, Rotation2d gyroAngle) {
+    m_odometry.resetPosition(pose, gyroAngle);
   }
 
   public void speedsToStates() {
-    
+    SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds);
+    setStates(states);
   }
 
   public void zeroGyro() {

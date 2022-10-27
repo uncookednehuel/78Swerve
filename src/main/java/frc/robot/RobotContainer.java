@@ -3,8 +3,11 @@ package frc.robot;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.Vector2d;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.SwerveChassis;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -12,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 
 public class RobotContainer {
 
-  private final SwerveChassis m_chassis;
+  public final SwerveChassis m_chassis;
   private final XboxController m_driveController;
 
   public RobotContainer() {
@@ -38,9 +41,11 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    PathPlannerTrajectory trajectory1 = PathFunctions.createTrajectory("pathplanner/Test2.path");
+    PathPlannerTrajectory trajectory1 = PathFunctions.createTrajectory("Test2");
     // error most likely due to trajectory not properly set, or imported from file, maybe need to export from pathplanner application in a different way
     PPSwerveControllerCommand command1 = PathFunctions.createSwerveController(trajectory1, m_chassis::getPose, m_chassis.getKinematics(), m_chassis::setStates, m_chassis);
+
+    PathFunctions.resetOdometry(m_chassis, trajectory1);
     return command1;
   }
 

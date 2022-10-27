@@ -56,16 +56,6 @@ public class PathFunctions {
             outputStates,
             eventMap,
             chassis);
-
-            // PathPlannerTrajectory trajectory,
-            // Supplier<Pose2d> poseSupplier,
-            // SwerveDriveKinematics kinematics,
-            // PIDController xController,
-            // PIDController yController,
-            // PIDController rotationController,
-            // Consumer<SwerveModuleState[]> outputModuleStates,
-            // HashMap<String, Command> eventMap,
-            // Subsystem... requirements)
     }
 
     /**
@@ -81,5 +71,9 @@ public class PathFunctions {
             new PIDController(Constants.yErrVel, Constants.kI, Constants.kD),
             new ProfiledPIDController(1, Constants.kI, Constants.kD, //need to revise this later, I am not sure what is velocity, acceleration, etc.
                 new TrapezoidProfile.Constraints(Constants.maxRotVel, Constants.maxRotAcc)));
+    }
+
+    public static void resetOdometry(SwerveChassis m_chassis, PathPlannerTrajectory trajectory) {
+        m_chassis.resetOdometry(trajectory.getInitialHolonomicPose(), trajectory.getInitialHolonomicPose().getRotation());
     }
 }
