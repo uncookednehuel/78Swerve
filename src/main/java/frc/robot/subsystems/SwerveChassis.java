@@ -12,9 +12,11 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
@@ -70,9 +72,12 @@ public class SwerveChassis extends SubsystemBase {
   
   @Override
   public void periodic() {
+  
   }
+    
 
-    public void resetOdometry(Pose2d pose, Rotation2d gyroAngle) {
+  public void resetOdometry(Pose2d pose, Rotation2d gyroAngle) {
+    zeroGyro();
     m_odometry.resetPosition(pose, gyroAngle);
   }
 
@@ -94,6 +99,9 @@ public class SwerveChassis extends SubsystemBase {
   }
 
   public Pose2d getPose () {
+    SmartDashboard.putNumber("OdometryX", m_odometry.getPoseMeters().getX());
+    SmartDashboard.putNumber("OdometryY", m_odometry.getPoseMeters().getY());
+    SmartDashboard.putNumber("OdometryRot", m_odometry.getPoseMeters().getRotation().getDegrees());
     return m_odometry.getPoseMeters();
   }
 
@@ -104,7 +112,8 @@ public class SwerveChassis extends SubsystemBase {
   public void setStates (SwerveModuleState[] states) {
     if (states.length != 4) {
       throw new IllegalArgumentException("The \"setStates\" input array size should be 4!");
-    } else {
+    } else {  
+      m_odometry.update(getGyroRot(), states); //these are supposed to be set to the real read values, not what is being set to the modules
       SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.maxSpeed);
       m_moduleLU.set(states[0].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage, states[0].angle.getRadians());
       m_moduleRU.set(states[1].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage, states[1].angle.getRadians());

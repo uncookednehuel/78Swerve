@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.SwerveChassis;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 
 public class RobotContainer {
@@ -19,7 +20,6 @@ public class RobotContainer {
   private final XboxController m_driveController;
 
   public RobotContainer() {
-    configureButtonBindings();
     m_chassis = new SwerveChassis();
 
     m_driveController = new XboxController(Constants.driverController);
@@ -38,10 +38,11 @@ public class RobotContainer {
     // new Button(m_driveController::getBackButton)
             // No requirements because we don't need to interrupt anything
             // .whenPressed(m_chassis::zeroGyro);
+            new Button(m_driveController::getYButton).whenPressed(new InstantCommand(m_chassis::zeroGyro));
   }
 
   public Command getAutonomousCommand() {
-    PathPlannerTrajectory trajectory1 = PathFunctions.createTrajectory("Test2");
+    PathPlannerTrajectory trajectory1 = PathFunctions.createTrajectory("TestUTurn");
     // error most likely due to trajectory not properly set, or imported from file, maybe need to export from pathplanner application in a different way
     PPSwerveControllerCommand command1 = PathFunctions.createSwerveController(trajectory1, m_chassis::getPose, m_chassis.getKinematics(), m_chassis::setStates, m_chassis);
 
