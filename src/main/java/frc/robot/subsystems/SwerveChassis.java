@@ -113,7 +113,13 @@ public class SwerveChassis extends SubsystemBase {
     if (states.length != 4) {
       throw new IllegalArgumentException("The \"setStates\" input array size should be 4!");
     } else {  
-      m_odometry.update(getGyroRot(), states); //these are supposed to be set to the real read values, not what is being set to the modules
+      SwerveModuleState moduleStates[] = {
+        new SwerveModuleState(m_moduleLU.getDriveVelocity(), new Rotation2d(m_moduleLU.getSteerAngle())),
+        new SwerveModuleState(m_moduleRU.getDriveVelocity(), new Rotation2d(m_moduleRU.getSteerAngle())),
+        new SwerveModuleState(m_moduleLD.getDriveVelocity(), new Rotation2d(m_moduleLD.getSteerAngle())),
+        new SwerveModuleState(m_moduleRD.getDriveVelocity(), new Rotation2d(m_moduleRD.getSteerAngle())),
+      };
+      m_odometry.update(getGyroRot(), moduleStates); //these are supposed to be set to the real read values, not what is being set to the modules
       SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.maxSpeed);
       m_moduleLU.set(states[0].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage, states[0].angle.getRadians());
       m_moduleRU.set(states[1].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage, states[1].angle.getRadians());

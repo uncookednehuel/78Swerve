@@ -42,7 +42,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    PathPlannerTrajectory trajectory1 = PathFunctions.createTrajectory("TestUTurn");
+    PathPlannerTrajectory trajectory1 = PathFunctions.createTrajectory("3MeterStraight");
     // error most likely due to trajectory not properly set, or imported from file, maybe need to export from pathplanner application in a different way
     PPSwerveControllerCommand command1 = PathFunctions.createSwerveController(trajectory1, m_chassis::getPose, m_chassis.getKinematics(), m_chassis::setStates, m_chassis);
 
