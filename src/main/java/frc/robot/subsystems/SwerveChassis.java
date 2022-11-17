@@ -121,6 +121,7 @@ public class SwerveChassis extends SubsystemBase {
       };
       m_odometry.update(getGyroRot(), moduleStates); //these are supposed to be set to the real read values, not what is being set to the modules
       SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.maxSpeed);
+      // SmartDashboard.putNumber("LU voltage", states[0].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage);
       m_moduleLU.set(states[0].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage, states[0].angle.getRadians());
       m_moduleRU.set(states[1].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage, states[1].angle.getRadians());
       m_moduleLD.set(states[2].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage, states[2].angle.getRadians());

@@ -26,9 +26,9 @@ public class RobotContainer {
 
     m_chassis.setDefaultCommand(new SwerveDrive(
       m_chassis,
-      () -> -modifyAxis(m_driveController.getLeftY()) * Constants.maxSpeed,
-      () -> -modifyAxis(m_driveController.getLeftX()) * Constants.maxSpeed,
-      () -> -modifyAxis(m_driveController.getRightX()) * Constants.maxSpeed
+      () -> -modifyAxis(triggerAdjust(m_driveController.getLeftY())) * Constants.maxSpeed,
+      () -> -modifyAxis(triggerAdjust(m_driveController.getLeftX())) * Constants.maxSpeed,
+      () -> -modifyAxis(triggerAdjust(m_driveController.getRightX())) * Constants.maxSpeed
       ));
 
       configureButtonBindings();
@@ -42,7 +42,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    PathPlannerTrajectory trajectory1 = PathFunctions.createTrajectory("3MeterStraight");
+    PathPlannerTrajectory trajectory1 = PathFunctions.createTrajectory("InlineCommand1");
     // error most likely due to trajectory not properly set, or imported from file, maybe need to export from pathplanner application in a different way
     PPSwerveControllerCommand command1 = PathFunctions.createSwerveController(trajectory1, m_chassis::getPose, m_chassis.getKinematics(), m_chassis::setStates, m_chassis);
 
@@ -61,17 +61,17 @@ public class RobotContainer {
   private static double modifyAxis(double value) {
     // Deadband
     value = deadband(value, 0.05);
-
     // Square the axis
-    value = Math.copySign(value * 0.3, value);
+    value = Math.copySign(value * 1, value);
+    
 
     return value;
   }
 
-  public Vector2d triggerAdjust(double inX, double inY) {
+  public double triggerAdjust(double in) {
     double upAdjust = 0.3;
     double downAdjust = 0.4;
-    double triggers = (m_driveController.getRightTriggerAxis() * upAdjust) - (m_driveController.getLeftTriggerAxis() * downAdjust); //calculates the trigger adjustment
-    return new Vector2d(inX * triggers, inY * triggers); //returns a normalized vector
+    double triggers = (1 - upAdjust) + (m_driveController.getRightTriggerAxis() * upAdjust) - (m_driveController.getLeftTriggerAxis() * downAdjust); //calculates the trigger adjustment
+    return in * triggers;
   }
 }

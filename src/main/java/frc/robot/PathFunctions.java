@@ -17,6 +17,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.SwerveChassis;
 
@@ -45,6 +47,8 @@ public class PathFunctions {
         PathPlannerTrajectory trajectory, Supplier<Pose2d> poseSupplier, SwerveDriveKinematics kinematics, Consumer<SwerveModuleState[]> outputStates, Subsystem... chassis)
     {
         HashMap<String, Command> eventMap = new HashMap<>();
+        eventMap.put("Waypoint1Reached", new PrintCommand("Waypoint 1 reached!"));
+        eventMap.put("command1", new PrintCommand("Hello World"));
 
         return new PPSwerveControllerCommand(
             trajectory,

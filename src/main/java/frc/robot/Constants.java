@@ -49,6 +49,7 @@ public final class Constants {
     public static final double offsetLD = Math.toRadians(16) * -1;
     public static final double offsetRD = Math.toRadians(353) * -1; // maybe substract 180
 
+                                        //6380 is falcon FX max rpm, / 60 (to get revolutions per second), * gear ratio (to wheel rps), * wheel circumference
     public static final double maxSpeed = 6380.0 / 60.0 * SdsModuleConfigurations.MK4_L2.getDriveReduction() * SdsModuleConfigurations.MK4_L2.getWheelDiameter() * Math.PI; //meters per second
     public static final double maxVoltage = 12.0;
     public static final Mk4SwerveModuleHelper.GearRatio swerveGearRatio = Mk4SwerveModuleHelper.GearRatio.L2;
