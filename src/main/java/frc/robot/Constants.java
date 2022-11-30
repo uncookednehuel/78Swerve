@@ -47,7 +47,7 @@ public final class Constants {
     public static final double offsetLU = Math.toRadians(270) * -1; //put real offsets from smartdashboard
     public static final double offsetRU = Math.toRadians(293) * -1;
     public static final double offsetLD = Math.toRadians(16) * -1;
-    public static final double offsetRD = Math.toRadians(353) * -1; // maybe substract 180
+    public static final double offsetRD = Math.toRadians(343) * -1; // maybe substract 180
 
                                         //6380 is falcon FX max rpm, / 60 (to get revolutions per second), * gear ratio (to wheel rps), * wheel circumference
     public static final double maxSpeed = 6380.0 / 60.0 * SdsModuleConfigurations.MK4_L2.getDriveReduction() * SdsModuleConfigurations.MK4_L2.getWheelDiameter() * Math.PI; //meters per second
