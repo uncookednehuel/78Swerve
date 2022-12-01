@@ -32,6 +32,7 @@ public class SwerveChassis extends SubsystemBase {
 
   //  KINEMATICS
   private final Translation2d wheelLU, wheelRU, wheelLD, wheelRD;
+  protected Translation2d centerOfRot;
 
   protected ChassisSpeeds m_speeds = new ChassisSpeeds();
 
@@ -62,6 +63,7 @@ public class SwerveChassis extends SubsystemBase {
     wheelRD = Constants.wheelRD;
 
     m_kinematics = new SwerveDriveKinematics(wheelLU, wheelRU, wheelLD, wheelRD);
+    centerOfRot = new Translation2d();
 
     m_pigeon = new Pigeon2(Constants.pigeonIMU);
 
@@ -82,7 +84,7 @@ public class SwerveChassis extends SubsystemBase {
   }
 
   public void speedsToStates() {
-    SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds);
+    SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds, centerOfRot);
     setStates(states);
   }
 
@@ -96,6 +98,10 @@ public class SwerveChassis extends SubsystemBase {
 
   public SwerveDriveKinematics getKinematics () {
     return m_kinematics;
+  }
+
+  public void setCenter(Translation2d translation) {
+    centerOfRot = translation;
   }
 
   public Pose2d getPose () {

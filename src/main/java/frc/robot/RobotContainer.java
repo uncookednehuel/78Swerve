@@ -3,6 +3,7 @@ package frc.robot;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.Vector2d;
@@ -39,6 +40,12 @@ public class RobotContainer {
             // No requirements because we don't need to interrupt anything
             // .whenPressed(m_chassis::zeroGyro);
             new Button(m_driveController::getYButton).whenPressed(new InstantCommand(m_chassis::zeroGyro));
+            new Button(m_driveController::getRightBumper).whenPressed(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(1, 0))));
+            new Button(m_driveController::getRightBumper).whenReleased(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
+            // new Button(m_driveController::get).whenPressed(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(1, 0))));
+            // new Button(m_driveController::get).whenReleased(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
+            // new Button(m_driveController::get).whenPressed(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(1, 0))));
+            // new Button(m_driveController::get).whenReleased(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
   }
 
   public Command getAutonomousCommand() {
@@ -62,7 +69,7 @@ public class RobotContainer {
     // Deadband
     value = deadband(value, 0.05);
     // Square the axis
-    value = Math.copySign(value * 0.3, value);
+    value = Math.copySign(value * 0.4, value);
     
 
     return value;
