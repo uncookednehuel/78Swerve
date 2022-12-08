@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
+import java.util.function.IntSupplier;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 
@@ -23,12 +24,14 @@ public class SwerveDrive extends CommandBase {
   private final DoubleSupplier xSupplier;
   private final DoubleSupplier ySupplier;
   private final DoubleSupplier rotSupplier;
+  private final IntSupplier dPadSupplier;
 
-  public SwerveDrive(SwerveChassis chassis, DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rotSupplier) {
+  public SwerveDrive(SwerveChassis chassis, DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rotSupplier, IntSupplier dPadSupplier) {
         m_chassis = chassis;
         this.xSupplier = xSupplier;
         this.ySupplier = ySupplier;
         this.rotSupplier = rotSupplier;
+        this.dPadSupplier = dPadSupplier;
 
         addRequirements(m_chassis);
   }
@@ -42,12 +45,14 @@ public class SwerveDrive extends CommandBase {
       xSupplier.getAsDouble(), 
       ySupplier.getAsDouble(), 
       rotSupplier.getAsDouble(), 
-      m_chassis.getGyroRot()));
+      m_chassis.getGyroRot()),
+      dPadSupplier.getAsInt()
+      );
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_chassis.setSpeeds(new ChassisSpeeds(0.0, 0.0, 0.0));
+    m_chassis.setSpeeds(new ChassisSpeeds(0.0, 0.0, 0.0), -1);
   }
 }

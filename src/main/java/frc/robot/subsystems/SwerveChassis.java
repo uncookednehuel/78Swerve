@@ -102,20 +102,25 @@ public class SwerveChassis extends SubsystemBase {
     return m_kinematics;
   }
 
+  //#endregion
+  //#region SET FUNCTIONS
+
   public void speedsToStates() {
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds, centerOfRot);
     setStates(states);
   }
 
-  //#endregion
-  //#region SET FUNCTIONS
-
   public void setCenter(Translation2d translation) {
     centerOfRot = translation;
   }
 
-  public void setSpeeds (ChassisSpeeds speeds) {
-    m_speeds = speeds;
+  public void setSpeeds (ChassisSpeeds speeds, int dPad) {
+    double dPadX = (90 - dPad < 45 ? 1 : 0) - (270 - dPad < 45 ? 1 : 0);
+    double dPadY = (0 - dPad < 45 ? 1 : 0) - (180 - dPad < 45 ? 1 : 0);
+    double dPadVel = 1;
+    m_speeds = new ChassisSpeeds(speeds.vxMetersPerSecond + dPadX * dPadVel,
+                                  speeds.vyMetersPerSecond + dPadY * dPadVel,
+                                  speeds.omegaRadiansPerSecond);
   }
 
   public void setStates (SwerveModuleState[] states) {

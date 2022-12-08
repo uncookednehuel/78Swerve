@@ -29,7 +29,8 @@ public class RobotContainer {
       m_chassis,
       () -> -modifyAxis(triggerAdjust(m_driveController.getLeftY())) * Constants.maxSpeed,
       () -> -modifyAxis(triggerAdjust(m_driveController.getLeftX())) * Constants.maxSpeed,
-      () -> -modifyAxis(triggerAdjust(m_driveController.getRightX())) * Constants.maxSpeed
+      () -> -modifyAxis(triggerAdjust(m_driveController.getRightX())) * Constants.maxSpeed,
+      () -> m_driveController.getPOV()
       ));
 
       configureButtonBindings();
