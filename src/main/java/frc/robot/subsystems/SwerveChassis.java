@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
+import frc.robot.Odometry;
 
 public class SwerveChassis extends SubsystemBase {
 
@@ -27,7 +28,8 @@ public class SwerveChassis extends SubsystemBase {
   protected SwerveModule m_moduleLU, m_moduleRU, m_moduleLD, m_moduleRD;
 
   protected SwerveDriveKinematics m_kinematics;
-  protected SwerveDriveOdometry m_odometry;
+  public SwerveDriveOdometry m_odometry;
+  public Odometry odometry;
   protected Pigeon2 m_pigeon;
 
   //  KINEMATICS
@@ -76,17 +78,15 @@ public class SwerveChassis extends SubsystemBase {
   public void periodic() {
   
   }
-    
 
-  public void resetOdometry(Pose2d pose, Rotation2d gyroAngle) {
-    zeroGyro();
-    m_odometry.resetPosition(pose, gyroAngle);
+  public Pose2d getPose () {
+    SmartDashboard.putNumber("OdometryX", m_odometry.getPoseMeters().getX());
+    SmartDashboard.putNumber("OdometryY", m_odometry.getPoseMeters().getY());
+    SmartDashboard.putNumber("OdometryRot", m_odometry.getPoseMeters().getRotation().getDegrees());
+    return odometry.getPose();
   }
 
-  public void speedsToStates() {
-    SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds, centerOfRot);
-    setStates(states);
-  }
+  //#region  GYRO
 
   public void zeroGyro() {
     m_pigeon.setYaw(0.0);
@@ -95,20 +95,23 @@ public class SwerveChassis extends SubsystemBase {
   public Rotation2d getGyroRot() {
     return Rotation2d.fromDegrees(m_pigeon.getYaw());
   }
+  //#endregion
+  //#region MISC
 
   public SwerveDriveKinematics getKinematics () {
     return m_kinematics;
   }
 
-  public void setCenter(Translation2d translation) {
-    centerOfRot = translation;
+  public void speedsToStates() {
+    SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds, centerOfRot);
+    setStates(states);
   }
 
-  public Pose2d getPose () {
-    SmartDashboard.putNumber("OdometryX", m_odometry.getPoseMeters().getX());
-    SmartDashboard.putNumber("OdometryY", m_odometry.getPoseMeters().getY());
-    SmartDashboard.putNumber("OdometryRot", m_odometry.getPoseMeters().getRotation().getDegrees());
-    return m_odometry.getPoseMeters();
+  //#endregion
+  //#region SET FUNCTIONS
+
+  public void setCenter(Translation2d translation) {
+    centerOfRot = translation;
   }
 
   public void setSpeeds (ChassisSpeeds speeds) {
@@ -125,7 +128,7 @@ public class SwerveChassis extends SubsystemBase {
         new SwerveModuleState(m_moduleLD.getDriveVelocity(), new Rotation2d(m_moduleLD.getSteerAngle())),
         new SwerveModuleState(m_moduleRD.getDriveVelocity(), new Rotation2d(m_moduleRD.getSteerAngle())),
       };
-      m_odometry.update(getGyroRot(), moduleStates); //these are supposed to be set to the real read values, not what is being set to the modules
+      odometry.updateOdometry(moduleStates);
       SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.maxSpeed);
       // SmartDashboard.putNumber("LU voltage", states[0].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage);
       m_moduleLU.set(states[0].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage, states[0].angle.getRadians());
@@ -134,4 +137,5 @@ public class SwerveChassis extends SubsystemBase {
       m_moduleRD.set(states[3].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage, states[3].angle.getRadians());
     }
   }
+  //#endregion
 }

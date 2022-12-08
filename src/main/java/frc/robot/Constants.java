@@ -28,11 +28,12 @@ public final class Constants {
     public static final int encRD = 12;
 
     public static final int pigeonIMU = 0;
+    public static final String photonCam = "photonvision";
     
     //  CONTROLLERS
     public static final int driverController = 0;
 
-    //  KINEMATICS
+    //#region KINEMATICS
     //keep in mind that the locations for the modules must be relative to the center of the robot. Positive x values represent moving toward the front of the robot whereas positive y values represent moving toward the left of the robot.
     //order for swerve modules is always left upper, right upper, left lower, right lower
     public static final Translation2d wheelLU = new Translation2d(0.5588, 0.5588);
@@ -53,8 +54,9 @@ public final class Constants {
     public static final double maxSpeed = 6380.0 / 60.0 * SdsModuleConfigurations.MK4_L2.getDriveReduction() * SdsModuleConfigurations.MK4_L2.getWheelDiameter() * Math.PI; //meters per second
     public static final double maxVoltage = 12.0;
     public static final Mk4SwerveModuleHelper.GearRatio swerveGearRatio = Mk4SwerveModuleHelper.GearRatio.L2;
-
-     //  PATH FOLLOWING
+    //#endregion
+    
+     //#region PATH FOLLOWING
      public static final double maxVel = 1; //in meters per second
      public static final double maxAcc = 1; //in meters per second squared
      public static final double maxRotVel = 6.28; //6.28 is 1 rotation (it is 2xPI but I don't know why exactly)
@@ -64,4 +66,5 @@ public final class Constants {
  
      public static final double kI = 0;
      public static final double kD = 0;
+     //#endregion
 }
