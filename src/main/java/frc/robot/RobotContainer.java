@@ -3,7 +3,9 @@ package frc.robot;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.Vector2d;
@@ -37,16 +39,16 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    // new Button(m_driveController::getBackButton)
-            // No requirements because we don't need to interrupt anything
-            // .whenPressed(m_chassis::zeroGyro);
             new Button(m_driveController::getYButton).whenPressed(new InstantCommand(m_chassis::zeroGyro));
+            SwerveModuleState[] emptyStates = {
+              new SwerveModuleState(0.01, new Rotation2d()),
+              new SwerveModuleState(0.01, new Rotation2d()),
+              new SwerveModuleState(0.01, new Rotation2d()),
+              new SwerveModuleState(0.01, new Rotation2d())
+            };
+            new Button(m_driveController::getXButton).whenPressed(new InstantCommand(() -> m_chassis.setStates(emptyStates)));
             new Button(m_driveController::getRightBumper).whenPressed(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(1, 0))));
             new Button(m_driveController::getRightBumper).whenReleased(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
-            // new Button(m_driveController::get).whenPressed(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(1, 0))));
-            // new Button(m_driveController::get).whenReleased(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
-            // new Button(m_driveController::get).whenPressed(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(1, 0))));
-            // new Button(m_driveController::get).whenReleased(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
   }
 
   public Command getAutonomousCommand() {

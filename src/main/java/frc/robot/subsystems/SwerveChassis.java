@@ -5,6 +5,8 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -29,7 +31,7 @@ public class SwerveChassis extends SubsystemBase {
 
   protected SwerveDriveKinematics m_kinematics;
   public SwerveDriveOdometry m_odometry;
-  public Odometry odometry;
+  protected PhotonCamera m_photonCam;
   protected Pigeon2 m_pigeon;
 
   //  KINEMATICS
@@ -69,7 +71,11 @@ public class SwerveChassis extends SubsystemBase {
 
     m_pigeon = new Pigeon2(Constants.pigeonIMU);
 
+    m_photonCam = new PhotonCamera(Constants.photonCam);
+
     m_kinematics = new SwerveDriveKinematics(Constants.wheelLU, Constants.wheelRU, Constants.wheelLD, Constants.wheelRD);
+
+    m_speeds = new ChassisSpeeds();
 
     m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroRot(), new Pose2d(0, 0, new Rotation2d())); //we can set starting position and heading
   }
@@ -83,7 +89,7 @@ public class SwerveChassis extends SubsystemBase {
     SmartDashboard.putNumber("OdometryX", m_odometry.getPoseMeters().getX());
     SmartDashboard.putNumber("OdometryY", m_odometry.getPoseMeters().getY());
     SmartDashboard.putNumber("OdometryRot", m_odometry.getPoseMeters().getRotation().getDegrees());
-    return odometry.getPose();
+    return Odometry.getPose(m_odometry, m_photonCam);
   }
 
   //#region  GYRO
@@ -115,8 +121,10 @@ public class SwerveChassis extends SubsystemBase {
   }
 
   public void setSpeeds (ChassisSpeeds speeds, int dPad) {
-    double dPadX = (90 - dPad < 45 ? 1 : 0) - (270 - dPad < 45 ? 1 : 0);
-    double dPadY = (0 - dPad < 45 ? 1 : 0) - (180 - dPad < 45 ? 1 : 0);
+    // double dPadX = (90 - dPad < 45 ? 1 : 0) - (270 - dPad < 45 ? 1 : 0);
+    // double dPadY = (0 - dPad < 45 ? 1 : 0) - (180 - dPad < 45 ? 1 : 0);
+    double dPadX = (dPad == 0 ? 1 : 0) - (dPad == 180 ? 1 : 0);
+    double dPadY = (dPad == 270 ? 1 : 0) - (dPad == 90 ? 1 : 0);
     double dPadVel = 1;
     m_speeds = new ChassisSpeeds(speeds.vxMetersPerSecond + dPadX * dPadVel,
                                   speeds.vyMetersPerSecond + dPadY * dPadVel,
@@ -133,7 +141,7 @@ public class SwerveChassis extends SubsystemBase {
         new SwerveModuleState(m_moduleLD.getDriveVelocity(), new Rotation2d(m_moduleLD.getSteerAngle())),
         new SwerveModuleState(m_moduleRD.getDriveVelocity(), new Rotation2d(m_moduleRD.getSteerAngle())),
       };
-      odometry.updateOdometry(moduleStates);
+      Odometry.updateOdometry(moduleStates, getGyroRot(), m_odometry);
       SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.maxSpeed);
       // SmartDashboard.putNumber("LU voltage", states[0].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage);
       m_moduleLU.set(states[0].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage, states[0].angle.getRadians());
