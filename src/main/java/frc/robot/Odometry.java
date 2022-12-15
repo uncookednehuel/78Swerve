@@ -24,9 +24,9 @@ public class Odometry {
     }
 
     static public Pose2d getPose(SwerveDriveOdometry odometry, PhotonCamera camera) {
-        PhotonPipelineResult result = camera.getLatestResult();
-        PhotonTrackedTarget bestTarget = result.getBestTarget();
-        Transform3d transform = bestTarget.getBestCameraToTarget();
+        // PhotonPipelineResult result = camera.getLatestResult();
+        // PhotonTrackedTarget bestTarget = result.getBestTarget();
+        // Transform3d transform = bestTarget.getBestCameraToTarget();
 
         return odometry.getPoseMeters();
     }
