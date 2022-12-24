@@ -34,6 +34,7 @@ public final class Constants {
     public static final int driverController = 0;
 
     //#region KINEMATICS
+
     //keep in mind that the locations for the modules must be relative to the center of the robot. Positive x values represent moving toward the front of the robot whereas positive y values represent moving toward the left of the robot.
     //order for swerve modules is always left upper, right upper, left lower, right lower
     public static final Translation2d wheelLU = new Translation2d(0.5588, 0.5588);
@@ -50,6 +51,14 @@ public final class Constants {
     public static final double offsetRU = Math.toRadians(292.84) * -1;
     public static final double offsetLD = Math.toRadians(15.22) * -1;
     public static final double offsetRD = Math.toRadians(344.35) * -1;
+
+    //Module constants
+    public static final double driveKS = 0;
+    public static final double driveKV = 0;
+    public static final double driveKA = 0;
+
+    public static final double angleRatio = 12.8 / 1.0;
+    public static final double driveRatio = 6.86 / 1.0;
 
                                         //6380 is falcon FX max rpm, / 60 (to get revolutions per second), * gear ratio (to wheel rps), * wheel circumference
     public static final double maxSpeed = 6380.0 / 60.0 * SdsModuleConfigurations.MK4_L2.getDriveReduction() * SdsModuleConfigurations.MK4_L2.getWheelDiameter() * Math.PI; //meters per second

@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.classes.PathFunctions;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.SwerveChassis;
 import edu.wpi.first.wpilibj2.command.Command;
