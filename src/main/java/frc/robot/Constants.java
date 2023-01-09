@@ -60,10 +60,11 @@ public final class Constants {
     public static final double angleRatio = 12.8 / 1.0;
     public static final double driveRatio = 6.86 / 1.0;
 
-                                        //6380 is falcon FX max rpm, / 60 (to get revolutions per second), * gear ratio (to wheel rps), * wheel circumference
-    public static final double maxSpeed = 6380.0 / 60.0 * SdsModuleConfigurations.MK4_L2.getDriveReduction() * SdsModuleConfigurations.MK4_L2.getWheelDiameter() * Math.PI; //meters per second
     public static final double maxVoltage = 12.0;
-    public static final Mk4SwerveModuleHelper.GearRatio swerveGearRatio = Mk4SwerveModuleHelper.GearRatio.L2;
+    public static final double DRIVE_GEAR_RATIO = 1 / 6.75;
+    public static final double STEER_GEAR_RATIO = 1 / 12.8;
+    //6380 is falcon FX max rpm, / 60 (to get revolutions per second), * gear ratio (to wheel rps), * wheel circumference
+    public static final double maxSpeed = 6380.0 / 60.0 * DRIVE_GEAR_RATIO * 0.1016 * Math.PI; //meters per second
     //#endregion
     
      //#region PATH FOLLOWING

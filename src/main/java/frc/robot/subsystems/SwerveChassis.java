@@ -77,7 +77,7 @@ public class SwerveChassis extends SubsystemBase {
 
     m_speeds = new ChassisSpeeds();
 
-    m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroRot(), new Pose2d(0, 0, new Rotation2d())); //we can set starting position and heading
+    m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroRot(), null);//new SwerveDriveOdometry(m_kinematics, getGyroRot(), new Pose2d(0, 0, new Rotation2d())); //we can set starting position and heading
   }
   
   @Override

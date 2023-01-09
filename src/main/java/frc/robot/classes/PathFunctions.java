@@ -6,18 +6,17 @@ import java.util.function.Supplier;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
@@ -36,6 +35,7 @@ public class PathFunctions {
     }
     
     /**
+     * DEPRECATED PROBABLY
      * Creates a PPSwerveControllerCommand to follow a trajectory
      * @param trajectory Trajectory object
      * @param poseSupplier A supplier of type Pose2d
@@ -45,21 +45,18 @@ public class PathFunctions {
      * @return A PPSwerveControllerCommand object
      */
     public static PPSwerveControllerCommand createSwerveController (
-        PathPlannerTrajectory trajectory, Supplier<Pose2d> poseSupplier, SwerveDriveKinematics kinematics, Consumer<SwerveModuleState[]> outputStates, Subsystem... chassis)
+        PathPlannerTrajectory trajectory, Supplier<Pose2d> poseSupplier, SwerveDriveKinematics kinematics, Consumer<ChassisSpeeds> chassisSpeeds, Subsystem... chassis)
     {
         HashMap<String, Command> eventMap = new HashMap<>();
         eventMap.put("Waypoint1Reached", new PrintCommand("Waypoint 1 reached!"));
         eventMap.put("command1", new PrintCommand("Hello World"));
 
         return new PPSwerveControllerCommand(
-            trajectory,
-            poseSupplier,
-            kinematics,
+            trajectory,poseSupplier,
             new PIDController(Constants.xErrVel, Constants.kI, Constants.kD),
             new PIDController(Constants.yErrVel, Constants.kI, Constants.kD),
-            new PIDController(1, Constants.kI, Constants.kD), //need to revise this later, I am not sure what is velocity, acceleration, etc.
-            outputStates,
-            eventMap,
+            new PIDController(1, Constants.kI, Constants.kD),
+            chassisSpeeds,
             chassis);
     }
 

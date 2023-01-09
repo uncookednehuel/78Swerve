@@ -1,6 +1,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -8,7 +9,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.classes.PathFunctions;
@@ -16,7 +16,7 @@ import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.SwerveChassis;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class RobotContainer {
 
@@ -40,25 +40,32 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-            new Button(m_driveController::getYButton).whenPressed(new InstantCommand(m_chassis::zeroGyro));
+            new Trigger(m_driveController::getYButton).onTrue(new InstantCommand(m_chassis::zeroGyro));//(new InstantCommand(m_chassis::zeroGyro));
             SwerveModuleState[] emptyStates = {
               new SwerveModuleState(0.01, new Rotation2d()),
               new SwerveModuleState(0.01, new Rotation2d()),
               new SwerveModuleState(0.01, new Rotation2d()),
               new SwerveModuleState(0.01, new Rotation2d())
             };
-            new Button(m_driveController::getXButton).whenPressed(new InstantCommand(() -> m_chassis.setStates(emptyStates)));
-            new Button(m_driveController::getRightBumper).whenPressed(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(1, 0))));
-            new Button(m_driveController::getRightBumper).whenReleased(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
+            new Trigger(m_driveController::getXButton).onTrue(new InstantCommand(() -> m_chassis.setStates(emptyStates)));
+            new Trigger(m_driveController::getRightBumper).onTrue(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(1, 0))));
+            new Trigger(m_driveController::getRightBumper).onFalse(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
   }
 
   public Command getAutonomousCommand() {
     PathPlannerTrajectory trajectory1 = PathFunctions.createTrajectory("Test3");
     // error most likely due to trajectory not properly set, or imported from file, maybe need to export from pathplanner application in a different way
-    PPSwerveControllerCommand command1 = PathFunctions.createSwerveController(trajectory1, m_chassis::getPose, m_chassis.getKinematics(), m_chassis::setStates, m_chassis);
+    SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
+    m_chassis::getPose,
+    null,
+    null,
+    null,
+    null,
+    null,
+    m_chassis);
+    //PathFunctions.createSwerveController(trajectory1, m_chassis::getPose, m_chassis.getKinematics(), m_chassis::setStates, m_chassis);
 
-    PathFunctions.resetOdometry(m_chassis, trajectory1);
-    return command1;
+    return autoBuilder.fullAuto(trajectory1);
   }
 
   private static double deadband(double value, double deadband) {
