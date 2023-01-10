@@ -2,8 +2,6 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 import com.ctre.phoenix.sensors.PigeonIMU;
-import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
-import com.swervedrivespecialties.swervelib.SwerveModule;
 
 import org.photonvision.PhotonCamera;
 
@@ -23,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
 import frc.robot.classes.Odometry;
+import frc.robot.classes.SwerveModule;
 
 public class SwerveChassis extends SubsystemBase {
 
@@ -136,18 +135,18 @@ public class SwerveChassis extends SubsystemBase {
       throw new IllegalArgumentException("The \"setStates\" input array size should be 4!");
     } else {  
       SwerveModuleState moduleStates[] = {
-        new SwerveModuleState(m_moduleLU.getDriveVelocity(), new Rotation2d(m_moduleLU.getSteerAngle())),
-        new SwerveModuleState(m_moduleRU.getDriveVelocity(), new Rotation2d(m_moduleRU.getSteerAngle())),
-        new SwerveModuleState(m_moduleLD.getDriveVelocity(), new Rotation2d(m_moduleLD.getSteerAngle())),
-        new SwerveModuleState(m_moduleRD.getDriveVelocity(), new Rotation2d(m_moduleRD.getSteerAngle())),
+        m_moduleRU.getState(),
+        m_moduleLU.getState(),
+        m_moduleLD.getState(),
+        m_moduleRD.getState(),
       };
       Odometry.updateOdometry(moduleStates, getGyroRot(), m_odometry);
       SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.maxSpeed);
       // SmartDashboard.putNumber("LU voltage", states[0].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage);
-      m_moduleLU.set(states[0].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage, states[0].angle.getRadians());
-      m_moduleRU.set(states[1].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage, states[1].angle.getRadians());
-      m_moduleLD.set(states[2].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage, states[2].angle.getRadians());
-      m_moduleRD.set(states[3].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage, states[3].angle.getRadians());
+      m_moduleRU.setDesiredState(states[1], true);
+      m_moduleLU.setDesiredState(states[0], true);
+      m_moduleLD.setDesiredState(states[2], true);
+      m_moduleRD.setDesiredState(states[3], true);
     }
   }
   //#endregion

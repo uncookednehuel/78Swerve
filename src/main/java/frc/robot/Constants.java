@@ -63,6 +63,7 @@ public final class Constants {
     public static final double maxVoltage = 12.0;
     public static final double DRIVE_GEAR_RATIO = 1 / 6.75;
     public static final double STEER_GEAR_RATIO = 1 / 12.8;
+    public static final double WHEEL_CIRCUMFERENCE = 0.09652; //meters
     //6380 is falcon FX max rpm, / 60 (to get revolutions per second), * gear ratio (to wheel rps), * wheel circumference
     public static final double maxSpeed = 6380.0 / 60.0 * DRIVE_GEAR_RATIO * 0.1016 * Math.PI; //meters per second
     //#endregion
