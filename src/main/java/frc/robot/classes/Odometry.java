@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.subsystems.SwerveChassis;
 
@@ -31,12 +32,11 @@ public class Odometry {
         return odometry.getPoseMeters();
     }
 
-    static public void updateOdometry(SwerveModuleState[] states, Rotation2d gyroRot, SwerveDriveOdometry odometry) {
-        odometry.update(gyroRot, states); //these are supposed to be set to the real read values, not what is being set to the modules
+    static public void updateOdometry(SwerveModulePosition[] positions, Rotation2d gyroRot, SwerveDriveOdometry odometry) {
+        odometry.update(gyroRot, positions); //these are supposed to be set to the real read values, not what is being set to the modules
     }
 
     static public void resetOdometry(Pose2d pose, Rotation2d gyroAngle, SwerveChassis chassis, SwerveDriveOdometry odometry) {
-    chassis.zeroGyro();
-    odometry.resetPosition(pose, gyroAngle);
+    odometry.resetPosition(gyroAngle, chassis.getPositions(), pose);
   }
 }

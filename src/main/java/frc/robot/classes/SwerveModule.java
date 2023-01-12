@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -33,7 +34,7 @@ public class SwerveModule {
 
     private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Constants.driveKS, Constants.driveKV, Constants.driveKA);
 
-    SwerveModule (int driveMotorID, int steerMotorID, int azimuthEncoderID, double offset) {
+    public SwerveModule (int driveMotorID, int steerMotorID, int azimuthEncoderID, double offset) {
         driveMotor = new TalonFX(driveMotorID);
         steerMotor = new TalonFX(steerMotorID);
         azimuthEncoder = new CANCoder(azimuthEncoderID);
@@ -46,7 +47,7 @@ public class SwerveModule {
     private void config() {
         //drive motor
         driveMotor.configFactoryDefault();
-        driveMotor.configAllSettings(Robot.ctreConfigs.swerveDriveFXConfig);
+        driveMotor.configAllSettings(new TalonFXConfiguration());
         driveMotor.setInverted(InvertType.InvertMotorOutput);
         driveMotor.setNeutralMode(NeutralMode.Brake);
         driveMotor.setSelectedSensorPosition(0);
@@ -59,6 +60,11 @@ public class SwerveModule {
         //azimuth encoder
         azimuthEncoder.configFactoryDefault();
         azimuthEncoder.configAllSettings(Robot.ctreConfigs.swerveCanCoderConfig);
+    }
+
+    private void resetToAbsolute(){
+        double absolutePosition = Calculations.degreesToFalcon(azimuthEncoder.getPosition() - azimuthOffset, Constants.STEER_GEAR_RATIO);
+        steerMotor.setSelectedSensorPosition(absolutePosition);
     }
 
     //#region SET FUNCTIONS

@@ -1,8 +1,5 @@
 package frc.robot;
 
-import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
-import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
-
 import edu.wpi.first.math.geometry.Translation2d;
 
 public final class Constants {
@@ -32,6 +29,43 @@ public final class Constants {
     
     //  CONTROLLERS
     public static final int driverController = 0;
+
+    //#region
+
+        /* Swerve Current Limiting */
+        public static final int angleContinuousCurrentLimit = 25;
+        public static final int anglePeakCurrentLimit = 40;
+        public static final double anglePeakCurrentDuration = 0.1;
+        public static final boolean angleEnableCurrentLimit = true;
+
+        public static final int driveContinuousCurrentLimit = 35;
+        public static final int drivePeakCurrentLimit = 60;
+        public static final double drivePeakCurrentDuration = 0.1;
+        public static final boolean driveEnableCurrentLimit = true;
+
+        /* These values are used by the drive falcon to ramp in open loop and closed loop driving.
+         * We found a small open loop ramp (0.25) helps with tread wear, tipping, etc */
+        public static final double openLoopRamp = 0.25;
+        public static final double closedLoopRamp = 0.0;
+
+        /* Angle Motor PID Values */
+        public static final double AZIMUTH_MOTOR_KP = 0;
+        public static final double AZIMUTH_MOTOR_KI = 0;
+        public static final double AZIMUTH_MOTOR_KD = 0;
+        public static final double AZIMUTH_MOTOR_KF = 0;
+
+        /* Drive Motor PID Values */
+        public static final double driveMotorKP = 0.05; //TODO: This must be tuned to specific robot
+        public static final double driveMotorKI = 0.0;
+        public static final double driveMotorKD = 0.0;
+        public static final double driveMotorKF = 0.0;
+
+        /* Drive Motor Characterization Values 
+         * Divide SYSID values by 12 to convert from volts to percent output for CTRE */
+        public static final double driveMotorKS = (0.32 / 12);
+        public static final double driveMotorKV = (1.51 / 12);
+        public static final double driveMotorKA = (0.27 / 12);
+    //#endregion
 
     //#region KINEMATICS
 

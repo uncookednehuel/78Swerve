@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -42,21 +43,10 @@ public class SwerveChassis extends SubsystemBase {
   public SwerveChassis() {
     ShuffleboardTab tab = Shuffleboard.getTab("Swerve");
 
-    m_moduleLU = Mk4SwerveModuleHelper.createFalcon500(
-      tab.getLayout("Left Up Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(0, 0),
-    Constants.swerveGearRatio, Constants.driveLUD, Constants.driveLUH, Constants.encLU, Constants.offsetLU);
-
-    m_moduleRU = Mk4SwerveModuleHelper.createFalcon500(
-      tab.getLayout("Right Up Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
-    Constants.swerveGearRatio, Constants.driveRUD, Constants.driveRUH, Constants.encRU, Constants.offsetRU);
-
-    m_moduleLD = Mk4SwerveModuleHelper.createFalcon500(
-      tab.getLayout("left Down Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
-      Constants.swerveGearRatio, Constants.driveLDD, Constants.driveLDH, Constants.encLD, Constants.offsetLD);
-
-    m_moduleRD = Mk4SwerveModuleHelper.createFalcon500(
-      tab.getLayout("Right Down Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
-      Constants.swerveGearRatio, Constants.driveRDD, Constants.driveRDH, Constants.encRD, Constants.offsetRD);
+    m_moduleLU = new SwerveModule(Constants.driveLUD, Constants.driveLUH, Constants.encLU, 0);
+    m_moduleRU = new SwerveModule(Constants.driveRUD, Constants.driveRUH, Constants.encRU, 0);
+    m_moduleLD = new SwerveModule(Constants.driveLDD, Constants.driveLDH, Constants.encLD, 0);
+    m_moduleRD = new SwerveModule(Constants.driveRDD, Constants.driveRDH, Constants.encRD, 0);
 
     m_pigeon = new Pigeon2(Constants.pigeonIMU);
 
@@ -101,10 +91,20 @@ public class SwerveChassis extends SubsystemBase {
     return Rotation2d.fromDegrees(m_pigeon.getYaw());
   }
   //#endregion
-  //#region MISC
+  //#region GET FUNCTIONS
 
   public SwerveDriveKinematics getKinematics () {
     return m_kinematics;
+  }
+
+  public SwerveModulePosition[] getPositions () {
+    SwerveModulePosition positions[] = {
+      m_moduleLU.getPosition(),
+      m_moduleRU.getPosition(),
+      m_moduleLD.getPosition(),
+      m_moduleRD.getPosition(),
+    };
+    return positions;
   }
 
   //#endregion
@@ -134,13 +134,7 @@ public class SwerveChassis extends SubsystemBase {
     if (states.length != 4) {
       throw new IllegalArgumentException("The \"setStates\" input array size should be 4!");
     } else {  
-      SwerveModuleState moduleStates[] = {
-        m_moduleRU.getState(),
-        m_moduleLU.getState(),
-        m_moduleLD.getState(),
-        m_moduleRD.getState(),
-      };
-      Odometry.updateOdometry(moduleStates, getGyroRot(), m_odometry);
+      Odometry.updateOdometry(getPositions(), getGyroRot(), m_odometry);
       SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.maxSpeed);
       // SmartDashboard.putNumber("LU voltage", states[0].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage);
       m_moduleRU.setDesiredState(states[1], true);
