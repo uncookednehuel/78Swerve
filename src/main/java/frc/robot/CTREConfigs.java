@@ -24,10 +24,10 @@ public final class CTREConfigs {
             Constants.anglePeakCurrentLimit, 
             Constants.anglePeakCurrentDuration);
 
-        // swerveAngleFXConfig.slot0.kP = Constants.angleKP;
-        // swerveAngleFXConfig.slot0.kI = Constants.angleKI;
-        // swerveAngleFXConfig.slot0.kD = Constants.angleKD;
-        // swerveAngleFXConfig.slot0.kF = Constants.angleKF;
+        swerveAngleFXConfig.slot0.kP = Constants.AZIMUTH_MOTOR_KP;
+        swerveAngleFXConfig.slot0.kI = Constants.AZIMUTH_MOTOR_KI;
+        swerveAngleFXConfig.slot0.kD = Constants.AZIMUTH_MOTOR_KD;
+        swerveAngleFXConfig.slot0.kF = Constants.AZIMUTH_MOTOR_KF;
         swerveAngleFXConfig.supplyCurrLimit = angleSupplyLimit;
 
         /* Swerve Drive Motor Configuration */
@@ -37,10 +37,10 @@ public final class CTREConfigs {
             Constants.drivePeakCurrentLimit, 
             Constants.drivePeakCurrentDuration);
 
-        // swerveDriveFXConfig.slot0.kP = Constants.Swerve.driveKP;
-        // swerveDriveFXConfig.slot0.kI = Constants.Swerve.driveKI;
-        // swerveDriveFXConfig.slot0.kD = Constants.Swerve.driveKD;
-        // swerveDriveFXConfig.slot0.kF = Constants.Swerve.driveKF;        
+        swerveDriveFXConfig.slot0.kP = Constants.driveMotorKP;
+        swerveDriveFXConfig.slot0.kI = Constants.driveMotorKI;
+        swerveDriveFXConfig.slot0.kD = Constants.driveMotorKD;
+        swerveDriveFXConfig.slot0.kF = Constants.driveMotorKF;    
         swerveDriveFXConfig.supplyCurrLimit = driveSupplyLimit;
         swerveDriveFXConfig.openloopRamp = Constants.openLoopRamp;
         swerveDriveFXConfig.closedloopRamp = Constants.closedLoopRamp;

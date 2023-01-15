@@ -32,12 +32,13 @@ public class SwerveModule {
     private double startingAzimuth;
     private Rotation2d lastAzimuth;
 
-    private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Constants.driveKS, Constants.driveKV, Constants.driveKA);
+    private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Constants.driveMotorKS, Constants.driveMotorKV, Constants.driveMotorKA);
 
     public SwerveModule (int driveMotorID, int steerMotorID, int azimuthEncoderID, double offset) {
         driveMotor = new TalonFX(driveMotorID);
         steerMotor = new TalonFX(steerMotorID);
         azimuthEncoder = new CANCoder(azimuthEncoderID);
+        config();
 
         azimuthOffset = offset;
         startingAzimuth = azimuthEncoder.getAbsolutePosition();

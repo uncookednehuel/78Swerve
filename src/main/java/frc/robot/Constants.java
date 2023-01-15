@@ -49,7 +49,8 @@ public final class Constants {
         public static final double closedLoopRamp = 0.0;
 
         /* Angle Motor PID Values */
-        public static final double AZIMUTH_MOTOR_KP = 0;
+        public static final double AZIMUTH_MOTOR_KP = 0.2;
+        ;
         public static final double AZIMUTH_MOTOR_KI = 0;
         public static final double AZIMUTH_MOTOR_KD = 0;
         public static final double AZIMUTH_MOTOR_KF = 0;
@@ -75,21 +76,16 @@ public final class Constants {
     public static final Translation2d wheelRU = new Translation2d(0.5588, -0.5588);
     public static final Translation2d wheelLD = new Translation2d(-0.5588, 0.5588);
     public static final Translation2d wheelRD = new Translation2d(-0.5588, -0.5588);
-
-    // public static final double offsetLU = Math.toRadians(0) * -1;
-    // public static final double offsetRU = Math.toRadians(0) * -1;
-    // public static final double offsetLD = Math.toRadians(0) * -1;
-    // public static final double offsetRD = Math.toRadians(0) * -1;
-    // https://github.com/SwerveDriveSpecialties/swerve-template how to calibrate
+    //OFFSETS
     public static final double offsetLU = Math.toRadians(269.20) * -1; //put real offsets from smartdashboard
     public static final double offsetRU = Math.toRadians(292.84) * -1;
     public static final double offsetLD = Math.toRadians(15.22) * -1;
     public static final double offsetRD = Math.toRadians(344.35) * -1;
 
     //Module constants
-    public static final double driveKS = 0;
-    public static final double driveKV = 0;
-    public static final double driveKA = 0;
+    public static final double driveKS = (0.32 / 12);
+    public static final double driveKV = (1.51 / 12);
+    public static final double driveKA = (0.27 / 12);
 
     public static final double angleRatio = 12.8 / 1.0;
     public static final double driveRatio = 6.86 / 1.0;

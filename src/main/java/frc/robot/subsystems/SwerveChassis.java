@@ -66,7 +66,7 @@ public class SwerveChassis extends SubsystemBase {
 
     m_speeds = new ChassisSpeeds();
 
-    m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroRot(), null);//new SwerveDriveOdometry(m_kinematics, getGyroRot(), new Pose2d(0, 0, new Rotation2d())); //we can set starting position and heading
+    m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroRot(), getPositions());//new SwerveDriveOdometry(m_kinematics, getGyroRot(), new Pose2d(0, 0, new Rotation2d())); //we can set starting position and heading
   }
   
   @Override
@@ -137,8 +137,8 @@ public class SwerveChassis extends SubsystemBase {
       Odometry.updateOdometry(getPositions(), getGyroRot(), m_odometry);
       SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.maxSpeed);
       // SmartDashboard.putNumber("LU voltage", states[0].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage);
-      m_moduleRU.setDesiredState(states[1], true);
       m_moduleLU.setDesiredState(states[0], true);
+      m_moduleRU.setDesiredState(states[1], true);
       m_moduleLD.setDesiredState(states[2], true);
       m_moduleRD.setDesiredState(states[3], true);
     }
