@@ -47,7 +47,7 @@ public class RobotContainer {
               new SwerveModuleState(0.01, new Rotation2d()),
               new SwerveModuleState(0.01, new Rotation2d())
             };
-            new Trigger(m_driveController::getXButton).onTrue(new InstantCommand(() -> m_chassis.setStates(emptyStates)));
+            new Trigger(m_driveController::getXButton).onTrue(new InstantCommand(() -> m_chassis.setStates(emptyStates, true)));
             new Trigger(m_driveController::getRightBumper).onTrue(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(1, 0))));
             new Trigger(m_driveController::getRightBumper).onFalse(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
   }
