@@ -6,22 +6,19 @@ package frc.robot.classes;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.InvertType;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants;
-import frc.robot.Robot;
 
 /** This is our custom class that represents an entire swerve module.
  * It contains functions for getting and setting modules, as well as a few other things.
  */
+//https://compendium.readthedocs.io/en/latest/tasks/drivetrains/swerve.html helpful thing
 public class SwerveModule {
     
     private TalonFX driveMotor;
@@ -30,41 +27,17 @@ public class SwerveModule {
 
     private double azimuthOffset;
     private double startingAzimuth;
-    private Rotation2d lastAzimuth;
 
-    private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Constants.driveKS, Constants.driveKV, Constants.driveKA);
+    private PIDController directionController;
 
     public SwerveModule (int driveMotorID, int steerMotorID, int azimuthEncoderID, double offset) {
         driveMotor = new TalonFX(driveMotorID);
         steerMotor = new TalonFX(steerMotorID);
         azimuthEncoder = new CANCoder(azimuthEncoderID);
+        directionController = new PIDController(Constants.AZIMUTH_MOTOR_KP, Constants.AZIMUTH_MOTOR_KI, Constants.AZIMUTH_MOTOR_KD);
 
         azimuthOffset = offset;
         startingAzimuth = azimuthEncoder.getAbsolutePosition();
-        lastAzimuth = getState().angle;
-    }
-
-    private void config() {
-        //drive motor
-        driveMotor.configFactoryDefault();
-        driveMotor.configAllSettings(new TalonFXConfiguration());
-        driveMotor.setInverted(InvertType.InvertMotorOutput);
-        driveMotor.setNeutralMode(NeutralMode.Brake);
-        driveMotor.setSelectedSensorPosition(0);
-        //steer motor
-        steerMotor.configFactoryDefault();
-        steerMotor.configAllSettings(Robot.ctreConfigs.swerveAngleFXConfig);
-        steerMotor.setInverted(InvertType.InvertMotorOutput);
-        steerMotor.setNeutralMode(NeutralMode.Coast);
-        resetToAbsolute();
-        //azimuth encoder
-        azimuthEncoder.configFactoryDefault();
-        azimuthEncoder.configAllSettings(Robot.ctreConfigs.swerveCanCoderConfig);
-    }
-
-    private void resetToAbsolute(){
-        double absolutePosition = Calculations.degreesToFalcon(azimuthEncoder.getPosition() - azimuthOffset, Constants.STEER_GEAR_RATIO);
-        steerMotor.setSelectedSensorPosition(absolutePosition);
     }
 
     //#region SET FUNCTIONS
@@ -87,10 +60,35 @@ public class SwerveModule {
     }
 
     private void setAngle(SwerveModuleState desiredState){
-        Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (Constants.maxSpeed * 0.01)) ? lastAzimuth : desiredState.angle; //Prevent rotating module if speed is less then 1%. Prevents Jittering.
+        directionController.reset();
+        double desiredAngle = desiredState.angle.getDegrees();
+
+        double currentAngle = getAngle().getDegrees();
+        // find closest angle to setpoint
+        double setpointAngle = closestAngle(currentAngle, desiredAngle);
+        // find closest angle to setpoint + 180
+        double setpointAngleFlipped = closestAngle(currentAngle, desiredAngle + 180.0);
+        // if the closest angle to setpoint is shorter
+        if (Math.abs(setpointAngle) <= Math.abs(setpointAngleFlipped))
+        {
+            // unflip the motor direction use the setpoint
+            directionMotor.setGain(1.0);
+            directionController.setSetpoint(currentAngle + setpointAngle);
+        }
+        // if the closest angle to setpoint + 180 is shorter
+        else
+        {
+            // flip the motor direction and use the setpoint + 180
+            directionMotor.setGain(-1.0);
+            directionController.setSetpoint(currentAngle + setpointAngleFlipped);
+        }
+
+        directionController.enable();
+
+        // Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (Constants.maxSpeed * 0.01)) ? lastAzimuth : desiredState.angle; //Prevent rotating module if speed is less then 1%. Prevents Jittering.
         
-        steerMotor.set(ControlMode.Position, Calculations.degreesToFalcon(angle.getDegrees(), Constants.STEER_GEAR_RATIO));
-        lastAzimuth = angle;
+        // steerMotor.set(ControlMode.Position, Calculations.degreesToFalcon(angle.getDegrees(), Constants.STEER_GEAR_RATIO));
+        // lastAzimuth = angle;
     }
     //#endregion
 
@@ -111,6 +109,22 @@ public class SwerveModule {
             Calculations.falconToMeters(driveMotor.getSelectedSensorPosition(), Constants.WHEEL_CIRCUMFERENCE, Constants.DRIVE_GEAR_RATIO), 
             getAngle()
         );
+    }
+
+    /**
+    * Get the closest angle between the given angles.
+    */
+    private static double closestAngle(double a, double b)
+    {
+        // get direction
+        double dir = (b % 360.0) - (a % 360.0);
+
+        // convert from -360 to 360 to -180 to 180
+        if (Math.abs(dir) > 180.0)
+        {
+                dir = -(Math.signum(dir) * 360.0) + dir;
+        }
+        return dir;
     }
     //#endregion
 }
