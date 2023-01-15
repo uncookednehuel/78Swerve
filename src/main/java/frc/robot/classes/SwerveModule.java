@@ -28,13 +28,14 @@ public class SwerveModule {
     private double azimuthOffset;
     private double startingAzimuth;
 
-    private PIDController directionController;
+    private PIDController azimuthController;
 
     public SwerveModule (int driveMotorID, int steerMotorID, int azimuthEncoderID, double offset) {
         driveMotor = new TalonFX(driveMotorID);
         steerMotor = new TalonFX(steerMotorID);
         azimuthEncoder = new CANCoder(azimuthEncoderID);
-        directionController = new PIDController(Constants.AZIMUTH_MOTOR_KP, Constants.AZIMUTH_MOTOR_KI, Constants.AZIMUTH_MOTOR_KD);
+        azimuthController = new PIDController(Constants.AZIMUTH_MOTOR_KP, Constants.AZIMUTH_MOTOR_KI, Constants.AZIMUTH_MOTOR_KD);
+        azimuthOutput =
 
         azimuthOffset = offset;
         startingAzimuth = azimuthEncoder.getAbsolutePosition();
@@ -60,7 +61,7 @@ public class SwerveModule {
     }
 
     private void setAngle(SwerveModuleState desiredState){
-        directionController.reset();
+        azimuthController.reset();
         double desiredAngle = desiredState.angle.getDegrees();
 
         double currentAngle = getAngle().getDegrees();
@@ -73,17 +74,18 @@ public class SwerveModule {
         {
             // unflip the motor direction use the setpoint
             directionMotor.setGain(1.0);
-            directionController.setSetpoint(currentAngle + setpointAngle);
+            azimuthController.setSetpoint(currentAngle + setpointAngle);
         }
         // if the closest angle to setpoint + 180 is shorter
         else
         {
             // flip the motor direction and use the setpoint + 180
             directionMotor.setGain(-1.0);
-            directionController.setSetpoint(currentAngle + setpointAngleFlipped);
+            azimuthController.setSetpoint(currentAngle + setpointAngleFlipped);
         }
 
-        directionController.enable();
+        steerMotor.set(ControlMode.PercentOutput, azimuthController.calculate(setpointAngleFlipped));
+        azimuthController.enable();
 
         // Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (Constants.maxSpeed * 0.01)) ? lastAzimuth : desiredState.angle; //Prevent rotating module if speed is less then 1%. Prevents Jittering.
         
