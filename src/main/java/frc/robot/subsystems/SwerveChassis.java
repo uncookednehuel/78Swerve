@@ -133,6 +133,14 @@ public class SwerveChassis extends SubsystemBase {
       speeds.vyMetersPerSecond,
       speeds.omegaRadiansPerSecond);
   }
+  //Need to find a cleaner way to do this
+  public void setSpeedsAuto (ChassisSpeeds speeds) {
+    m_speeds = new ChassisSpeeds(
+      speeds.vxMetersPerSecond,
+      speeds.vyMetersPerSecond,
+      speeds.omegaRadiansPerSecond);
+    speedsToStates(false);
+  }
 
   public void setStates (SwerveModuleState[] states, Boolean isOpenLoop) {
     if (states.length != 4) {

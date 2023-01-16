@@ -55,7 +55,7 @@ public class RobotContainer {
       m_chassis::resetPose,
       new PIDConstants(5.0, 0.0, 0.0),
       new PIDConstants(0.5, 0.0, 0.0),
-      m_chassis::setSpeeds,
+      m_chassis::setSpeedsAuto,
       eventMap,
       m_chassis);
 
@@ -77,9 +77,9 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    PathPlannerTrajectory trajectory1 = PathFunctions.createTrajectory("Test3");
+    PathPlannerTrajectory trajectory1 = PathFunctions.createTrajectory("2MeterStraight");
 
-    return autoBuilder.fullAuto(trajectory1);
+    return autoBuilder.followPath(trajectory1);
   }
 
   private static double deadband(double value, double deadband) {
