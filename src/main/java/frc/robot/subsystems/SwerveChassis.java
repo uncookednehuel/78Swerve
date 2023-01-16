@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.function.Consumer;
+
 import org.photonvision.PhotonCamera;
 
 import com.ctre.phoenix.sensors.Pigeon2;
@@ -31,7 +33,6 @@ public class SwerveChassis extends SubsystemBase {
   protected Pigeon2 m_pigeon;
 
   //  KINEMATICS
-  private final Translation2d wheelLU, wheelRU, wheelLD, wheelRD;
   protected Translation2d centerOfRot;
 
   protected ChassisSpeeds m_speeds = new ChassisSpeeds();
@@ -47,12 +48,6 @@ public class SwerveChassis extends SubsystemBase {
 
     m_pigeon = new Pigeon2(Constants.pigeonIMU);
 
-    wheelLU = Constants.wheelLU;
-    wheelRU = Constants.wheelRU;
-    wheelLD = Constants.wheelLD;
-    wheelRD = Constants.wheelRD;
-
-    m_kinematics = new SwerveDriveKinematics(wheelLU, wheelRU, wheelLD, wheelRD);
     centerOfRot = new Translation2d();
 
     m_pigeon = new Pigeon2(Constants.pigeonIMU);
@@ -76,11 +71,15 @@ public class SwerveChassis extends SubsystemBase {
         }
   }
 
-  public Pose2d getPose () {
-    SmartDashboard.putNumber("OdometryX", m_odometry.getPoseMeters().getX());
-    SmartDashboard.putNumber("OdometryY", m_odometry.getPoseMeters().getY());
-    SmartDashboard.putNumber("OdometryRot", m_odometry.getPoseMeters().getRotation().getDegrees());
-    return Odometry.getPose(m_odometry, m_photonCam);
+  public void resetPose(Pose2d pose) {
+        Odometry.resetOdometry(pose, getGyroRot(), this, m_odometry);
+  }
+
+  public void resetAllToAbsolute() {
+    m_moduleLU.resetToAbsolute();
+    m_moduleRU.resetToAbsolute();
+    m_moduleLD.resetToAbsolute();
+    m_moduleRD.resetToAbsolute();
   }
 
   //#region  GYRO
@@ -94,6 +93,13 @@ public class SwerveChassis extends SubsystemBase {
   }
   //#endregion
   //#region GET FUNCTIONS
+
+  public Pose2d getPose () {
+    SmartDashboard.putNumber("OdometryX", m_odometry.getPoseMeters().getX());
+    SmartDashboard.putNumber("OdometryY", m_odometry.getPoseMeters().getY());
+    SmartDashboard.putNumber("OdometryRot", m_odometry.getPoseMeters().getRotation().getDegrees());
+    return Odometry.getPose(m_odometry, m_photonCam);
+  }
 
   public SwerveDriveKinematics getKinematics () {
     return m_kinematics;
@@ -121,15 +127,11 @@ public class SwerveChassis extends SubsystemBase {
     centerOfRot = translation;
   }
 
-  public void setSpeeds (ChassisSpeeds speeds, int dPad) {
-    // double dPadX = (90 - dPad < 45 ? 1 : 0) - (270 - dPad < 45 ? 1 : 0);
-    // double dPadY = (0 - dPad < 45 ? 1 : 0) - (180 - dPad < 45 ? 1 : 0);
-    double dPadX = (dPad == 0 ? 1 : 0) - (dPad == 180 ? 1 : 0);
-    double dPadY = (dPad == 270 ? 1 : 0) - (dPad == 90 ? 1 : 0);
-    double dPadVel = 1;
-    m_speeds = new ChassisSpeeds(speeds.vxMetersPerSecond + dPadX * dPadVel,
-                                  speeds.vyMetersPerSecond + dPadY * dPadVel,
-                                  speeds.omegaRadiansPerSecond);
+  public void setSpeeds (ChassisSpeeds speeds) {
+    m_speeds = new ChassisSpeeds(
+      speeds.vxMetersPerSecond,
+      speeds.vyMetersPerSecond,
+      speeds.omegaRadiansPerSecond);
   }
 
   public void setStates (SwerveModuleState[] states, Boolean isOpenLoop) {

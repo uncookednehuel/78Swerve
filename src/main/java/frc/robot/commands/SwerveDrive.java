@@ -7,13 +7,7 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 
-import com.ctre.phoenix.sensors.Pigeon2;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.SwerveChassis;
@@ -25,13 +19,22 @@ public class SwerveDrive extends CommandBase {
   private final DoubleSupplier ySupplier;
   private final DoubleSupplier rotSupplier;
   private final IntSupplier dPadSupplier;
+  private final DoubleSupplier lTriggerSupplier;
+  private final DoubleSupplier rTriggerSupplier;
 
-  public SwerveDrive(SwerveChassis chassis, DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rotSupplier, IntSupplier dPadSupplier) {
+  public SwerveDrive(
+    SwerveChassis chassis,
+    DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rotSupplier,
+    IntSupplier dPadSupplier,
+    DoubleSupplier lTriggerSupplier, DoubleSupplier rTriggerSupplier)
+    {
         m_chassis = chassis;
         this.xSupplier = xSupplier;
         this.ySupplier = ySupplier;
         this.rotSupplier = rotSupplier;
         this.dPadSupplier = dPadSupplier;
+        this.lTriggerSupplier = lTriggerSupplier;
+        this.rTriggerSupplier = rTriggerSupplier;
 
         addRequirements(m_chassis);
   }
@@ -41,18 +44,35 @@ public class SwerveDrive extends CommandBase {
 
   @Override
   public void execute() {
-    m_chassis.setSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(
-      xSupplier.getAsDouble(), 
-      ySupplier.getAsDouble(), 
-      rotSupplier.getAsDouble(), 
-      m_chassis.getGyroRot()),
-      dPadSupplier.getAsInt()
-      );
+    double dPadX = (dPadSupplier.getAsInt() == 0 ? 1 : 0) - (dPadSupplier.getAsInt() == 180 ? 1 : 0);
+    double dPadY = (dPadSupplier.getAsInt() == 270 ? 1 : 0) - (dPadSupplier.getAsInt() == 90 ? 1 : 0);
+    dPadX = triggerAdjust(dPadX * Constants.dPadVel);
+    dPadY = triggerAdjust(dPadY * Constants.dPadVel);
+
+    ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+      triggerAdjust(xSupplier.getAsDouble()) * Constants.maxSpeed, 
+      triggerAdjust(ySupplier.getAsDouble()) * Constants.maxSpeed, 
+      triggerAdjust(rotSupplier.getAsDouble()) * Constants.maxSpeed, 
+      m_chassis.getGyroRot());
+    
+    speeds = new ChassisSpeeds(speeds.vxMetersPerSecond + dPadX, speeds.vyMetersPerSecond + dPadY, speeds.omegaRadiansPerSecond);
+    
+    m_chassis.setSpeeds(speeds);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_chassis.setSpeeds(new ChassisSpeeds(0.0, 0.0, 0.0), -1);
+    m_chassis.setSpeeds(new ChassisSpeeds(0.0, 0.0, 0.0));
+  }
+
+  public double triggerAdjust(double in) {
+    double upAdjust = 0.3;
+    double downAdjust = 0.4;
+    //Default speed = 1 - upAdjust
+    //Full left trigger = 1 - upAdjust - downAdjust
+    //Full right trigger = 1
+    double triggers = (1 - upAdjust) + (rTriggerSupplier.getAsDouble() * upAdjust) - (lTriggerSupplier.getAsDouble() * downAdjust);
+    return in * triggers;
   }
 }

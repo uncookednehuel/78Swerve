@@ -95,7 +95,7 @@ public final class Constants {
             public static final int angleMotorID = 2;
             public static final int canCoderID = 9;
             // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(269.29); //MK4
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(10.28); //MK4i
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(10.19); //MK4i
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -106,7 +106,7 @@ public final class Constants {
             public static final int angleMotorID = 4;
             public static final int canCoderID = 10;
             // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(292.93); //MK4
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(162.24); //MK4i
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(161.98); //MK4i
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -117,7 +117,7 @@ public final class Constants {
             public static final int angleMotorID = 6;
             public static final int canCoderID = 11;
             // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(17.31); //MK4
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(179.64); //MK4i
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(178.5); //MK4i
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -128,7 +128,7 @@ public final class Constants {
             public static final int angleMotorID = 8;
             public static final int canCoderID = 12;
             // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(344.70); //MK4
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(168.04); //MK4i
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(166.99); //MK4i
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -137,17 +137,14 @@ public final class Constants {
     public static final int pigeonIMU = 0;
     public static final String photonCam = "photonvision";
     
-    //  CONTROLLERS
+    //  CONTROL
     public static final int driverController = 0;
+    public static final double dPadVel = 0.7;
 
     //#region KINEMATICS
 
     //keep in mind that the locations for the modules must be relative to the center of the robot. Positive x values represent moving toward the front of the robot whereas positive y values represent moving toward the left of the robot.
     //order for swerve modules is always left upper, right upper, left lower, right lower
-    public static final Translation2d wheelLU = new Translation2d(0.5588, 0.5588);
-    public static final Translation2d wheelRU = new Translation2d(0.5588, -0.5588);
-    public static final Translation2d wheelLD = new Translation2d(-0.5588, 0.5588);
-    public static final Translation2d wheelRD = new Translation2d(-0.5588, -0.5588);
 
     public static final double offsetLU = Math.toRadians(269.20) * -1; //put real offsets from smartdashboard
     public static final double offsetRU = Math.toRadians(292.84) * -1;

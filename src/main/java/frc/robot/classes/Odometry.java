@@ -4,9 +4,9 @@
 
 package frc.robot.classes;
 
+import java.util.function.Consumer;
+
 import org.photonvision.PhotonCamera;
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.SwerveChassis;
 
 /** Add your docs here. */
@@ -34,9 +35,12 @@ public class Odometry {
 
     static public void updateOdometry(SwerveModulePosition[] positions, Rotation2d gyroRot, SwerveDriveOdometry odometry) {
         odometry.update(gyroRot, positions); //these are supposed to be set to the real read values, not what is being set to the modules
+        SmartDashboard.putNumber("OdometryX", odometry.getPoseMeters().getX());
+        SmartDashboard.putNumber("OdometryY", odometry.getPoseMeters().getY());
+        SmartDashboard.putNumber("OdometryRot", odometry.getPoseMeters().getRotation().getDegrees());
     }
 
     static public void resetOdometry(Pose2d pose, Rotation2d gyroAngle, SwerveChassis chassis, SwerveDriveOdometry odometry) {
-    odometry.resetPosition(gyroAngle, chassis.getPositions(), pose);
-  }
+        odometry.resetPosition(gyroAngle, chassis.getPositions(), pose);
+    }
 }

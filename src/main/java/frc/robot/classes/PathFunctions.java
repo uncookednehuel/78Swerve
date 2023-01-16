@@ -45,11 +45,7 @@ public class PathFunctions {
      * @return A PPSwerveControllerCommand object
      */
     public static PPSwerveControllerCommand createSwerveController (
-        PathPlannerTrajectory trajectory, Supplier<Pose2d> poseSupplier, SwerveDriveKinematics kinematics, Consumer<ChassisSpeeds> chassisSpeeds, Subsystem... chassis)
-    {
-        HashMap<String, Command> eventMap = new HashMap<>();
-        eventMap.put("Waypoint1Reached", new PrintCommand("Waypoint 1 reached!"));
-        eventMap.put("command1", new PrintCommand("Hello World"));
+        PathPlannerTrajectory trajectory, Supplier<Pose2d> poseSupplier, SwerveDriveKinematics kinematics, Consumer<ChassisSpeeds> chassisSpeeds, Subsystem... chassis) {
 
         return new PPSwerveControllerCommand(
             trajectory,poseSupplier,

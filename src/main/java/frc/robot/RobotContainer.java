@@ -1,6 +1,9 @@
 package frc.robot;
 
+import java.util.HashMap;
+
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
@@ -11,17 +14,22 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.classes.Odometry;
 import frc.robot.classes.PathFunctions;
 import frc.robot.commands.SwerveDrive;
-import frc.robot.subsystems.SwerveChassis;
+import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class RobotContainer {
 
   public final SwerveChassis m_chassis;
   private final XboxController m_driveController;
+
+  private final HashMap<String, Command> eventMap;
+  private final SwerveAutoBuilder autoBuilder;
 
   public RobotContainer() {
     m_chassis = new SwerveChassis();
@@ -30,13 +38,28 @@ public class RobotContainer {
 
     m_chassis.setDefaultCommand(new SwerveDrive(
       m_chassis,
-      () -> -modifyAxis(triggerAdjust(m_driveController.getLeftY())) * Constants.maxSpeed,
-      () -> -modifyAxis(triggerAdjust(m_driveController.getLeftX())) * Constants.maxSpeed,
-      () -> -modifyAxis(triggerAdjust(m_driveController.getRightX())) * Constants.maxSpeed,
-      () -> m_driveController.getPOV()
+      () -> -modifyAxis(m_driveController.getLeftY()),
+      () -> -modifyAxis(m_driveController.getLeftX()),
+      () -> -modifyAxis(m_driveController.getRightX()),
+      () -> m_driveController.getPOV(),
+      () -> m_driveController.getLeftTriggerAxis(),
+      () -> m_driveController.getRightTriggerAxis()
       ));
 
-      configureButtonBindings();
+    eventMap = new HashMap<>();
+    eventMap.put("Waypoint1Reached", new PrintCommand("Waypoint 1 reached!"));
+    eventMap.put("command1", new PrintCommand("Hello World"));
+    
+    autoBuilder = new SwerveAutoBuilder(
+      m_chassis::getPose,
+      m_chassis::resetPose,
+      new PIDConstants(5.0, 0.0, 0.0),
+      new PIDConstants(0.5, 0.0, 0.0),
+      m_chassis::setSpeeds,
+      eventMap,
+      m_chassis);
+
+    configureButtonBindings();
   }
 
   private void configureButtonBindings() {
@@ -48,22 +71,13 @@ public class RobotContainer {
               new SwerveModuleState(0.01, new Rotation2d())
             };
             new Trigger(m_driveController::getXButton).onTrue(new InstantCommand(() -> m_chassis.setStates(emptyStates, true)));
+            new Trigger(m_driveController::getBButton).onTrue(new InstantCommand(() -> m_chassis.resetAllToAbsolute()));
             new Trigger(m_driveController::getRightBumper).onTrue(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(1, 0))));
             new Trigger(m_driveController::getRightBumper).onFalse(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
   }
 
   public Command getAutonomousCommand() {
     PathPlannerTrajectory trajectory1 = PathFunctions.createTrajectory("Test3");
-    // error most likely due to trajectory not properly set, or imported from file, maybe need to export from pathplanner application in a different way
-    SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
-    m_chassis::getPose,
-    null,
-    null,
-    null,
-    null,
-    null,
-    m_chassis);
-    //PathFunctions.createSwerveController(trajectory1, m_chassis::getPose, m_chassis.getKinematics(), m_chassis::setStates, m_chassis);
 
     return autoBuilder.fullAuto(trajectory1);
   }
@@ -81,15 +95,6 @@ public class RobotContainer {
     value = deadband(value, 0.05);
     // Square the axis
     value = Math.copySign(value * 0.4, value);
-    
-
     return value;
-  }
-
-  public double triggerAdjust(double in) {
-    double upAdjust = 0.3;
-    double downAdjust = 0.4;
-    double triggers = (1 - upAdjust) + (m_driveController.getRightTriggerAxis() * upAdjust) - (m_driveController.getLeftTriggerAxis() * downAdjust); //calculates the trigger adjustment
-    return in * triggers;
   }
 }
