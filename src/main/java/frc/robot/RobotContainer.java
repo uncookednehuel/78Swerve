@@ -6,6 +6,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
+import com.pathplanner.lib.server.PathPlannerServer;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -59,6 +60,8 @@ public class RobotContainer {
       eventMap,
       m_chassis);
 
+    PathPlannerServer.startServer(5811);
+
     configureButtonBindings();
   }
 
@@ -77,8 +80,10 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    PathPlannerTrajectory trajectory1 = PathFunctions.createTrajectory("2MeterStraight");
+    PathPlannerTrajectory trajectory1 = PathFunctions.createTrajectory("Test4");
 
+    Odometry.resetOdometry(trajectory1.getInitialHolonomicPose(), m_chassis.getGyroRot(), m_chassis, m_chassis.m_odometry);
+    // autoBuilder.resetPose(trajectory1);
     return autoBuilder.followPath(trajectory1);
   }
 

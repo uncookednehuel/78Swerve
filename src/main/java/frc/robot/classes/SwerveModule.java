@@ -82,28 +82,7 @@ public class SwerveModule {
         return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition());
     }
 
-    private void waitForCanCoder(){
-        /*
-         * Wait for up to 1000 ms for a good CANcoder signal.
-         *
-         * This prevents a race condition during program startup
-         * where we try to synchronize the Falcon encoder to the
-         * CANcoder before we have received any position signal
-         * from the CANcoder.
-         */
-        for (int i = 0; i < 100; ++i) {
-            angleEncoder.getAbsolutePosition();
-            if (angleEncoder.getLastError() == ErrorCode.OK) {
-                break;
-            }
-            Timer.delay(0.010);            
-            CANcoderInitTime += 10;
-        }
-    }
-
     public void resetToAbsolute(){
-        waitForCanCoder();
-        
         double absolutePosition = Calculations.degreesToFalcon(getCanCoder().getDegrees() - angleOffset.getDegrees(), Constants.Swerve.angleGearRatio);
         mAngleMotor.setSelectedSensorPosition(absolutePosition);
     }

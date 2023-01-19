@@ -14,6 +14,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -58,7 +59,13 @@ public class SwerveChassis extends SubsystemBase {
 
     m_speeds = new ChassisSpeeds();
 
-    m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroRot(), getPositions());//new SwerveDriveOdometry(m_kinematics, getGyroRot(), new Pose2d(0, 0, new Rotation2d())); //we can set starting position and heading
+    //new SwerveDriveOdometry(m_kinematics, getGyroRot(), new Pose2d(0, 0, new Rotation2d())); //we can set starting position and headings
+    m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroRot(), getPositions());
+
+    Timer.delay(1.0);
+    resetAllToAbsolute();
+
+    resetPose(new Pose2d());
   }
   
   @Override
