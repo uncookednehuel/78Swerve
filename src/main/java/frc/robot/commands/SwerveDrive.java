@@ -42,6 +42,7 @@ public class SwerveDrive extends CommandBase {
   @Override
   public void initialize() {}
 
+  //NEEDS TO BE REVISED, SOMETHING AINT RIGHT
   @Override
   public void execute() {
     double dPadX = (dPadSupplier.getAsInt() == 0 ? 1 : 0) - (dPadSupplier.getAsInt() == 180 ? 1 : 0);
@@ -66,6 +67,11 @@ public class SwerveDrive extends CommandBase {
     m_chassis.setSpeeds(new ChassisSpeeds(0.0, 0.0, 0.0));
   }
 
+  /**
+   * Adjusts the speeds of the given input depending on trigger input, with left trigger decreasing speed and RT increasing
+   * @param in
+   * @return
+   */
   public double triggerAdjust(double in) {
     double upAdjust = 0.3;
     double downAdjust = 0.4;

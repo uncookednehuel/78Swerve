@@ -1,9 +1,5 @@
 package frc.robot.subsystems;
 
-import java.util.function.Consumer;
-
-import org.photonvision.PhotonCamera;
-
 import com.ctre.phoenix.sensors.Pigeon2;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -26,41 +22,36 @@ import frc.robot.classes.SwerveModule;
 public class SwerveChassis extends SubsystemBase {
 
   //abreviations: LU (left upper), RU (right upper), LD (left down), RD (right down)
-  protected SwerveModule m_moduleLU, m_moduleRU, m_moduleLD, m_moduleRD;
+  protected SwerveModule moduleLU, moduleRU, moduleLD, moduleRD;
 
-  protected SwerveDriveKinematics m_kinematics;
-  public SwerveDriveOdometry m_odometry;
-  protected PhotonCamera m_photonCam;
-  protected Pigeon2 m_pigeon;
+  protected SwerveDriveKinematics kinematics;
+  public SwerveDriveOdometry odometry;
+  protected Pigeon2 pidgeon;
 
   //  KINEMATICS
   protected Translation2d centerOfRot;
 
-  protected ChassisSpeeds m_speeds = new ChassisSpeeds();
+  protected ChassisSpeeds speeds = new ChassisSpeeds();
 
   public SwerveChassis() {
-    ShuffleboardTab tab = Shuffleboard.getTab("Swerve");
+    // WILL COULD CONSIDER MAKING THIS AN ARRAY FOR SIMPLIFIED CODE
+    moduleLU = new SwerveModule(0, Constants.Swerve.Mod0.constants);
+    moduleRU = new SwerveModule(1, Constants.Swerve.Mod1.constants);
+    moduleLD = new SwerveModule(2, Constants.Swerve.Mod2.constants);
+    moduleRD = new SwerveModule(3, Constants.Swerve.Mod3.constants);
 
-    // WILL HAVE TO CONSIDER MAKING THIS AN ARRAY FOR SIMPLIFIED CODE
-    m_moduleLU = new SwerveModule(0, Constants.Swerve.Mod0.constants);
-    m_moduleRU = new SwerveModule(1, Constants.Swerve.Mod1.constants);
-    m_moduleLD = new SwerveModule(2, Constants.Swerve.Mod2.constants);
-    m_moduleRD = new SwerveModule(3, Constants.Swerve.Mod3.constants);
-
-    m_pigeon = new Pigeon2(Constants.pigeonIMU);
+    pidgeon = new Pigeon2(Constants.pigeonIMU);
 
     centerOfRot = new Translation2d();
 
-    m_pigeon = new Pigeon2(Constants.pigeonIMU);
+    pidgeon = new Pigeon2(Constants.pigeonIMU);
 
-    m_photonCam = new PhotonCamera(Constants.photonCam);
+    kinematics = Constants.Swerve.SWERVE_KINEMATICS;
 
-    m_kinematics = Constants.Swerve.swerveKinematics;
-
-    m_speeds = new ChassisSpeeds();
+    speeds = new ChassisSpeeds();
 
     //new SwerveDriveOdometry(m_kinematics, getGyroRot(), new Pose2d(0, 0, new Rotation2d())); //we can set starting position and headings
-    m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroRot(), getPositions());
+    odometry = new SwerveDriveOdometry(kinematics, getGyroRot(), getPositions());
 
     Timer.delay(1.0);
     resetAllToAbsolute();
@@ -70,7 +61,7 @@ public class SwerveChassis extends SubsystemBase {
   
   @Override
   public void periodic() {
-    SwerveModule swerveModules[] = {m_moduleLU, m_moduleRU, m_moduleLD, m_moduleRD};
+    SwerveModule swerveModules[] = {moduleLU, moduleRU, moduleLD, moduleRD};
     for(SwerveModule mod : swerveModules){
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
@@ -79,45 +70,45 @@ public class SwerveChassis extends SubsystemBase {
   }
 
   public void resetPose(Pose2d pose) {
-        Odometry.resetOdometry(pose, getGyroRot(), this, m_odometry);
+        Odometry.resetOdometry(pose, getGyroRot(), this, odometry);
   }
 
   public void resetAllToAbsolute() {
-    m_moduleLU.resetToAbsolute();
-    m_moduleRU.resetToAbsolute();
-    m_moduleLD.resetToAbsolute();
-    m_moduleRD.resetToAbsolute();
+    moduleLU.resetToAbsolute();
+    moduleRU.resetToAbsolute();
+    moduleLD.resetToAbsolute();
+    moduleRD.resetToAbsolute();
   }
 
   //#region  GYRO
 
   public void zeroGyro() {
-    m_pigeon.setYaw(0.0);
+    pidgeon.setYaw(0.0);
   }
 
   public Rotation2d getGyroRot() {
-    return Rotation2d.fromDegrees(m_pigeon.getYaw());
+    return Rotation2d.fromDegrees(pidgeon.getYaw());
   }
   //#endregion
   //#region GET FUNCTIONS
 
   public Pose2d getPose () {
-    SmartDashboard.putNumber("OdometryX", m_odometry.getPoseMeters().getX());
-    SmartDashboard.putNumber("OdometryY", m_odometry.getPoseMeters().getY());
-    SmartDashboard.putNumber("OdometryRot", m_odometry.getPoseMeters().getRotation().getDegrees());
-    return Odometry.getPose(m_odometry, m_photonCam);
+    SmartDashboard.putNumber("OdometryX", odometry.getPoseMeters().getX());
+    SmartDashboard.putNumber("OdometryY", odometry.getPoseMeters().getY());
+    SmartDashboard.putNumber("OdometryRot", odometry.getPoseMeters().getRotation().getDegrees());
+    return Odometry.getPose(odometry);
   }
 
   public SwerveDriveKinematics getKinematics () {
-    return m_kinematics;
+    return kinematics;
   }
 
   public SwerveModulePosition[] getPositions () {
     SwerveModulePosition positions[] = {
-      m_moduleLU.getPosition(),
-      m_moduleRU.getPosition(),
-      m_moduleLD.getPosition(),
-      m_moduleRD.getPosition(),
+      moduleLU.getPosition(),
+      moduleRU.getPosition(),
+      moduleLD.getPosition(),
+      moduleRD.getPosition(),
     };
     return positions;
   }
@@ -126,7 +117,7 @@ public class SwerveChassis extends SubsystemBase {
   //#region SET FUNCTIONS
 
   public void speedsToStates(Boolean isOpenLoop) {
-    SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds, centerOfRot);
+    SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds, centerOfRot);
     setStates(states, isOpenLoop);
   }
 
@@ -134,32 +125,50 @@ public class SwerveChassis extends SubsystemBase {
     centerOfRot = translation;
   }
 
+  //Need to find a cleaner way to do this, we shouldn't have 2 set speeds functions, either it should always set the
+  //states or never set the states after
+
+  /**
+   * Sets chassi speeds, with open loop and without calling speedsToStates
+   * @param speeds
+   */
   public void setSpeeds (ChassisSpeeds speeds) {
-    m_speeds = new ChassisSpeeds(
+    speeds = new ChassisSpeeds(
       speeds.vxMetersPerSecond,
       speeds.vyMetersPerSecond,
       speeds.omegaRadiansPerSecond);
   }
-  //Need to find a cleaner way to do this
+  /**Overload for setSpeeds, sets speeds to 0, 0, 0 */
+  public void setSpeeds() { setSpeeds(new ChassisSpeeds(0, 0, 0)); }
+
+  /**
+   * Sets chassis speeds, but with a closed loop PID
+   * @param speeds
+   */
   public void setSpeedsAuto (ChassisSpeeds speeds) {
-    m_speeds = new ChassisSpeeds(
+    speeds = new ChassisSpeeds(
       speeds.vxMetersPerSecond,
       speeds.vyMetersPerSecond,
       speeds.omegaRadiansPerSecond);
     speedsToStates(false);
   }
 
+  /**
+   * Sets the state of each module
+   * @param states Must be exactly of length 4
+   * @param isOpenLoop
+   */
   public void setStates (SwerveModuleState[] states, Boolean isOpenLoop) {
     if (states.length != 4) {
       throw new IllegalArgumentException("The \"setStates\" input array size should be 4!");
     } else {  
-      Odometry.updateOdometry(getPositions(), getGyroRot(), m_odometry);
+      Odometry.updateOdometry(getPositions(), getGyroRot(), odometry);
       SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.maxSpeed);
       // SmartDashboard.putNumber("LU voltage", states[0].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage);
-      m_moduleRU.setDesiredState(states[1], isOpenLoop);
-      m_moduleLU.setDesiredState(states[0], isOpenLoop);
-      m_moduleLD.setDesiredState(states[2], isOpenLoop);
-      m_moduleRD.setDesiredState(states[3], isOpenLoop);
+      moduleRU.setDesiredState(states[1], isOpenLoop);
+      moduleLU.setDesiredState(states[0], isOpenLoop);
+      moduleLD.setDesiredState(states[2], isOpenLoop);
+      moduleRD.setDesiredState(states[3], isOpenLoop);
     }
   }
   //#endregion

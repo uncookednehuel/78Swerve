@@ -29,9 +29,8 @@ public class PathFunctions {
      * @param path trajectory file path, I am pretty sure that you just need to input PathName.path
      * @return Trajectory object
      */
-    public static PathPlannerTrajectory createTrajectory (String path)
-    {
-        return PathPlanner.loadPath(path, Constants.maxVel, Constants.maxAcc);
+    public static PathPlannerTrajectory createTrajectory (String path) {
+        return PathPlanner.loadPath(path, Constants.PATH_MAX_VEL, Constants.PATH_MAX_ACC);
     }
     
     /**
@@ -49,29 +48,19 @@ public class PathFunctions {
 
         return new PPSwerveControllerCommand(
             trajectory,poseSupplier,
-            new PIDController(Constants.xErrVel, Constants.kI, Constants.kD),
-            new PIDController(Constants.yErrVel, Constants.kI, Constants.kD),
-            new PIDController(1, Constants.kI, Constants.kD),
+            new PIDController(Constants.X_ERROR_VEL, Constants.TRAJECTORY_KI, Constants.TRAJECTORY_KD),
+            new PIDController(Constants.Y_ERROR_VEL, Constants.TRAJECTORY_KI, Constants.TRAJECTORY_KD),
+            new PIDController(1, Constants.TRAJECTORY_KI, Constants.TRAJECTORY_KD),
             chassisSpeeds,
             chassis);
     }
 
     /**
-     * DEPRECATED, USE createSwerveController
-     * @param xErrVel
-     * @param yErrVel
-     * @return Holonomic Drive Controller object
+     * Resets the odometry of the robot to the provided trajectory intial pose
+     * @param m_chassis
+     * @param trajectory
      */
-    public static HolonomicDriveController createHoloController (double xErrVel, double yErrVel)
-    {
-        return new HolonomicDriveController(
-            new PIDController(Constants.xErrVel, Constants.kI, Constants.kD),
-            new PIDController(Constants.yErrVel, Constants.kI, Constants.kD),
-            new ProfiledPIDController(1, Constants.kI, Constants.kD, //need to revise this later, I am not sure what is velocity, acceleration, etc.
-                new TrapezoidProfile.Constraints(Constants.maxRotVel, Constants.maxRotAcc)));
-    }
-
     public static void resetOdometry(SwerveChassis m_chassis, PathPlannerTrajectory trajectory) {
-        Odometry.resetOdometry(trajectory.getInitialHolonomicPose(), trajectory.getInitialHolonomicPose().getRotation(), m_chassis, m_chassis.m_odometry);
+        Odometry.resetOdometry(trajectory.getInitialHolonomicPose(), trajectory.getInitialHolonomicPose().getRotation(), m_chassis, m_chassis.odometry);
     }
 }
