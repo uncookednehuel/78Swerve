@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
@@ -23,26 +19,26 @@ public class SwerveDrive extends CommandBase {
   private final DoubleSupplier rTriggerSupplier;
 
   public SwerveDrive(
-    SwerveChassis chassis,
-    DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rotSupplier,
-    IntSupplier dPadSupplier,
-    DoubleSupplier lTriggerSupplier, DoubleSupplier rTriggerSupplier)
-    {
-        m_chassis = chassis;
-        this.xSupplier = xSupplier;
-        this.ySupplier = ySupplier;
-        this.rotSupplier = rotSupplier;
-        this.dPadSupplier = dPadSupplier;
-        this.lTriggerSupplier = lTriggerSupplier;
-        this.rTriggerSupplier = rTriggerSupplier;
+      SwerveChassis chassis,
+      DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rotSupplier,
+      IntSupplier dPadSupplier,
+      DoubleSupplier lTriggerSupplier, DoubleSupplier rTriggerSupplier) {
+    m_chassis = chassis;
+    this.xSupplier = xSupplier;
+    this.ySupplier = ySupplier;
+    this.rotSupplier = rotSupplier;
+    this.dPadSupplier = dPadSupplier;
+    this.lTriggerSupplier = lTriggerSupplier;
+    this.rTriggerSupplier = rTriggerSupplier;
 
-        addRequirements(m_chassis);
+    addRequirements(m_chassis);
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
-  //NEEDS TO BE REVISED, SOMETHING AINT RIGHT
+  // NEEDS TO BE REVISED, SOMETHING AINT RIGHT
   @Override
   public void execute() {
     double dPadX = (dPadSupplier.getAsInt() == 0 ? 1 : 0) - (dPadSupplier.getAsInt() == 180 ? 1 : 0);
@@ -51,34 +47,37 @@ public class SwerveDrive extends CommandBase {
     dPadY = triggerAdjust(dPadY * Constants.dPadVel);
 
     ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-      triggerAdjust(xSupplier.getAsDouble()) * Constants.maxSpeed, 
-      triggerAdjust(ySupplier.getAsDouble()) * Constants.maxSpeed, 
-      triggerAdjust(rotSupplier.getAsDouble()) * Constants.maxSpeed, 
-      m_chassis.getGyroRot());
-    
-    speeds = new ChassisSpeeds(speeds.vxMetersPerSecond + dPadX, speeds.vyMetersPerSecond + dPadY, speeds.omegaRadiansPerSecond);
-    
+        triggerAdjust(xSupplier.getAsDouble()) * Constants.maxSpeed,
+        triggerAdjust(ySupplier.getAsDouble()) * Constants.maxSpeed,
+        triggerAdjust(rotSupplier.getAsDouble()) * Constants.maxSpeed,
+        m_chassis.getGyroRot());
+
+    speeds = new ChassisSpeeds(speeds.vxMetersPerSecond + dPadX, speeds.vyMetersPerSecond + dPadY,
+        speeds.omegaRadiansPerSecond);
+
     m_chassis.setSpeeds(speeds);
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     m_chassis.setSpeeds(new ChassisSpeeds(0.0, 0.0, 0.0));
   }
 
   /**
-   * Adjusts the speeds of the given input depending on trigger input, with left trigger decreasing speed and RT increasing
+   * Adjusts the speeds of the given input depending on trigger input, with left
+   * trigger decreasing speed and RT increasing
+   * 
    * @param in
-   * @return
+   * @return Adjusted speed
    */
   public double triggerAdjust(double in) {
     double upAdjust = 0.3;
     double downAdjust = 0.4;
-    //Default speed = 1 - upAdjust
-    //Full left trigger = 1 - upAdjust - downAdjust
-    //Full right trigger = 1
-    double triggers = (1 - upAdjust) + (rTriggerSupplier.getAsDouble() * upAdjust) - (lTriggerSupplier.getAsDouble() * downAdjust);
+    // Default speed = 1 - upAdjust
+    // Full left trigger = 1 - upAdjust - downAdjust
+    // Full right trigger = 1
+    double triggers = (1 - upAdjust) + (rTriggerSupplier.getAsDouble() * upAdjust)
+        - (lTriggerSupplier.getAsDouble() * downAdjust);
     return in * triggers;
   }
 }

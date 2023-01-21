@@ -14,10 +14,12 @@ import frc.robot.subsystems.SwerveChassis;
 /** Add your docs here. */
 public class Odometry {
 
-    public Odometry () { }
+    public Odometry() {
+    }
 
     /**
      * Returns the robot's odometry pose
+     * 
      * @param odometry
      * @return
      */
@@ -27,12 +29,15 @@ public class Odometry {
 
     /**
      * Updates the odometry of the robot
+     * 
      * @param positions
      * @param gyroRot
      * @param odometry
      */
-    static public void updateOdometry(SwerveModulePosition[] positions, Rotation2d gyroRot, SwerveDriveOdometry odometry) {
-        odometry.update(gyroRot, positions); //these are supposed to be set to the real read values, not what is being set to the modules
+    static public void updateOdometry(SwerveModulePosition[] positions, Rotation2d gyroRot,
+            SwerveDriveOdometry odometry) {
+        odometry.update(gyroRot, positions); // these are supposed to be set to the real read values, not what is being
+                                             // set to the modules
         SmartDashboard.putNumber("OdometryX", odometry.getPoseMeters().getX());
         SmartDashboard.putNumber("OdometryY", odometry.getPoseMeters().getY());
         SmartDashboard.putNumber("OdometryRot", odometry.getPoseMeters().getRotation().getDegrees());
@@ -40,12 +45,14 @@ public class Odometry {
 
     /**
      * Resets the robot's odometry
+     * 
      * @param pose
      * @param gyroAngle
      * @param chassis
      * @param odometry
      */
-    static public void resetOdometry(Pose2d pose, Rotation2d gyroAngle, SwerveChassis chassis, SwerveDriveOdometry odometry) {
+    static public void resetOdometry(Pose2d pose, Rotation2d gyroAngle, SwerveChassis chassis,
+            SwerveDriveOdometry odometry) {
         odometry.resetPosition(gyroAngle, chassis.getPositions(), pose);
     }
 }

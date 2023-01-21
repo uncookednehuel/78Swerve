@@ -34,48 +34,50 @@ public class RobotContainer {
     m_driveController = new XboxController(Constants.driverController);
 
     m_chassis.setDefaultCommand(new SwerveDrive(
-      m_chassis,
-      () -> -modifyAxis(m_driveController.getLeftY()),
-      () -> -modifyAxis(m_driveController.getLeftX()),
-      () -> -modifyAxis(m_driveController.getRightX()),
-      () -> m_driveController.getPOV(),
-      () -> m_driveController.getLeftTriggerAxis(),
-      () -> m_driveController.getRightTriggerAxis()
-      ));
+        m_chassis,
+        () -> -modifyAxis(m_driveController.getLeftY()),
+        () -> -modifyAxis(m_driveController.getLeftX()),
+        () -> -modifyAxis(m_driveController.getRightX()),
+        () -> m_driveController.getPOV(),
+        () -> m_driveController.getLeftTriggerAxis(),
+        () -> m_driveController.getRightTriggerAxis()));
 
-    //#region PATHPLANNER
+    // #region PATHPLANNER
     m_eventMap = new HashMap<>();
     m_eventMap.put("Waypoint1Reached", new PrintCommand("Waypoint 1 reached!"));
     m_eventMap.put("command1", new PrintCommand("Hello World"));
-    
-    //An object used to do much of the creating path following commands
+
+    // An object used to do much of the creating path following commands
     autoBuilder = new SwerveAutoBuilder(
-      m_chassis::getPose,
-      m_chassis::resetPose,
-      new PIDConstants(5.0, 0.0, 0.0),
-      new PIDConstants(0.5, 0.0, 0.0),
-      m_chassis::setSpeedsAuto,
-      m_eventMap,
-      m_chassis);
+        m_chassis::getPose,
+        m_chassis::resetPose,
+        new PIDConstants(5.0, 0.0, 0.0),
+        new PIDConstants(0.5, 0.0, 0.0),
+        m_chassis::setSpeedsAuto,
+        m_eventMap,
+        m_chassis);
 
     PathPlannerServer.startServer(5811);
-    //#endregion
+    // #endregion
 
     configureButtonBindings();
   }
 
   private void configureButtonBindings() {
-            new Trigger(m_driveController::getYButton).onTrue(new InstantCommand(m_chassis::zeroGyro));//(new InstantCommand(m_chassis::zeroGyro));
-            SwerveModuleState[] emptyStates = {
-              new SwerveModuleState(0.01, new Rotation2d()),
-              new SwerveModuleState(0.01, new Rotation2d()),
-              new SwerveModuleState(0.01, new Rotation2d()),
-              new SwerveModuleState(0.01, new Rotation2d())
-            };
-            new Trigger(m_driveController::getXButton).onTrue(new InstantCommand(() -> m_chassis.setStates(emptyStates, true)));
-            new Trigger(m_driveController::getBButton).onTrue(new InstantCommand(() -> m_chassis.resetAllToAbsolute()));
-            new Trigger(m_driveController::getRightBumper).onTrue(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(1, 0))));
-            new Trigger(m_driveController::getRightBumper).onFalse(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
+    new Trigger(m_driveController::getYButton).onTrue(new InstantCommand(m_chassis::zeroGyro));// (new
+                                                                                               // InstantCommand(m_chassis::zeroGyro));
+    SwerveModuleState[] emptyStates = {
+        new SwerveModuleState(0.01, new Rotation2d()),
+        new SwerveModuleState(0.01, new Rotation2d()),
+        new SwerveModuleState(0.01, new Rotation2d()),
+        new SwerveModuleState(0.01, new Rotation2d())
+    };
+    new Trigger(m_driveController::getXButton).onTrue(new InstantCommand(() -> m_chassis.setStates(emptyStates, true)));
+    new Trigger(m_driveController::getBButton).onTrue(new InstantCommand(() -> m_chassis.resetAllToAbsolute()));
+    new Trigger(m_driveController::getRightBumper)
+        .onTrue(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(1, 0))));
+    new Trigger(m_driveController::getRightBumper)
+        .onFalse(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
   }
 
   public Command getAutonomousCommand() {
@@ -87,6 +89,7 @@ public class RobotContainer {
 
   /**
    * Applies a deadband to the given joystick axis value
+   * 
    * @param value
    * @param deadband
    * @return
@@ -101,6 +104,7 @@ public class RobotContainer {
 
   /**
    * Processes the given joystick axis value, applying deadband and squaring it
+   * 
    * @param value
    * @return
    */

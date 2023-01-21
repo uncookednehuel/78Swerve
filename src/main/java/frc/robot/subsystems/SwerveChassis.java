@@ -21,14 +21,14 @@ import frc.robot.classes.SwerveModule;
 
 public class SwerveChassis extends SubsystemBase {
 
-  //abreviations: LU (left upper), RU (right upper), LD (left down), RD (right down)
+  // abreviations: LU (left upper), RU (right upper), LD (left down), RD (rightdown)
   protected SwerveModule moduleLU, moduleRU, moduleLD, moduleRD;
 
   protected SwerveDriveKinematics kinematics;
   public SwerveDriveOdometry odometry;
   protected Pigeon2 pidgeon;
 
-  //  KINEMATICS
+  // KINEMATICS
   protected Translation2d centerOfRot;
 
   protected ChassisSpeeds speeds = new ChassisSpeeds();
@@ -50,7 +50,6 @@ public class SwerveChassis extends SubsystemBase {
 
     speeds = new ChassisSpeeds();
 
-    //new SwerveDriveOdometry(m_kinematics, getGyroRot(), new Pose2d(0, 0, new Rotation2d())); //we can set starting position and headings
     odometry = new SwerveDriveOdometry(kinematics, getGyroRot(), getPositions());
 
     Timer.delay(1.0);
@@ -58,19 +57,19 @@ public class SwerveChassis extends SubsystemBase {
 
     resetPose(new Pose2d());
   }
-  
+
   @Override
   public void periodic() {
-    SwerveModule swerveModules[] = {moduleLU, moduleRU, moduleLD, moduleRD};
-    for(SwerveModule mod : swerveModules){
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
-        }
+    SwerveModule swerveModules[] = { moduleLU, moduleRU, moduleLD, moduleRD };
+    for (SwerveModule mod : swerveModules) {
+      SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
+      SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
+      SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
+    }
   }
 
   public void resetPose(Pose2d pose) {
-        Odometry.resetOdometry(pose, getGyroRot(), this, odometry);
+    Odometry.resetOdometry(pose, getGyroRot(), this, odometry);
   }
 
   public void resetAllToAbsolute() {
@@ -80,7 +79,7 @@ public class SwerveChassis extends SubsystemBase {
     moduleRD.resetToAbsolute();
   }
 
-  //#region  GYRO
+  // #region GYRO
 
   public void zeroGyro() {
     pidgeon.setYaw(0.0);
@@ -89,32 +88,32 @@ public class SwerveChassis extends SubsystemBase {
   public Rotation2d getGyroRot() {
     return Rotation2d.fromDegrees(pidgeon.getYaw());
   }
-  //#endregion
-  //#region GET FUNCTIONS
+  // #endregion
+  // #region GET FUNCTIONS
 
-  public Pose2d getPose () {
+  public Pose2d getPose() {
     SmartDashboard.putNumber("OdometryX", odometry.getPoseMeters().getX());
     SmartDashboard.putNumber("OdometryY", odometry.getPoseMeters().getY());
     SmartDashboard.putNumber("OdometryRot", odometry.getPoseMeters().getRotation().getDegrees());
     return Odometry.getPose(odometry);
   }
 
-  public SwerveDriveKinematics getKinematics () {
+  public SwerveDriveKinematics getKinematics() {
     return kinematics;
   }
 
-  public SwerveModulePosition[] getPositions () {
+  public SwerveModulePosition[] getPositions() {
     SwerveModulePosition positions[] = {
-      moduleLU.getPosition(),
-      moduleRU.getPosition(),
-      moduleLD.getPosition(),
-      moduleRD.getPosition(),
+        moduleLU.getPosition(),
+        moduleRU.getPosition(),
+        moduleLD.getPosition(),
+        moduleRD.getPosition(),
     };
     return positions;
   }
 
-  //#endregion
-  //#region SET FUNCTIONS
+  // #endregion
+  // #region SET FUNCTIONS
 
   public void speedsToStates(Boolean isOpenLoop) {
     SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds, centerOfRot);
@@ -125,51 +124,57 @@ public class SwerveChassis extends SubsystemBase {
     centerOfRot = translation;
   }
 
-  //Need to find a cleaner way to do this, we shouldn't have 2 set speeds functions, either it should always set the
-  //states or never set the states after
+  // Need to find a cleaner way to do this, we shouldn't have 2 set speeds
+  // functions, either it should always set the
+  // states or never set the states after
 
   /**
    * Sets chassi speeds, with open loop and without calling speedsToStates
+   * 
    * @param speeds
    */
-  public void setSpeeds (ChassisSpeeds speeds) {
+  public void setSpeeds(ChassisSpeeds speeds) {
     speeds = new ChassisSpeeds(
-      speeds.vxMetersPerSecond,
-      speeds.vyMetersPerSecond,
-      speeds.omegaRadiansPerSecond);
+        speeds.vxMetersPerSecond,
+        speeds.vyMetersPerSecond,
+        speeds.omegaRadiansPerSecond);
   }
-  /**Overload for setSpeeds, sets speeds to 0, 0, 0 */
-  public void setSpeeds() { setSpeeds(new ChassisSpeeds(0, 0, 0)); }
+
+  /** Overload for setSpeeds, sets speeds to 0, 0, 0 */
+  public void setSpeeds() {
+    setSpeeds(new ChassisSpeeds(0, 0, 0));
+  }
 
   /**
    * Sets chassis speeds, but with a closed loop PID
+   * 
    * @param speeds
    */
-  public void setSpeedsAuto (ChassisSpeeds speeds) {
+  public void setSpeedsAuto(ChassisSpeeds speeds) {
     speeds = new ChassisSpeeds(
-      speeds.vxMetersPerSecond,
-      speeds.vyMetersPerSecond,
-      speeds.omegaRadiansPerSecond);
+        speeds.vxMetersPerSecond,
+        speeds.vyMetersPerSecond,
+        speeds.omegaRadiansPerSecond);
     speedsToStates(false);
   }
 
   /**
    * Sets the state of each module
-   * @param states Must be exactly of length 4
+   * 
+   * @param states     Must be exactly of length 4
    * @param isOpenLoop
    */
-  public void setStates (SwerveModuleState[] states, Boolean isOpenLoop) {
+  public void setStates(SwerveModuleState[] states, Boolean isOpenLoop) {
     if (states.length != 4) {
       throw new IllegalArgumentException("The \"setStates\" input array size should be 4!");
-    } else {  
+    } else {
       Odometry.updateOdometry(getPositions(), getGyroRot(), odometry);
       SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.maxSpeed);
-      // SmartDashboard.putNumber("LU voltage", states[0].speedMetersPerSecond / Constants.maxSpeed * Constants.maxVoltage);
       moduleRU.setDesiredState(states[1], isOpenLoop);
       moduleLU.setDesiredState(states[0], isOpenLoop);
       moduleLD.setDesiredState(states[2], isOpenLoop);
       moduleRD.setDesiredState(states[3], isOpenLoop);
     }
   }
-  //#endregion
+  // #endregion
 }
