@@ -40,11 +40,11 @@ public class SwerveChassis extends SubsystemBase {
     moduleLD = new SwerveModule(2, Constants.Swerve.Mod2.constants);
     moduleRD = new SwerveModule(3, Constants.Swerve.Mod3.constants);
 
-    pidgeon = new Pigeon2(Constants.pigeonIMU);
+    pidgeon = new Pigeon2(Constants.PIGEON_IMU);
 
     centerOfRot = new Translation2d();
 
-    pidgeon = new Pigeon2(Constants.pigeonIMU);
+    pidgeon = new Pigeon2(Constants.PIGEON_IMU);
 
     kinematics = Constants.Swerve.SWERVE_KINEMATICS;
 
@@ -133,16 +133,22 @@ public class SwerveChassis extends SubsystemBase {
    * 
    * @param speeds
    */
-  public void setSpeeds(ChassisSpeeds speeds) {
-    speeds = new ChassisSpeeds(
-        speeds.vxMetersPerSecond,
-        speeds.vyMetersPerSecond,
-        speeds.omegaRadiansPerSecond);
+  public void 
+  setSpeeds(ChassisSpeeds speeds, boolean isOpenLoop) {
+    this.speeds = speeds;
+    SmartDashboard.putNumber("ChassisSpeedsX", speeds.vxMetersPerSecond);
+    SmartDashboard.putNumber("ChassisSpeedsY", speeds.vyMetersPerSecond);
+    SmartDashboard.putNumber("ChassisSpeedsRot", speeds.omegaRadiansPerSecond);
+
+    // the the teleop periodic in Robot it calls speeds to states
+    if(!isOpenLoop){
+      speedsToStates(isOpenLoop);
+    }
   }
 
   /** Overload for setSpeeds, sets speeds to 0, 0, 0 */
   public void setSpeeds() {
-    setSpeeds(new ChassisSpeeds(0, 0, 0));
+    setSpeeds(new ChassisSpeeds(0, 0, 0), false);
   }
 
   /**
@@ -150,12 +156,8 @@ public class SwerveChassis extends SubsystemBase {
    * 
    * @param speeds
    */
-  public void setSpeedsAuto(ChassisSpeeds speeds) {
-    speeds = new ChassisSpeeds(
-        speeds.vxMetersPerSecond,
-        speeds.vyMetersPerSecond,
-        speeds.omegaRadiansPerSecond);
-    speedsToStates(false);
+  public void setSpeeds(ChassisSpeeds speeds) {
+    setSpeeds(speeds, false);
   }
 
   /**
@@ -169,7 +171,7 @@ public class SwerveChassis extends SubsystemBase {
       throw new IllegalArgumentException("The \"setStates\" input array size should be 4!");
     } else {
       Odometry.updateOdometry(getPositions(), getGyroRot(), odometry);
-      SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.maxSpeed);
+      SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.Swerve.MAX_SPEED);
       moduleRU.setDesiredState(states[1], isOpenLoop);
       moduleLU.setDesiredState(states[0], isOpenLoop);
       moduleLD.setDesiredState(states[2], isOpenLoop);

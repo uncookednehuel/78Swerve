@@ -7,6 +7,7 @@ import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.server.PathPlannerServer;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -15,14 +16,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.classes.LimeLight;
 import frc.robot.classes.Odometry;
 import frc.robot.classes.PathFunctions;
+import frc.robot.commands.AutoCenter;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.SwerveChassis;
 
 public class RobotContainer {
 
   public final SwerveChassis m_chassis;
+  private final LimeLight m_limeLight;
   private final XboxController m_driveController;
 
   private final HashMap<String, Command> m_eventMap;
@@ -30,8 +34,8 @@ public class RobotContainer {
 
   public RobotContainer() {
     m_chassis = new SwerveChassis();
-
-    m_driveController = new XboxController(Constants.driverController);
+    m_limeLight = new LimeLight();
+    m_driveController = new XboxController(Constants.DRIVE_CONTROLLER);
 
     m_chassis.setDefaultCommand(new SwerveDrive(
         m_chassis,
@@ -39,8 +43,8 @@ public class RobotContainer {
         () -> -modifyAxis(m_driveController.getLeftX()),
         () -> -modifyAxis(m_driveController.getRightX()),
         () -> m_driveController.getPOV(),
-        () -> m_driveController.getLeftTriggerAxis(),
-        () -> m_driveController.getRightTriggerAxis()));
+        () -> modifyAxis(m_driveController.getLeftTriggerAxis()),
+        () -> modifyAxis(m_driveController.getRightTriggerAxis())));
 
     // #region PATHPLANNER
     m_eventMap = new HashMap<>();
@@ -53,7 +57,7 @@ public class RobotContainer {
         m_chassis::resetPose,
         new PIDConstants(5.0, 0.0, 0.0),
         new PIDConstants(0.5, 0.0, 0.0),
-        m_chassis::setSpeedsAuto,
+        m_chassis::setSpeeds,
         m_eventMap,
         m_chassis);
 
@@ -64,16 +68,12 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    new Trigger(m_driveController::getYButton).onTrue(new InstantCommand(m_chassis::zeroGyro));// (new
+    new Trigger(m_driveController::getStartButton).onTrue(new InstantCommand(m_chassis::zeroGyro));// (new
                                                                                                // InstantCommand(m_chassis::zeroGyro));
-    SwerveModuleState[] emptyStates = {
-        new SwerveModuleState(0.01, new Rotation2d()),
-        new SwerveModuleState(0.01, new Rotation2d()),
-        new SwerveModuleState(0.01, new Rotation2d()),
-        new SwerveModuleState(0.01, new Rotation2d())
-    };
-    new Trigger(m_driveController::getXButton).onTrue(new InstantCommand(() -> m_chassis.setStates(emptyStates, true)));
-    new Trigger(m_driveController::getBButton).onTrue(new InstantCommand(() -> m_chassis.resetAllToAbsolute()));
+    new Trigger(m_driveController::getYButton).whileTrue(new AutoCenter(m_limeLight, new Pose2d(-1.2, 0.5, new Rotation2d(0)), m_chassis));
+    new Trigger(m_driveController::getXButton).whileTrue(new AutoCenter(m_limeLight, new Pose2d(-1.2, 0, new Rotation2d(0)), m_chassis));
+    new Trigger(m_driveController::getBButton).whileTrue(new AutoCenter(m_limeLight, new Pose2d(-1.2, -0.5, new Rotation2d(0)), m_chassis));
+    new Trigger(m_driveController::getAButton).onTrue(new InstantCommand(() -> m_chassis.resetAllToAbsolute()));
     new Trigger(m_driveController::getRightBumper)
         .onTrue(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(1, 0))));
     new Trigger(m_driveController::getRightBumper)
@@ -112,7 +112,7 @@ public class RobotContainer {
     // Deadband
     value = deadband(value, 0.05);
     // Square the axis
-    value = Math.copySign(value * value, value);
+    // value = Math.copySign(value * value, value);
     return value;
   }
 }
