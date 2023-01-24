@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.classes.Odometry;
 import frc.robot.classes.PathFunctions;
@@ -24,14 +25,18 @@ public class RobotContainer {
 
   public final SwerveChassis m_chassis;
   private final XboxController m_driveController;
+  //private final XboxController manipControl;
 
   private final HashMap<String, Command> m_eventMap;
   private final SwerveAutoBuilder autoBuilder;
+  private final CommandJoystick manipControl = new CommandJoystick(0);
 
   public RobotContainer() {
     m_chassis = new SwerveChassis();
 
     m_driveController = new XboxController(Constants.driverController);
+    //m_manipControl = new XboxController(0);
+    //private final CommandJoystick manipControl = new CommandJoystick(0);
 
     m_chassis.setDefaultCommand(new SwerveDrive(
         m_chassis,
@@ -78,6 +83,11 @@ public class RobotContainer {
         .onTrue(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(1, 0))));
     new Trigger(m_driveController::getRightBumper)
         .onFalse(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
+
+
+
+
+    
   }
 
   public Command getAutonomousCommand() {
