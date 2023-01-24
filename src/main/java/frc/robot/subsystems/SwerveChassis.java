@@ -117,7 +117,7 @@ public class SwerveChassis extends SubsystemBase {
 
   public void speedsToStates(Boolean isOpenLoop) {
     SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds, centerOfRot);
-    setStates(states, isOpenLoop);
+    setStates(states, isOpenLoop, false);
   }
 
   public void setCenter(Translation2d translation) {
@@ -166,16 +166,16 @@ public class SwerveChassis extends SubsystemBase {
    * @param states     Must be exactly of length 4
    * @param isOpenLoop
    */
-  public void setStates(SwerveModuleState[] states, Boolean isOpenLoop) {
+  public void setStates(SwerveModuleState[] states, boolean isOpenLoop, boolean overrideDeadband) {
     if (states.length != 4) {
       throw new IllegalArgumentException("The \"setStates\" input array size should be 4!");
     } else {
       Odometry.updateOdometry(getPositions(), getGyroRot(), odometry);
       SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.Swerve.MAX_SPEED);
-      moduleRU.setDesiredState(states[1], isOpenLoop);
-      moduleLU.setDesiredState(states[0], isOpenLoop);
-      moduleLD.setDesiredState(states[2], isOpenLoop);
-      moduleRD.setDesiredState(states[3], isOpenLoop);
+      moduleLU.setDesiredState(states[0], isOpenLoop, overrideDeadband);
+      moduleRU.setDesiredState(states[1], isOpenLoop, overrideDeadband);
+      moduleLD.setDesiredState(states[2], isOpenLoop, overrideDeadband);
+      moduleRD.setDesiredState(states[3], isOpenLoop, overrideDeadband);
     }
   }
   // #endregion

@@ -44,8 +44,8 @@ public class SwerveDrive extends CommandBase {
   public void execute() {
     double dPadX = (dPadSupplier.getAsInt() == 0 ? 1 : 0) - (dPadSupplier.getAsInt() == 180 ? 1 : 0);
     double dPadY = (dPadSupplier.getAsInt() == 270 ? 1 : 0) - (dPadSupplier.getAsInt() == 90 ? 1 : 0);
-    dPadX = triggerAdjust(dPadX * Constants.DPAD_VEL);
-    dPadY = triggerAdjust(dPadY * Constants.DPAD_VEL);
+    dPadX = triggerAdjust(dPadX) * Constants.DPAD_VEL;
+    dPadY = triggerAdjust(dPadY) * Constants.DPAD_VEL;
 
     SmartDashboard.putNumber("JoystickX", triggerAdjust(xSupplier.getAsDouble()));
     SmartDashboard.putNumber("JoystickY", triggerAdjust(ySupplier.getAsDouble()));
@@ -76,8 +76,8 @@ public class SwerveDrive extends CommandBase {
    * @return Adjusted speed
    */
   public double triggerAdjust(double in) {
-    double upAdjust = 0.3;
-    double downAdjust = 0.4;
+    double upAdjust = 0.7;
+    double downAdjust = 0.25;
     // Default speed = 1 - upAdjust
     // Full left trigger = 1 - upAdjust - downAdjust
     // Full right trigger = 1

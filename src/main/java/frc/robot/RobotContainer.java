@@ -20,6 +20,7 @@ import frc.robot.classes.LimeLight;
 import frc.robot.classes.Odometry;
 import frc.robot.classes.PathFunctions;
 import frc.robot.commands.AutoCenter;
+import frc.robot.commands.Park;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.SwerveChassis;
 
@@ -78,6 +79,7 @@ public class RobotContainer {
         .onTrue(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(1, 0))));
     new Trigger(m_driveController::getRightBumper)
         .onFalse(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
+    new Trigger(m_driveController::getBackButton).whileTrue(new Park(m_chassis));
   }
 
   public Command getAutonomousCommand() {
