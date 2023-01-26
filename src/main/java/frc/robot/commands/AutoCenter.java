@@ -52,7 +52,7 @@ public class AutoCenter extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Pose2d pose = limeLight.getCamTran();
+    Pose2d pose = limeLight.getCamPose();
 
     speeds.vxMetersPerSecond = xController.calculate(pose.getX(), setPoint.getX());
     speeds.vyMetersPerSecond = yController.calculate(pose.getY() * -1, setPoint.getY());
