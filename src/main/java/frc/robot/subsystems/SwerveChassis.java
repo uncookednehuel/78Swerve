@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.classes.LimeLight;
 import frc.robot.classes.Odometry;
 import frc.robot.classes.SwerveModule;
 
@@ -26,7 +28,9 @@ public class SwerveChassis extends SubsystemBase {
 
   protected SwerveDriveKinematics kinematics;
   public SwerveDriveOdometry odometry;
+  public SwerveDrivePoseEstimator poseEstimator;
   protected Pigeon2 pidgeon;
+  protected LimeLight limelight;
 
   // KINEMATICS
   protected Translation2d centerOfRot;
@@ -44,13 +48,19 @@ public class SwerveChassis extends SubsystemBase {
 
     centerOfRot = new Translation2d();
 
-    pidgeon = new Pigeon2(Constants.PIGEON_IMU);
-
     kinematics = Constants.Swerve.SWERVE_KINEMATICS;
 
     speeds = new ChassisSpeeds();
 
+    limelight = new LimeLight();
+
     odometry = new SwerveDriveOdometry(kinematics, getGyroRot(), getPositions());
+
+    poseEstimator = new SwerveDrivePoseEstimator(
+        getKinematics(),
+        getGyroRot(),
+        getPositions(),
+        getPose());
 
     Timer.delay(1.0);
     resetAllToAbsolute();
@@ -66,6 +76,12 @@ public class SwerveChassis extends SubsystemBase {
       SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
       SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
     }
+
+    poseEstimator.update(getGyroRot(), getPositions());
+    Pose2d pose = getFusedPose();
+    SmartDashboard.putNumber("FusedPoseX", pose.getX());
+    SmartDashboard.putNumber("FusedPoseY", pose.getY());
+    SmartDashboard.putNumber("FusedPoseRot", pose.getRotation().getDegrees());
   }
 
   public void resetPose(Pose2d pose) {
@@ -90,6 +106,13 @@ public class SwerveChassis extends SubsystemBase {
   }
   // #endregion
   // #region GET FUNCTIONS
+
+  public Pose2d getFusedPose() {
+    if (limelight.hasApriltag()) {
+      poseEstimator.addVisionMeasurement(limelight.getBotPose(), limelight.getBotPoseTimestamp());
+    }
+    return poseEstimator.getEstimatedPosition();
+}
 
   public Pose2d getPose() {
     SmartDashboard.putNumber("OdometryX", odometry.getPoseMeters().getX());
