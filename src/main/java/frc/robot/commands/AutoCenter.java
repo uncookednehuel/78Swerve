@@ -44,8 +44,8 @@ public class AutoCenter extends CommandBase {
     xController.reset();
     yController.reset();
 
-    xController.setTolerance(0.1);
-    yController.setTolerance(0.1);
+    xController.setTolerance(0.2);
+    yController.setTolerance(0.2);
     // rotController.reset();
   }
 
