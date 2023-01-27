@@ -19,17 +19,24 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.classes.Odometry;
 import frc.robot.classes.PathFunctions;
 import frc.robot.commands.SwerveDrive;
+import frc.robot.subsystems.IntakeV1_Lentz;
 import frc.robot.subsystems.SwerveChassis;
-
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 public class RobotContainer {
 
   public final SwerveChassis m_chassis;
   private final XboxController m_driveController;
   //private final XboxController manipControl;
+  private final IntakeV1_Lentz m_IntakeV1_Lentz = new IntakeV1_Lentz();
 
   private final HashMap<String, Command> m_eventMap;
   private final SwerveAutoBuilder autoBuilder;
-  private final CommandJoystick manipControl = new CommandJoystick(0);
+ private final CommandJoystick manipControl = new CommandJoystick(0);
+
+ Trigger btnX = manipControl.button(1);
+  Trigger btnY = manipControl.button(2);
+  Trigger btnA = manipControl.button(3);
+  Trigger btnB = manipControl.button(4);
 
   public RobotContainer() {
     m_chassis = new SwerveChassis();
@@ -37,7 +44,7 @@ public class RobotContainer {
     m_driveController = new XboxController(Constants.driverController);
     //m_manipControl = new XboxController(0);
     //private final CommandJoystick manipControl = new CommandJoystick(0);
-
+   // private final CommandJoystick manipControl = new CommandJoystick(0);
     m_chassis.setDefaultCommand(new SwerveDrive(
         m_chassis,
         () -> -modifyAxis(m_driveController.getLeftY()),
@@ -83,6 +90,19 @@ public class RobotContainer {
         .onTrue(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(1, 0))));
     new Trigger(m_driveController::getRightBumper)
         .onFalse(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
+
+    //Intake Buttons for V1 
+
+        btnX.onTrue(m_IntakeV1_Lentz.runTopNeo(0.1)).onFalse(m_IntakeV1_Lentz.runTopNeo(0));
+   
+   
+        btnY.onTrue(m_IntakeV1_Lentz.runTopNeo(-0.1)).onFalse(m_IntakeV1_Lentz.runTopNeo(0));
+     
+        btnA.onTrue(m_IntakeV1_Lentz.runBottomNeo(1)).onFalse(m_IntakeV1_Lentz.runBottomNeo(0));
+     
+        btnB.onTrue(m_IntakeV1_Lentz.runBottomNeo(-0.50)).onFalse(m_IntakeV1_Lentz.runBottomNeo(0.0));
+
+    //End of Intake buttons for V1
 
 
 
