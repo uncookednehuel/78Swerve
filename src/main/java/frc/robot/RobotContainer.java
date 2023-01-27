@@ -14,16 +14,20 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.classes.Odometry;
 import frc.robot.classes.PathFunctions;
 import frc.robot.commands.SwerveDrive;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.SwerveChassis;
 
 public class RobotContainer {
 
   public final SwerveChassis m_chassis;
+  public final Arm m_arm;
   private final XboxController m_driveController;
+  private final XboxController m_armController;
 
   private final HashMap<String, Command> m_eventMap;
   private final SwerveAutoBuilder autoBuilder;
@@ -31,7 +35,11 @@ public class RobotContainer {
   public RobotContainer() {
     m_chassis = new SwerveChassis();
 
+    m_arm = new Arm();
+
     m_driveController = new XboxController(Constants.driverController);
+
+    m_armController = new XboxController(Constants.armController);
 
     m_chassis.setDefaultCommand(new SwerveDrive(
         m_chassis,
@@ -41,6 +49,22 @@ public class RobotContainer {
         () -> m_driveController.getPOV(),
         () -> m_driveController.getLeftTriggerAxis(),
         () -> m_driveController.getRightTriggerAxis()));
+
+    Trigger buttonX = new JoystickButton(m_armController, XboxController.Button.kX.value);
+    buttonX.onTrue(new InstantCommand(() -> m_arm.setShoulderSpeed(0.5)));
+    buttonX.onFalse(new InstantCommand(() -> m_arm.setShoulderSpeed(0)));
+    
+    Trigger buttonA = new JoystickButton(m_armController, XboxController.Button.kX.value);
+    buttonA.onTrue(new InstantCommand(() -> m_arm.setShoulderSpeed(-0.5)));
+    buttonA.onFalse(new InstantCommand(() -> m_arm.setShoulderSpeed(0)));
+    
+    Trigger buttonY = new JoystickButton(m_armController, XboxController.Button.kY.value);
+    buttonY.onTrue(new InstantCommand(() -> m_arm.setElbowSpeed(0.5)));
+    buttonY.onFalse(new InstantCommand(() -> m_arm.setElbowSpeed(0)));
+
+    Trigger buttonB = new JoystickButton(m_armController, XboxController.Button.kY.value);
+    buttonB.onTrue(new InstantCommand(() -> m_arm.setElbowSpeed(-0.5)));
+    buttonB.onFalse(new InstantCommand(() -> m_arm.setElbowSpeed(0)));
 
     // #region PATHPLANNER
     m_eventMap = new HashMap<>();
