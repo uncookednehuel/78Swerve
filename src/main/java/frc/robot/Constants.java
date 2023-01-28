@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DutyCycle;
 import frc.robot.classes.COTSFalconSwerveConstants;
 import frc.robot.classes.SwerveModuleConstants;
 
@@ -183,4 +184,6 @@ public final class Constants {
     public static final double TRAJECTORY_KD = 0;
     // #endregion
     public static int armController = 3;
+    public static int shoulderEncoderID = 0;
+    public static int elbowEncoderID = 1;
 }

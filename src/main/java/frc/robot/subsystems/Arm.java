@@ -7,13 +7,16 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Arm extends SubsystemBase {
 
-  private Encoder shoulderEncoder;
+  private DutyCycleEncoder shoulderEncoder;
+  private DutyCycleEncoder elbowEncoder;
   private CANSparkMax shoulderNeo;
   private CANSparkMax elbowNeo;
 
@@ -21,6 +24,8 @@ public class Arm extends SubsystemBase {
   public Arm() {
     shoulderNeo = new CANSparkMax(Constants.shoulderNeoID, MotorType.kBrushless);
     elbowNeo = new CANSparkMax(Constants.elbowNeoID, MotorType.kBrushless);
+    shoulderEncoder = new DutyCycleEncoder(Constants.shoulderEncoderID);
+    elbowEncoder = new DutyCycleEncoder(Constants.elbowEncoderID);
   }
 
   /**
@@ -38,9 +43,28 @@ public void setShoulderSpeed(double motorPercentage){
 public void setElbowSpeed(double motorPercentage){
   elbowNeo.set(motorPercentage);
 }
+
+/**
+ * method to get absolute position of shoulder
+ * @return double containing absolute position of shoulder
+ */
+public double getShoulderAbsolutePosition(){
+  return shoulderEncoder.getAbsolutePosition();
+}
+
+/**
+ * method to get absolute position of elbow
+ * @return double containing absolute position of elbow
+ */
+public double getElbowAbsolutePosition(){
+  return elbowEncoder.getAbsolutePosition();
+}
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Shoulder Encoder", getShoulderAbsolutePosition());
+    SmartDashboard.putNumber("Elbow Encoder", getElbowAbsolutePosition());
   }
 
 }
