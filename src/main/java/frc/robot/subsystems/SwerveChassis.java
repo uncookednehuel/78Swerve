@@ -63,7 +63,7 @@ public class SwerveChassis extends SubsystemBase {
         getKinematics(),
         getGyroRot(),
         getPositions(),
-        getPose());
+        new Pose2d());
 
     Timer.delay(1.0);
     resetAllToAbsolute();
@@ -81,8 +81,8 @@ public class SwerveChassis extends SubsystemBase {
     }
 
     poseEstimator.update(getGyroRot(), getPositions());
-    Pose2d pose = getFusedPose();
-    PathPlannerServer.sendPathFollowingData(new Pose2d(), new Pose2d(pose.getX() + 8.5, pose.getY() + 4.25, pose.getRotation()));
+    Pose2d pose = getFusedPose(); //offset by 8.5, 4.25
+    PathPlannerServer.sendPathFollowingData(new Pose2d(), new Pose2d(pose.getX(), pose.getY(), pose.getRotation()));
     SmartDashboard.putNumber("FusedPoseX", pose.getX());
     SmartDashboard.putNumber("FusedPoseY", pose.getY());
     SmartDashboard.putNumber("FusedPoseRot", pose.getRotation().getDegrees());
@@ -113,7 +113,8 @@ public class SwerveChassis extends SubsystemBase {
 
   public Pose2d getFusedPose() {
     if (limelight.hasApriltag()) {
-      poseEstimator.addVisionMeasurement(limelight.getBotPose(), limelight.getBotPoseTimestamp());
+      Pose2d pose = limelight.getBotPose();
+      poseEstimator.addVisionMeasurement(new Pose2d(pose.getX() + 8.5, pose.getY() + 4.25, pose.getRotation()), limelight.getBotPoseTimestamp());
     }
     return poseEstimator.getEstimatedPosition();
 }
