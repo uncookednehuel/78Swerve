@@ -4,7 +4,9 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -12,6 +14,8 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.PIDCommand;
 
 public class Arm extends SubsystemBase {
 
@@ -19,6 +23,9 @@ public class Arm extends SubsystemBase {
   private DutyCycleEncoder elbowEncoder;
   private CANSparkMax shoulderNeo;
   private CANSparkMax elbowNeo;
+  private SparkMaxPIDController elbowPIDcontroller;
+  private SparkMaxPIDController shoulderPIDcontroller;
+  private int target;
 
   /** Creates a new Arm. */
   public Arm() {
@@ -26,6 +33,9 @@ public class Arm extends SubsystemBase {
     elbowNeo = new CANSparkMax(Constants.elbowNeoID, MotorType.kBrushless);
     shoulderEncoder = new DutyCycleEncoder(Constants.shoulderEncoderID);
     elbowEncoder = new DutyCycleEncoder(Constants.elbowEncoderID);
+    elbowPIDcontroller = elbowNeo.getPIDController();
+    shoulderPIDcontroller = shoulderNeo.getPIDController();
+    target = 0;
   }
 
   /**
@@ -49,7 +59,7 @@ public void setElbowSpeed(double motorPercentage){
  * @return double containing absolute position of shoulder
  */
 public double getShoulderAbsolutePosition(){
-  return shoulderEncoder.getAbsolutePosition();
+  return shoulderEncoder.getAbsolutePosition() * 360;
 }
 
 /**
@@ -57,7 +67,7 @@ public double getShoulderAbsolutePosition(){
  * @return double containing absolute position of elbow
  */
 public double getElbowAbsolutePosition(){
-  return elbowEncoder.getAbsolutePosition();
+  return elbowEncoder.getAbsolutePosition() * 360;
 }
 
   @Override
@@ -65,6 +75,7 @@ public double getElbowAbsolutePosition(){
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Shoulder Encoder", getShoulderAbsolutePosition());
     SmartDashboard.putNumber("Elbow Encoder", getElbowAbsolutePosition());
+
   }
 
 }
