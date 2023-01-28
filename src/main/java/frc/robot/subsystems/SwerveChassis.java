@@ -1,7 +1,9 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.Pigeon2;
+import com.pathplanner.lib.server.PathPlannerServer;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -14,6 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -79,6 +82,7 @@ public class SwerveChassis extends SubsystemBase {
 
     poseEstimator.update(getGyroRot(), getPositions());
     Pose2d pose = getFusedPose();
+    PathPlannerServer.sendPathFollowingData(new Pose2d(), new Pose2d(pose.getX() + 8.5, pose.getY() + 4.25, pose.getRotation()));
     SmartDashboard.putNumber("FusedPoseX", pose.getX());
     SmartDashboard.putNumber("FusedPoseY", pose.getY());
     SmartDashboard.putNumber("FusedPoseRot", pose.getRotation().getDegrees());

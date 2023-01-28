@@ -76,7 +76,7 @@ public class SwerveDrive extends CommandBase {
    * @return Adjusted speed
    */
   public double triggerAdjust(double in) {
-    double upAdjust = 0.7;
+    double upAdjust = 0.5;
     double downAdjust = 0.25;
     // Default speed = 1 - upAdjust
     // Full left trigger = 1 - upAdjust - downAdjust

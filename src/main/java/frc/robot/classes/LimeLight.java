@@ -47,7 +47,7 @@ public class LimeLight {
     }
 
     public boolean hasApriltag() {
-        return tid.getDouble(-1) != -1;
+        return tid.getDouble(-1) != -1; 
     }
 
     public long getBotPoseTimestamp() {

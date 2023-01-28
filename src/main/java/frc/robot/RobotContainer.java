@@ -51,6 +51,7 @@ public class RobotContainer {
     m_eventMap = new HashMap<>();
     m_eventMap.put("Waypoint1Reached", new PrintCommand("Waypoint 1 reached!"));
     m_eventMap.put("command1", new PrintCommand("Hello World"));
+    m_eventMap.put("Park", new Park(m_chassis));
 
     // An object used to do much of the creating path following commands
     autoBuilder = new SwerveAutoBuilder(
