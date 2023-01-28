@@ -150,6 +150,7 @@ public final class Constants {
 
     // CONTROL
     public static final int driverController = 0;
+    public static final int manipController = 1;
     public static final double dPadVel = 0.7;
 
     // #region KINEMATICS

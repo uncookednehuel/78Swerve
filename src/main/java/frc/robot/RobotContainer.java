@@ -18,7 +18,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.classes.Odometry;
 import frc.robot.classes.PathFunctions;
+import frc.robot.commands.SetSpeed;
 import frc.robot.commands.SwerveDrive;
+import frc.robot.subsystems.Dave_Intake;
 import frc.robot.subsystems.IntakeV1_Lentz;
 import frc.robot.subsystems.SwerveChassis;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -26,9 +28,9 @@ public class RobotContainer {
 
   public final SwerveChassis m_chassis;
   private final XboxController m_driveController;
-  //private final XboxController manipControl;
+  private final XboxController m_manipController;
   private final IntakeV1_Lentz m_IntakeV1_Lentz = new IntakeV1_Lentz();
-
+  private final Dave_Intake m_Dave_Intake;
   private final HashMap<String, Command> m_eventMap;
   private final SwerveAutoBuilder autoBuilder;
  private final CommandJoystick manipControl = new CommandJoystick(0);
@@ -40,9 +42,10 @@ public class RobotContainer {
 
   public RobotContainer() {
     m_chassis = new SwerveChassis();
+    m_Dave_Intake = new Dave_Intake();
 
     m_driveController = new XboxController(Constants.driverController);
-    //m_manipControl = new XboxController(0);
+    m_manipController = new XboxController(Constants.manipController);
     //private final CommandJoystick manipControl = new CommandJoystick(0);
    // private final CommandJoystick manipControl = new CommandJoystick(0);
     m_chassis.setDefaultCommand(new SwerveDrive(
@@ -93,21 +96,16 @@ public class RobotContainer {
 
     //Intake Buttons for V1 
 
-        btnX.onTrue(m_IntakeV1_Lentz.runTopNeo(0.1)).onFalse(m_IntakeV1_Lentz.runTopNeo(0));
-   
-   
-        btnY.onTrue(m_IntakeV1_Lentz.runTopNeo(-0.1)).onFalse(m_IntakeV1_Lentz.runTopNeo(0));
-     
-        btnA.onTrue(m_IntakeV1_Lentz.runBottomNeo(1)).onFalse(m_IntakeV1_Lentz.runBottomNeo(0));
-     
-        btnB.onTrue(m_IntakeV1_Lentz.runBottomNeo(-0.50)).onFalse(m_IntakeV1_Lentz.runBottomNeo(0.0));
+    btnX.onTrue(m_IntakeV1_Lentz.runTopNeo(0.1)).onFalse(m_IntakeV1_Lentz.runTopNeo(0));
+    btnY.onTrue(m_IntakeV1_Lentz.runTopNeo(-0.1)).onFalse(m_IntakeV1_Lentz.runTopNeo(0));
+    btnA.onTrue(m_IntakeV1_Lentz.runBottomNeo(1)).onFalse(m_IntakeV1_Lentz.runBottomNeo(0));
+    btnB.onTrue(m_IntakeV1_Lentz.runBottomNeo(-0.50)).onFalse(m_IntakeV1_Lentz.runBottomNeo(0.0));
 
     //End of Intake buttons for V1
 
+    // Intake buttons for Dave's intake
 
-
-
-    
+    new Trigger(m_manipController::getBButton).whileTrue(new SetSpeed(m_Dave_Intake, 0.1)); //whileTrue(new SetSpeed(m_Dave_Intake, 0.1));
   }
 
   public Command getAutonomousCommand() {
