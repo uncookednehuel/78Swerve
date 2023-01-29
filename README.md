@@ -1,7 +1,9 @@
+# This repository has been deprecated in favor of the fork created by Aquidneck Island Robotics, in which further development will occur. This is so that my other team members can also have access to the code, and it just makes more sense to have our 2023 season code under our organization. (https://github.com/AquidneckIslandRobotics/FRC78_2023)
+
 # 78Swerve
 A repository for FRC team 78's offseason swerve testing
 
-Currently has:
+(Outdated) Currently has:
 ```
     - Swerve subsystem and base functionality
     - Pidgeon 2
@@ -12,12 +14,4 @@ Currently used vendor libraries:
 ```
     - PathplannerLib
     - CTRE-Phoenix
-    - REVLib
-    - swerve-lib
-```
-Planned additions:
-```
-    - Limelight functionality and aiming
-    - Target following
-    - Additional odometry sensors (LiDAR?, and maybe camera SLAM)
 ```
