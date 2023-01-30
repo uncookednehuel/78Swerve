@@ -63,7 +63,7 @@ public class SwerveChassis extends SubsystemBase {
         getKinematics(),
         getGyroRot(),
         getPositions(),
-        new Pose2d());
+        new Pose2d(0, 0, getGyroRot()));
 
     Timer.delay(1.0);
     resetAllToAbsolute();
@@ -82,6 +82,7 @@ public class SwerveChassis extends SubsystemBase {
 
     poseEstimator.update(getGyroRot(), getPositions());
     Pose2d pose = getFusedPose(); //offset by 8.5, 4.25
+    //THIS NEEDS TO BE CONSIDERED WHEN RUNNING AUTONOMOUS
     PathPlannerServer.sendPathFollowingData(new Pose2d(), new Pose2d(pose.getX(), pose.getY(), pose.getRotation()));
     SmartDashboard.putNumber("FusedPoseX", pose.getX());
     SmartDashboard.putNumber("FusedPoseY", pose.getY());
@@ -151,18 +152,12 @@ public class SwerveChassis extends SubsystemBase {
   public void setCenter(Translation2d translation) {
     centerOfRot = translation;
   }
-
-  // Need to find a cleaner way to do this, we shouldn't have 2 set speeds
-  // functions, either it should always set the
-  // states or never set the states after
-
   /**
-   * Sets chassi speeds, with open loop and without calling speedsToStates
+   * Sets chassis speeds, with open loop and without calling speedsToStates
    * 
    * @param speeds
    */
-  public void 
-  setSpeeds(ChassisSpeeds speeds, boolean isOpenLoop) {
+  public void setSpeeds(ChassisSpeeds speeds, boolean isOpenLoop) {
     this.speeds = speeds;
     SmartDashboard.putNumber("ChassisSpeedsX", speeds.vxMetersPerSecond);
     SmartDashboard.putNumber("ChassisSpeedsY", speeds.vyMetersPerSecond);
