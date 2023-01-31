@@ -43,7 +43,8 @@ public class LimeLight {
             SmartDashboard.putNumber("PoseYRot", array[4]);
             SmartDashboard.putNumber("PoseZRot", array[5]);
 
-            return new Pose2d(array[0], array[1], Rotation2d.fromDegrees(array[5]));
+            //offsets because most wpilib uses bottom left field as 0, 0 while limlight has 0, 0 at the center
+            return new Pose2d(array[0] + 8.5, array[1] + 4.25, Rotation2d.fromDegrees(array[5]));
     }
 
     public boolean hasApriltag() {
