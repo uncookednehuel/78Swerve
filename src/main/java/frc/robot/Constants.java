@@ -148,6 +148,10 @@ public final class Constants {
     public static final int pigeonIMU = 0;
     public static final String photonCam = "photonvision";
 
+    // PNEUMATICS
+    public static final int forwardChannel = 2;
+    public static final int backwardChannel = 3;
+
     // CONTROL
     public static final int driverController = 0;
     public static final int manipController = 1;

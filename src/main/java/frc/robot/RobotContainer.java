@@ -18,12 +18,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.classes.Odometry;
 import frc.robot.classes.PathFunctions;
-import frc.robot.commands.SetSpeed;
+import frc.robot.commands.SetIntake;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.Dave_Intake;
 import frc.robot.subsystems.IntakeV1_Lentz;
 import frc.robot.subsystems.SwerveChassis;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+
 public class RobotContainer {
 
   public final SwerveChassis m_chassis;
@@ -95,7 +97,10 @@ public class RobotContainer {
         .onFalse(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
 
     //Intake Buttons for V1 
-
+    //new Trigger(m_manipController::getXButton).onTrue(m_IntakeV1_Lentz.runTopNeo(0.1)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
+    //new Trigger(m_manipController::getYButton).onTrue((m_IntakeV1_Lentz.runTopNeo(-0.1))).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
+    //new Trigger(m_manipController::getAButton).onTrue(m_IntakeV1_Lentz.runBottomNeo(1)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
+    //new Trigger(m_manipController::getXButton).onTrue(m_IntakeV1_Lentz.runBottomNeo(-0.50)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
     btnX.onTrue(m_IntakeV1_Lentz.runTopNeo(0.1)).onFalse(m_IntakeV1_Lentz.runTopNeo(0));
     btnY.onTrue(m_IntakeV1_Lentz.runTopNeo(-0.1)).onFalse(m_IntakeV1_Lentz.runTopNeo(0));
     btnA.onTrue(m_IntakeV1_Lentz.runBottomNeo(1)).onFalse(m_IntakeV1_Lentz.runBottomNeo(0));
@@ -103,9 +108,12 @@ public class RobotContainer {
 
     //End of Intake buttons for V1
 
-    // Intake buttons for Dave's intake
+    // Intake buttons for Dave's intake (X = intake)
 
-    new Trigger(m_manipController::getBButton).whileTrue(new SetSpeed(m_Dave_Intake, 0.1)); //whileTrue(new SetSpeed(m_Dave_Intake, 0.1));
+    new Trigger(m_manipController::getXButton).whileTrue(new SetIntake(m_Dave_Intake, 0.1, DoubleSolenoid.Value.kForward)); 
+    new Trigger(m_manipController::getYButton).whileTrue(new SetIntake(m_Dave_Intake, -0.1, DoubleSolenoid.Value.kReverse)); 
+    
+    //whileTrue(new SetSpeed(m_Dave_Intake, 0.1));
   }
 
   public Command getAutonomousCommand() {
