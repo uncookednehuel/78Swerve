@@ -25,7 +25,7 @@ public class Arm extends SubsystemBase {
   private CANSparkMax elbowNeo;
   private SparkMaxPIDController elbowPIDcontroller;
   private SparkMaxPIDController shoulderPIDcontroller;
-  private int target;
+  private double target;
 
   /** Creates a new Arm. */
   public Arm() {
@@ -77,5 +77,32 @@ public double getElbowAbsolutePosition(){
     SmartDashboard.putNumber("Elbow Encoder", getElbowAbsolutePosition());
 
   }
+
+
+  public void elbowGoToPosition(double target){
+    double elbowCurrentPosition = getElbowAbsolutePosition();
+    if(elbowCurrentPosition > Constants.elbowMin && elbowCurrentPosition < Constants.elbowMax) {
+      if(elbowCurrentPosition > (target + Constants.elbowBuffer)){
+        setElbowSpeed(-0.5);
+      }else if(elbowCurrentPosition < (target + Constants.elbowBuffer)){
+        setElbowSpeed(0.5);
+      }else{
+        setElbowSpeed(0);
+      }
+    }
+  }
+
+  public void shoulderGoToPosition(double target){
+    double shoulderCurrentPosition = getShoulderAbsolutePosition();
+    if(shoulderCurrentPosition > target + Constants.shoulderBuffer){
+      setElbowSpeed(-0.5);
+    }else if(shoulderCurrentPosition < target + Constants.shoulderBuffer){
+      setElbowSpeed(0.5);
+    }else{
+      setElbowSpeed(0);
+    }
+  }
+
+  
 
 }
