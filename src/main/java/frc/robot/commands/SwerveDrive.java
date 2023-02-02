@@ -3,6 +3,7 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -19,6 +20,10 @@ public class SwerveDrive extends CommandBase {
   private final DoubleSupplier lTriggerSupplier;
   private final DoubleSupplier rTriggerSupplier;
 
+  private final SlewRateLimiter xLimiter;
+  private final SlewRateLimiter yLimiter;
+  private final SlewRateLimiter thetaLimiter;
+
   public SwerveDrive(
       SwerveChassis chassis,
       DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rotSupplier,
@@ -32,6 +37,9 @@ public class SwerveDrive extends CommandBase {
     this.lTriggerSupplier = lTriggerSupplier;
     this.rTriggerSupplier = rTriggerSupplier;
 
+    xLimiter = new SlewRateLimiter(11, -11, 0);
+    yLimiter = new SlewRateLimiter(11, -11, 0);
+    thetaLimiter = new SlewRateLimiter(30, -30, 0);
     addRequirements(m_chassis);
   }
 
@@ -57,8 +65,9 @@ public class SwerveDrive extends CommandBase {
         triggerAdjust(rotSupplier.getAsDouble()) * Constants.Swerve.MAX_ANGULAR_VELOCITY,
         m_chassis.getGyroRot());
 
-    speeds = new ChassisSpeeds(speeds.vxMetersPerSecond + dPadX, speeds.vyMetersPerSecond + dPadY,
-        speeds.omegaRadiansPerSecond);
+    speeds = new ChassisSpeeds(xLimiter.calculate(speeds.vxMetersPerSecond + dPadX),
+        yLimiter.calculate(speeds.vyMetersPerSecond + dPadY),
+        thetaLimiter.calculate(speeds.omegaRadiansPerSecond));
 
     m_chassis.setSpeeds(speeds, true);
   }
