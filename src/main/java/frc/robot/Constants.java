@@ -6,11 +6,15 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DutyCycle;
 import frc.robot.classes.COTSFalconSwerveConstants;
 import frc.robot.classes.SwerveModuleConstants;
 
 public final class Constants {
 
+
+    public static final int elbowNeoID = 9;
+    public static final int shoulderNeoID = 10;
     /** A class within Constants that contains most of the swerve constants */
     public static final class Swerve {
 
@@ -174,4 +178,25 @@ public final class Constants {
     public static final double TRAJECTORY_KI = 0;
     public static final double TRAJECTORY_KD = 0;
     // #endregion
+    public static int armController = 3;
+    public static int shoulderEncoderID = 0;
+    public static int elbowEncoderID = 1;
+
+    //Arm control constants-->
+    //All encoder constants are offsets from a HOME position
+    public static final double shoulderMax = 7800; // all max and mins subject to change after testing
+    public static final double shoulderMin = -200;
+    public static final double elbowMax = 7800;
+    public static final double elbowMin = -200;
+
+    //Deadzone Buffer for encoders
+    public static final double elbowBuffer = 10;
+    public static final double shoulderBuffer = 10;
+
+    //Arm Targets--> Subject to change (Delete when changed)
+    public static final double shoulderLowTarget = 500;
+    public static final double elbowLowTarget = -200;
+    public static final double shoulderMidTarget = 500;
+    public static final double elbowMidTarget = -200;
+
 }

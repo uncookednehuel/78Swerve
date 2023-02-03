@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.classes.LimeLight;
 import frc.robot.classes.Odometry;
@@ -22,21 +23,30 @@ import frc.robot.classes.PathFunctions;
 import frc.robot.commands.AutoCenter;
 import frc.robot.commands.Park;
 import frc.robot.commands.SwerveDrive;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.SwerveChassis;
+import frc.robot.commands.ManualControl;
+import frc.robot.commands.RunArmToTarget;
 
 public class RobotContainer {
 
   public final SwerveChassis m_chassis;
+  public final Arm m_arm;
   private final LimeLight m_limeLight;
+  
   private final XboxController m_driveController;
+  private final XboxController m_armController;
 
   private final HashMap<String, Command> m_eventMap;
   private final SwerveAutoBuilder autoBuilder;
 
   public RobotContainer() {
     m_chassis = new SwerveChassis();
+    m_arm = new Arm();
     m_limeLight = new LimeLight();
     m_driveController = new XboxController(Constants.DRIVE_CONTROLLER);
+
+    m_armController = new XboxController(Constants.armController);
 
     m_chassis.setDefaultCommand(new SwerveDrive(
         m_chassis,
@@ -46,6 +56,27 @@ public class RobotContainer {
         () -> m_driveController.getPOV(),
         () -> modifyAxis(m_driveController.getLeftTriggerAxis()),
         () -> modifyAxis(m_driveController.getRightTriggerAxis())));
+
+      m_arm.setDefaultCommand(new ManualControl(m_arm, m_armController.getRightY(), m_armController.getLeftY()));
+    
+  //  m_arm.setDefaultCommand(new InstantCommand(()-> m_arm.setShoulderSpeed(0.2)));//will change-MG
+
+    
+    Trigger buttonA = new JoystickButton(m_armController, XboxController.Button.kX.value);
+    buttonA.onTrue(new InstantCommand(() -> new RunArmToTarget(m_arm, Constants.shoulderLowTarget, Constants.elbowLowTarget)));
+    buttonA.onFalse(new InstantCommand(() -> m_arm.setShoulderSpeed(0)));
+    
+    Trigger buttonB = new JoystickButton(m_armController, XboxController.Button.kX.value);
+    buttonB.onTrue(new InstantCommand(() -> new RunArmToTarget(m_arm, Constants.shoulderMidTarget, Constants.elbowMidTarget)));
+    buttonB.onFalse(new InstantCommand(() -> m_arm.setShoulderSpeed(0)));
+    
+    //Trigger buttonY = new JoystickButton(m_armController, XboxController.Button.kY.value);
+   // buttonY.onTrue(new InstantCommand(() -> m_arm.setElbowSpeed(0.5)));
+    //buttonY.onFalse(new InstantCommand(() -> m_arm.setElbowSpeed(0)));
+
+   //Trigger buttonB = new JoystickButton(m_armController, XboxController.Button.kY.value);
+    //buttonB.onTrue(new InstantCommand(() -> m_arm.setElbowSpeed(-0.5)));
+    //buttonB.onFalse(new InstantCommand(() -> m_arm.setElbowSpeed(0)));
 
     // #region PATHPLANNER
     m_eventMap = new HashMap<>();
@@ -81,7 +112,10 @@ public class RobotContainer {
     new Trigger(m_driveController::getRightBumper)
         .onFalse(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
     new Trigger(m_driveController::getBackButton).whileTrue(new Park(m_chassis));
+
   }
+
+  //value * max * joystickY
 
   public Command getAutonomousCommand() {
     PathPlannerTrajectory trajectory1 = PathFunctions.createTrajectory("Test3");
