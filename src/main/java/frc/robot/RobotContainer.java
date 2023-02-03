@@ -7,6 +7,7 @@ import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.server.PathPlannerServer;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -16,8 +17,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.classes.LimeLight;
 import frc.robot.classes.Odometry;
 import frc.robot.classes.PathFunctions;
+import frc.robot.commands.AutoCenter;
+import frc.robot.commands.Park;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.SwerveChassis;
@@ -28,6 +32,8 @@ public class RobotContainer {
 
   public final SwerveChassis m_chassis;
   public final Arm m_arm;
+  private final LimeLight m_limeLight;
+  
   private final XboxController m_driveController;
   private final XboxController m_armController;
 
@@ -36,10 +42,9 @@ public class RobotContainer {
 
   public RobotContainer() {
     m_chassis = new SwerveChassis();
-
     m_arm = new Arm();
-
-    m_driveController = new XboxController(Constants.driverController);
+    m_limeLight = new LimeLight();
+    m_driveController = new XboxController(Constants.DRIVE_CONTROLLER);
 
     m_armController = new XboxController(Constants.armController);
 
@@ -49,8 +54,8 @@ public class RobotContainer {
         () -> -modifyAxis(m_driveController.getLeftX()),
         () -> -modifyAxis(m_driveController.getRightX()),
         () -> m_driveController.getPOV(),
-        () -> m_driveController.getLeftTriggerAxis(),
-        () -> m_driveController.getRightTriggerAxis()));
+        () -> modifyAxis(m_driveController.getLeftTriggerAxis()),
+        () -> modifyAxis(m_driveController.getRightTriggerAxis())));
 
       m_arm.setDefaultCommand(new ManualControl(m_arm, m_armController.getRightY(), m_armController.getLeftY()));
     
@@ -77,6 +82,7 @@ public class RobotContainer {
     m_eventMap = new HashMap<>();
     m_eventMap.put("Waypoint1Reached", new PrintCommand("Waypoint 1 reached!"));
     m_eventMap.put("command1", new PrintCommand("Hello World"));
+    m_eventMap.put("Park", new Park(m_chassis));
 
     // An object used to do much of the creating path following commands
     autoBuilder = new SwerveAutoBuilder(
@@ -84,7 +90,7 @@ public class RobotContainer {
         m_chassis::resetPose,
         new PIDConstants(5.0, 0.0, 0.0),
         new PIDConstants(0.5, 0.0, 0.0),
-        m_chassis::setSpeedsAuto,
+        m_chassis::setSpeeds,
         m_eventMap,
         m_chassis);
 
@@ -95,22 +101,18 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    new Trigger(m_driveController::getYButton).onTrue(new InstantCommand(m_chassis::zeroGyro));// (new
+    new Trigger(m_driveController::getStartButton).onTrue(new InstantCommand(m_chassis::zeroGyro));// (new
                                                                                                // InstantCommand(m_chassis::zeroGyro));
-    SwerveModuleState[] emptyStates = {
-        new SwerveModuleState(0.01, new Rotation2d()),
-        new SwerveModuleState(0.01, new Rotation2d()),
-        new SwerveModuleState(0.01, new Rotation2d()),
-        new SwerveModuleState(0.01, new Rotation2d())
-    };
-    new Trigger(m_driveController::getXButton).onTrue(new InstantCommand(() -> m_chassis.setStates(emptyStates, true)));
-    new Trigger(m_driveController::getBButton).onTrue(new InstantCommand(() -> m_chassis.resetAllToAbsolute()));
+    new Trigger(m_driveController::getYButton).whileTrue(new AutoCenter(m_limeLight, new Pose2d(-1.2, 0, new Rotation2d(0)), m_chassis));
+    new Trigger(m_driveController::getXButton).whileTrue(new AutoCenter(m_limeLight, new Pose2d(-1.2, 0.5, new Rotation2d(0)), m_chassis));
+    new Trigger(m_driveController::getBButton).whileTrue(new AutoCenter(m_limeLight, new Pose2d(-1.2, -0.5, new Rotation2d(0)), m_chassis));
+    new Trigger(m_driveController::getAButton).onTrue(new InstantCommand(() -> m_chassis.resetAllToAbsolute()));
     new Trigger(m_driveController::getRightBumper)
         .onTrue(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(1, 0))));
     new Trigger(m_driveController::getRightBumper)
         .onFalse(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
+    new Trigger(m_driveController::getBackButton).whileTrue(new Park(m_chassis));
 
-    
   }
 
   //value * max * joystickY
@@ -147,7 +149,7 @@ public class RobotContainer {
     // Deadband
     value = deadband(value, 0.05);
     // Square the axis
-    value = Math.copySign(value * value, value);
+    // value = Math.copySign(value * value, value);
     return value;
   }
 }
