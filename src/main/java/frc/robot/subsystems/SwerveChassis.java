@@ -61,7 +61,7 @@ public class SwerveChassis extends SubsystemBase {
         getKinematics(),
         getGyroRot(),
         getPositions(),
-        new Pose2d(0, 0, getGyroRot()));
+        new Pose2d(0, 0, getGyroRot().plus(Rotation2d.fromDegrees(90))));
 
     // CONFGIURE THIS IN A BITs
     // poseEstimator.setVisionMeasurementStdDevs(new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.02, 0.02, 0.01, 0.02, 0.02));
@@ -85,9 +85,9 @@ public class SwerveChassis extends SubsystemBase {
     Pose2d pose = getFusedPose(); //offset by 8.5, 4.25
     //THIS NEEDS TO BE CONSIDERED WHEN RUNNING AUTONOMOUS
     if(limelight.hasApriltag()){
-      PathPlannerServer.sendPathFollowingData(limelight.getBotPose(), new Pose2d(pose.getY(), pose.getX(), pose.getRotation()));
+      PathPlannerServer.sendPathFollowingData(limelight.getBotPose(), new Pose2d(pose.getX(), pose.getY(), pose.getRotation()));
     } else {
-      PathPlannerServer.sendPathFollowingData(new Pose2d(), new Pose2d(pose.getY(), pose.getX(), pose.getRotation()));
+      PathPlannerServer.sendPathFollowingData(new Pose2d(), new Pose2d(pose.getX(), pose.getY(), pose.getRotation()));
     }
     
     SmartDashboard.putNumber("FusedPoseX", pose.getX());
@@ -122,7 +122,7 @@ public class SwerveChassis extends SubsystemBase {
     if (limelight.hasApriltag()) {
       Pose2d pose = limelight.getBotPose();
       poseEstimator.addVisionMeasurement(pose, limelight.getBotPoseTimestamp());
-      // poseEstimator.resetPosition(getGyroRot(), getPositions(), poseEstimator.getEstimatedPosition());
+      poseEstimator.resetPosition(getGyroRot().plus(Rotation2d.fromDegrees(0)), getPositions(), poseEstimator.getEstimatedPosition());
     }
     return poseEstimator.getEstimatedPosition();
 }

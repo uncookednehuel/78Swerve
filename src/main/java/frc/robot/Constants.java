@@ -19,11 +19,11 @@ public final class Constants {
         COTSFalconSwerveConstants.SDSMK4(COTSFalconSwerveConstants.driveGearRatios.SDSMK4_L2);
 
         // MK4 drivetrain constants
-        // public static final double TRACK_WIDTH = Units.inchesToMeters(22);
-        // public static final double WHEEL_BASE = Units.inchesToMeters(22);
+        public static final double TRACK_WIDTH = Units.inchesToMeters(22);
+        public static final double WHEEL_BASE = Units.inchesToMeters(22);
         // Ant Man drivetrain constants
-        public static final double TRACK_WIDTH = Units.inchesToMeters(18.75);
-        public static final double WHEEL_BASE = Units.inchesToMeters(18.75);
+        // public static final double TRACK_WIDTH = Units.inchesToMeters(18.75);
+        // public static final double WHEEL_BASE = Units.inchesToMeters(18.75);
         public static final double WHEEL_CIRCUMFERENCE = CHOSEN_MODULE.wheelCircumference;
 
         /*
