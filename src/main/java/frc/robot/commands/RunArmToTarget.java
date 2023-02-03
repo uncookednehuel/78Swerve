@@ -4,21 +4,25 @@
 
 package frc.robot.commands;
 
+import java.lang.annotation.Target;
+
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.Arm;
 
-public class ShoulderManualMovement extends CommandBase {
-  //protected final XboxController armController;
-  protected final Arm m_Arm;
-  private double joystickValue;
-  /** Creates a new ShoulderManualMovement. */
-  public ShoulderManualMovement(Arm m_Arm, double joystickValue) {
-   // armController = m_armController;
-    this.m_Arm = m_Arm;
-    this.joystickValue = joystickValue;
-    addRequirements(m_Arm);
+public class RunArmToTarget extends CommandBase {
+  private double elbowTarget;
+  private double shoulderTarget;
+  private Arm m_Arm;
+  
+  
+  /** Creates a new RunArmToTarget. */
+  public RunArmToTarget(Subsystem Arm, double elbowTarget, double shoulderTarget) {
+    Arm = m_Arm;
+    this.elbowTarget = elbowTarget;
+    this.shoulderTarget = shoulderTarget;
+
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -29,9 +33,8 @@ public class ShoulderManualMovement extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Arm.setShoulderSpeed(joystickValue * 0.5);
-
-   // m_Arm.setElbowSpeed(armController.getLeftY() * 0.5);
+    m_Arm.elbowGoToPosition(elbowTarget);
+    m_Arm.shoulderGoToPosition(shoulderTarget);
   }
 
   // Called once the command ends or is interrupted.
