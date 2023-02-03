@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
@@ -91,7 +92,7 @@ public class AutoCenter extends CommandBase {
 
   private Pose2d getClosestTag () { 
     AprilTagFieldLayout apriltags;
-    Pose2d closestPose = null;
+    Pose2d closestPose = new Pose2d();
     double closestDistance = 1000.0;
     int closestID = -1;
     try {
@@ -102,6 +103,7 @@ public class AutoCenter extends CommandBase {
       
       for(int i = 1; i < 9; i++) {
         apriltagPoses[i - 1] = fromPose3d(apriltags.getTagPose(i).get());
+        // SmartDashboard.putNumber("AprilTag Y#" + i, fromPose3d(apriltags.getTagPose(i).get()).getY());
       } 
 
       Pose2d robotPose = chassis.getFusedPose();
@@ -126,7 +128,7 @@ public class AutoCenter extends CommandBase {
       SmartDashboard.putNumber("closestPoseID", closestID);
       return closestPose;
     } else {
-      DriverStation.reportError("Closest Pose was not set, check getClosestTag in AutoCenter", false);
+      DriverStation.reportError("Closest Pose was not set, check getClosestTag in AutoCenter", true);
       return new Pose2d();
     }
   }
