@@ -31,7 +31,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.SwerveChassis;
 //import frc.robot.commands.ManualControl;
 import frc.robot.commands.RunArmToTarget;
-
+import frc.robot.commands.SetArmPID;
 import frc.robot.commands.SetIntake;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.Dave_Intake;
@@ -84,13 +84,7 @@ public class RobotContainer {
         () -> modifyAxis(m_driveController.getLeftTriggerAxis()),
         () -> modifyAxis(m_driveController.getRightTriggerAxis())));
 
-      //m_arm.setDefaultCommand(new ManualControl(m_arm, m_armController.getRightY(), m_armController.getLeftY()));
-     // m_arm.setDefaultCommand(new ArmControl(m_arm, m_armController.getLeftY(), m_armController.getRightY()));
-      m_arm.setDefaultCommand(new ArmControl(m_arm,
-      () -> -modifyAxis(m_armController.getLeftY()),
-      () -> -modifyAxis(m_armController.getRightY())
-      ));
-    //  m_arm.setDefaultCommand(new TestShoulderMotor(m_arm));
+    m_arm.setDefaultCommand(new SetArmPID(m_arm));
     
   //  m_arm.setDefaultCommand(new InstantCommand(()-> m_arm.setShoulderSpeed(0.2)));//will change-MG
 

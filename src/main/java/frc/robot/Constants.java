@@ -190,6 +190,9 @@ public final class Constants {
    // public static int armController = 3;
     public static int shoulderEncoderID = 0;
     public static int elbowEncoderID = 1;
+    public static double elbowDefault = 50;
+    public static double shoulderDefault = 50;
+    // TODO - change to proper default positions
 
     //Arm control constants-->
     //All encoder constants are offsets from a HOME position
