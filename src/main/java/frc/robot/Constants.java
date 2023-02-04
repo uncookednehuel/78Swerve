@@ -13,8 +13,8 @@ import frc.robot.classes.SwerveModuleConstants;
 public final class Constants {
 
 
-    public static final int elbowNeoID = 9;
-    public static final int shoulderNeoID = 10;
+    public static final int elbowNeoID = 10;
+    public static final int shoulderNeoID = 9;
     /** A class within Constants that contains most of the swerve constants */
     public static final class Swerve {
 
@@ -150,6 +150,7 @@ public final class Constants {
 
     // CONTROL
     public static final int DRIVE_CONTROLLER = 0;
+    public static final int ARM_Controller = 1;
     public static final double DPAD_VEL = 1; // max meters per second (with RT down)
 
     // #region KINEMATICS
@@ -178,7 +179,7 @@ public final class Constants {
     public static final double TRAJECTORY_KI = 0;
     public static final double TRAJECTORY_KD = 0;
     // #endregion
-    public static int armController = 3;
+   // public static int armController = 3;
     public static int shoulderEncoderID = 0;
     public static int elbowEncoderID = 1;
 

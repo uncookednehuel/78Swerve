@@ -20,12 +20,14 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.classes.LimeLight;
 import frc.robot.classes.Odometry;
 import frc.robot.classes.PathFunctions;
+import frc.robot.commands.ArmControl;
 import frc.robot.commands.AutoCenter;
 import frc.robot.commands.Park;
 import frc.robot.commands.SwerveDrive;
+import frc.robot.commands.TestShoulderMotor;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.SwerveChassis;
-import frc.robot.commands.ManualControl;
+//import frc.robot.commands.ManualControl;
 import frc.robot.commands.RunArmToTarget;
 
 public class RobotContainer {
@@ -46,7 +48,7 @@ public class RobotContainer {
     m_limeLight = new LimeLight();
     m_driveController = new XboxController(Constants.DRIVE_CONTROLLER);
 
-    m_armController = new XboxController(Constants.armController);
+    m_armController = new XboxController(Constants.ARM_Controller);
 
     m_chassis.setDefaultCommand(new SwerveDrive(
         m_chassis,
@@ -57,7 +59,13 @@ public class RobotContainer {
         () -> modifyAxis(m_driveController.getLeftTriggerAxis()),
         () -> modifyAxis(m_driveController.getRightTriggerAxis())));
 
-      m_arm.setDefaultCommand(new ManualControl(m_arm, m_armController.getRightY(), m_armController.getLeftY()));
+      //m_arm.setDefaultCommand(new ManualControl(m_arm, m_armController.getRightY(), m_armController.getLeftY()));
+     // m_arm.setDefaultCommand(new ArmControl(m_arm, m_armController.getLeftY(), m_armController.getRightY()));
+      m_arm.setDefaultCommand(new ArmControl(m_arm,
+      () -> -modifyAxis(m_armController.getLeftY()),
+      () -> -modifyAxis(m_armController.getRightY())
+      ));
+    //  m_arm.setDefaultCommand(new TestShoulderMotor(m_arm));
     
   //  m_arm.setDefaultCommand(new InstantCommand(()-> m_arm.setShoulderSpeed(0.2)));//will change-MG
 
@@ -69,6 +77,8 @@ public class RobotContainer {
     Trigger buttonB = new JoystickButton(m_armController, XboxController.Button.kX.value);
     buttonB.onTrue(new InstantCommand(() -> new RunArmToTarget(m_arm, Constants.shoulderMidTarget, Constants.elbowMidTarget)));
     buttonB.onFalse(new InstantCommand(() -> m_arm.setShoulderSpeed(0)));
+
+    
     
     //Trigger buttonY = new JoystickButton(m_armController, XboxController.Button.kY.value);
    // buttonY.onTrue(new InstantCommand(() -> m_arm.setElbowSpeed(0.5)));
@@ -99,7 +109,7 @@ public class RobotContainer {
 
     configureButtonBindings();
   }
-
+//yay
   private void configureButtonBindings() {
     new Trigger(m_driveController::getStartButton).onTrue(new InstantCommand(m_chassis::zeroGyro));// (new
                                                                                                // InstantCommand(m_chassis::zeroGyro));
