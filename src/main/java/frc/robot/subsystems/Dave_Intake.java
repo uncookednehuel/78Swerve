@@ -27,10 +27,23 @@ public class Dave_Intake extends SubsystemBase {
     compressor = new Compressor(PneumaticsModuleType.REVPH);
   }
  
+
+
   public void setSpeed(double speed) {
     leftNeo.set(speed);
     rightNeo.set(speed);
   }
+
+  
+  public void setCompressor(boolean isOn){
+    if(isOn){
+      compressor.enableDigital();
+    }
+    else{
+      compressor.disable();}
+    }
+
+
 
   public void setSolenoid(DoubleSolenoid.Value value) {
     solenoid.set(value);
