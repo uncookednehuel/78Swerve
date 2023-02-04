@@ -7,21 +7,23 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.IntakeV1_Lentz;
 
-public class bottomNeo extends CommandBase {
-  IntakeV1_Lentz m_sub;
-  double speed = 0;
-  /** Creates a new bottomNeo. */
-  public bottomNeo(IntakeV1_Lentz sub, double speed) {
-    this.m_sub = sub;
+public class RunTopNeos extends CommandBase {
+  IntakeV1_Lentz intake;
+  double speed;
+  /** Creates a new RunTopNeos. */
+  public RunTopNeos(IntakeV1_Lentz intake, double speed) {
+    this.intake = intake;
     this.speed = speed;
-    addRequirements(sub);
+
+    addRequirements(intake);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_sub.runBottomNeocmd(speed);
+    intake.runTopNeo(speed);
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -31,12 +33,12 @@ public class bottomNeo extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_sub.runBottomNeocmd(0.0);
+    intake.stopNeo();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return false;
   }
 }

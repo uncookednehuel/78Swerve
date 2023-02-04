@@ -1,5 +1,6 @@
 package frc.robot;
 
+import java.time.Instant;
 import java.util.HashMap;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -25,13 +26,17 @@ import frc.robot.classes.PathFunctions;
 import frc.robot.commands.ArmControl;
 import frc.robot.commands.AutoCenter;
 import frc.robot.commands.Park;
+import frc.robot.commands.ReverseBottomNeo;
+import frc.robot.commands.ReverseTopNeo;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.commands.TestShoulderMotor;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.SwerveChassis;
 //import frc.robot.commands.ManualControl;
 import frc.robot.commands.RunArmToTarget;
-
+import frc.robot.commands.RunBottomNeos;
+import frc.robot.commands.RunTopBottomTemp;
+import frc.robot.commands.RunTopNeos;
 import frc.robot.commands.SetIntake;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.Dave_Intake;
@@ -50,16 +55,15 @@ public class RobotContainer {
   private final XboxController m_driveController;
   private final XboxController m_armController;
   private final XboxController m_manipController;
-  private final IntakeV1_Lentz m_IntakeV1_Lentz = new IntakeV1_Lentz();
+  private final IntakeV1_Lentz m_IntakeV1_Lentz;
   private final Dave_Intake m_Dave_Intake;
   private final HashMap<String, Command> m_eventMap;
   private final SwerveAutoBuilder autoBuilder;
- private final CommandJoystick manipControl = new CommandJoystick(0);
 
- Trigger btnX = manipControl.button(1);
-  Trigger btnY = manipControl.button(2);
-  Trigger btnA = manipControl.button(3);
-  Trigger btnB = manipControl.button(4);
+  // Trigger btnX = manipControl.x(null);
+  // Trigger btnY = manipControl.y.value;
+  // Trigger btnA = manipControl.a.value;
+  // Trigger btnB = manipControl.b.value;
 
   public RobotContainer() {
     m_chassis = new SwerveChassis();
@@ -68,6 +72,7 @@ public class RobotContainer {
     m_driveController = new XboxController(Constants.DRIVE_CONTROLLER);
 
     m_armController = new XboxController(Constants.ARM_Controller);
+    m_IntakeV1_Lentz = new IntakeV1_Lentz();
 
 
     m_Dave_Intake = new Dave_Intake();
@@ -93,8 +98,13 @@ public class RobotContainer {
     //  m_arm.setDefaultCommand(new TestShoulderMotor(m_arm));
     
   //  m_arm.setDefaultCommand(new InstantCommand(()-> m_arm.setShoulderSpeed(0.2)));//will change-MG
+  InstantCommand test = new InstantCommand(() -> m_IntakeV1_Lentz.stopNeo());
+  test.addRequirements(m_IntakeV1_Lentz);
+  m_IntakeV1_Lentz.setDefaultCommand(test);
 
-    
+  // Trigger manipA = new JoystickButton(m_manipController, XboxController.Button.kA.value);
+  // manipA.onTrue(new InstantCommand(() -> m_IntakeV1_Lentz.testNeo())).onFalse(new InstantCommand(() -> m_IntakeV1_Lentz.stopNeo()));  
+
     Trigger buttonA = new JoystickButton(m_armController, XboxController.Button.kX.value);
     buttonA.onTrue(new InstantCommand(() -> new RunArmToTarget(m_arm, Constants.shoulderLowTarget, Constants.elbowLowTarget)));
     buttonA.onFalse(new InstantCommand(() -> m_arm.setShoulderSpeed(0)));
@@ -152,22 +162,30 @@ public class RobotContainer {
 
 
     //Intake Buttons for V1 
-    //new Trigger(m_manipController::getXButton).onTrue(m_IntakeV1_Lentz.runTopNeo(0.1)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
-    //new Trigger(m_manipController::getYButton).onTrue((m_IntakeV1_Lentz.runTopNeo(-0.1))).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
-    //new Trigger(m_manipController::getAButton).onTrue(m_IntakeV1_Lentz.runBottomNeo(1)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
-    //new Trigger(m_manipController::getXButton).onTrue(m_IntakeV1_Lentz.runBottomNeo(-0.50)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
-    btnX.onTrue(m_IntakeV1_Lentz.runTopNeo(0.1)).onFalse(m_IntakeV1_Lentz.runTopNeo(0));
-    btnY.onTrue(m_IntakeV1_Lentz.runTopNeo(-0.1)).onFalse(m_IntakeV1_Lentz.runTopNeo(0));
-    btnA.onTrue(m_IntakeV1_Lentz.runBottomNeo(1)).onFalse(m_IntakeV1_Lentz.runBottomNeo(0));
-    btnB.onTrue(m_IntakeV1_Lentz.runBottomNeo(-0.50)).onFalse(m_IntakeV1_Lentz.runBottomNeo(0.0));
+    // new Trigger(m_manipController::getXButton).onTrue(m_IntakeV1_Lentz.runTopNeo(0.5)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
+    // new Trigger(m_manipController::getYButton).onTrue(m_IntakeV1_Lentz.runTopNeo(-0.5)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
+    // new Trigger(m_manipController::getAButton).onTrue(m_IntakeV1_Lentz.runBottomNeo(0.5)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
+    // new Trigger(m_manipController::getXButton).onTrue(m_IntakeV1_Lentz.runBottomNeo(-0.50)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
+    //new Trigger(m_manipController::getAButton).onTrue(new InstantCommand(() -> m_IntakeV1_Lentz.testNeo())).onFalse(new InstantCommand(() -> m_IntakeV1_Lentz.stopNeo()));
+    //new Trigger(m_manipController::getAButton).whileTrue(new RunTopBottomTemp(m_IntakeV1_Lentz));
+    new Trigger(m_manipController::getAButton).whileTrue(new RunTopNeos(m_IntakeV1_Lentz, -0.4));
+    new Trigger(m_manipController::getBButton).whileTrue(new RunBottomNeos(m_IntakeV1_Lentz, -0.3));
+    new Trigger(m_manipController::getXButton).whileTrue(new RunTopNeos(m_IntakeV1_Lentz, 0.4));
+    new Trigger(m_manipController::getYButton).whileTrue(new RunBottomNeos(m_IntakeV1_Lentz, 0.3));
+    
+    
+    // btnX.onTrue(m_IntakeV1_Lentz.runTopNeo(0.5)).onFalse(m_IntakeV1_Lentz.runTopNeo(0));
+    // btnY.onTrue(m_IntakeV1_Lentz.runTopNeo(-0.5)).onFalse(m_IntakeV1_Lentz.runTopNeo(0));
+    // btnA.onTrue(m_IntakeV1_Lentz.runBottomNeo(1)).onFalse(m_IntakeV1_Lentz.runBottomNeo(0));
+    // btnB.onTrue(m_IntakeV1_Lentz.runBottomNeo(-0.50)).onFalse(m_IntakeV1_Lentz.runBottomNeo(0.0));
 
     //End of Intake buttons for V1
 
     // Intake buttons for Dave's intake (X = intake)
 
-    new Trigger(m_manipController::getXButton).whileTrue(new SetIntake(m_Dave_Intake, 0.1, DoubleSolenoid.Value.kForward)); 
-    new Trigger(m_manipController::getYButton).whileTrue(new SetIntake(m_Dave_Intake, -0.1, DoubleSolenoid.Value.kReverse)); 
-    
+  //  new Trigger(m_manipController::getXButton).whileTrue(new SetIntake(m_Dave_Intake, 0.1, DoubleSolenoid.Value.kForward)); 
+  //  new Trigger(m_manipController::getYButton).whileTrue(new SetIntake(m_Dave_Intake, -0.1, DoubleSolenoid.Value.kReverse)); 
+    //commented to test 
     //whileTrue(new SetSpeed(m_Dave_Intake, 0.1));
 
   }
