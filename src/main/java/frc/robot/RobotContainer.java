@@ -16,10 +16,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.classes.LimeLight;
 import frc.robot.classes.Odometry;
 import frc.robot.classes.PathFunctions;
+
 import frc.robot.commands.ArmControl;
 import frc.robot.commands.AutoCenter;
 import frc.robot.commands.Park;
@@ -30,6 +32,15 @@ import frc.robot.subsystems.SwerveChassis;
 //import frc.robot.commands.ManualControl;
 import frc.robot.commands.RunArmToTarget;
 
+import frc.robot.commands.SetIntake;
+import frc.robot.commands.SwerveDrive;
+import frc.robot.subsystems.Dave_Intake;
+import frc.robot.subsystems.IntakeV1_Lentz;
+import frc.robot.subsystems.SwerveChassis;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+
+
 public class RobotContainer {
 
   public final SwerveChassis m_chassis;
@@ -38,9 +49,17 @@ public class RobotContainer {
   
   private final XboxController m_driveController;
   private final XboxController m_armController;
-
+  private final XboxController m_manipController;
+  private final IntakeV1_Lentz m_IntakeV1_Lentz = new IntakeV1_Lentz();
+  private final Dave_Intake m_Dave_Intake;
   private final HashMap<String, Command> m_eventMap;
   private final SwerveAutoBuilder autoBuilder;
+ private final CommandJoystick manipControl = new CommandJoystick(0);
+
+ Trigger btnX = manipControl.button(1);
+  Trigger btnY = manipControl.button(2);
+  Trigger btnA = manipControl.button(3);
+  Trigger btnB = manipControl.button(4);
 
   public RobotContainer() {
     m_chassis = new SwerveChassis();
@@ -49,6 +68,12 @@ public class RobotContainer {
     m_driveController = new XboxController(Constants.DRIVE_CONTROLLER);
 
     m_armController = new XboxController(Constants.ARM_Controller);
+
+
+    m_Dave_Intake = new Dave_Intake();
+    m_manipController = new XboxController(Constants.manipController);
+    //private final CommandJoystick manipControl = new CommandJoystick(0);
+   // private final CommandJoystick manipControl = new CommandJoystick(0);
 
     m_chassis.setDefaultCommand(new SwerveDrive(
         m_chassis,
@@ -121,7 +146,29 @@ public class RobotContainer {
         .onTrue(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(1, 0))));
     new Trigger(m_driveController::getRightBumper)
         .onFalse(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
+
     new Trigger(m_driveController::getBackButton).whileTrue(new Park(m_chassis));
+
+
+
+    //Intake Buttons for V1 
+    //new Trigger(m_manipController::getXButton).onTrue(m_IntakeV1_Lentz.runTopNeo(0.1)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
+    //new Trigger(m_manipController::getYButton).onTrue((m_IntakeV1_Lentz.runTopNeo(-0.1))).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
+    //new Trigger(m_manipController::getAButton).onTrue(m_IntakeV1_Lentz.runBottomNeo(1)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
+    //new Trigger(m_manipController::getXButton).onTrue(m_IntakeV1_Lentz.runBottomNeo(-0.50)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
+    btnX.onTrue(m_IntakeV1_Lentz.runTopNeo(0.1)).onFalse(m_IntakeV1_Lentz.runTopNeo(0));
+    btnY.onTrue(m_IntakeV1_Lentz.runTopNeo(-0.1)).onFalse(m_IntakeV1_Lentz.runTopNeo(0));
+    btnA.onTrue(m_IntakeV1_Lentz.runBottomNeo(1)).onFalse(m_IntakeV1_Lentz.runBottomNeo(0));
+    btnB.onTrue(m_IntakeV1_Lentz.runBottomNeo(-0.50)).onFalse(m_IntakeV1_Lentz.runBottomNeo(0.0));
+
+    //End of Intake buttons for V1
+
+    // Intake buttons for Dave's intake (X = intake)
+
+    new Trigger(m_manipController::getXButton).whileTrue(new SetIntake(m_Dave_Intake, 0.1, DoubleSolenoid.Value.kForward)); 
+    new Trigger(m_manipController::getYButton).whileTrue(new SetIntake(m_Dave_Intake, -0.1, DoubleSolenoid.Value.kReverse)); 
+    
+    //whileTrue(new SetSpeed(m_Dave_Intake, 0.1));
 
   }
 

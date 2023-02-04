@@ -148,10 +148,18 @@ public final class Constants {
 
     public static final int PIGEON_IMU = 0;
 
+    // PNEUMATICS
+    public static final int forwardChannel = 2;
+    public static final int backwardChannel = 3;
+
     // CONTROL
+
     public static final int DRIVE_CONTROLLER = 0;
     public static final int ARM_Controller = 1;
     public static final double DPAD_VEL = 1; // max meters per second (with RT down)
+
+    public static final int manipController = 2;
+
 
     // #region KINEMATICS
 
