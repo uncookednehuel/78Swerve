@@ -98,9 +98,13 @@ public class RobotContainer {
     //  m_arm.setDefaultCommand(new TestShoulderMotor(m_arm));
     
   //  m_arm.setDefaultCommand(new InstantCommand(()-> m_arm.setShoulderSpeed(0.2)));//will change-MG
-  InstantCommand test = new InstantCommand(() -> m_IntakeV1_Lentz.stopNeo());
-  test.addRequirements(m_IntakeV1_Lentz);
-  m_IntakeV1_Lentz.setDefaultCommand(test);
+
+  //need if using the Lentz intake
+  //InstantCommand test = new InstantCommand(() -> m_IntakeV1_Lentz.stopNeo());
+ // test.addRequirements(m_IntakeV1_Lentz);
+  //m_IntakeV1_Lentz.setDefaultCommand(test);
+
+  m_Dave_Intake.setDefaultCommand(new SetIntake(m_Dave_Intake, 0.1, DoubleSolenoid.Value.kForward));
 
   // Trigger manipA = new JoystickButton(m_manipController, XboxController.Button.kA.value);
   // manipA.onTrue(new InstantCommand(() -> m_IntakeV1_Lentz.testNeo())).onFalse(new InstantCommand(() -> m_IntakeV1_Lentz.stopNeo()));  
@@ -168,10 +172,10 @@ public class RobotContainer {
     // new Trigger(m_manipController::getXButton).onTrue(m_IntakeV1_Lentz.runBottomNeo(-0.50)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
     //new Trigger(m_manipController::getAButton).onTrue(new InstantCommand(() -> m_IntakeV1_Lentz.testNeo())).onFalse(new InstantCommand(() -> m_IntakeV1_Lentz.stopNeo()));
     //new Trigger(m_manipController::getAButton).whileTrue(new RunTopBottomTemp(m_IntakeV1_Lentz));
-    new Trigger(m_manipController::getAButton).whileTrue(new RunTopNeos(m_IntakeV1_Lentz, -0.4));
+    new Trigger(m_manipController::getAButton).whileTrue(new RunTopNeos(m_IntakeV1_Lentz, -0.6));
     new Trigger(m_manipController::getBButton).whileTrue(new RunBottomNeos(m_IntakeV1_Lentz, -0.3));
-    new Trigger(m_manipController::getXButton).whileTrue(new RunTopNeos(m_IntakeV1_Lentz, 0.4));
-    new Trigger(m_manipController::getYButton).whileTrue(new RunBottomNeos(m_IntakeV1_Lentz, 0.3));
+   // new Trigger(m_manipController::getXButton).whileTrue(new RunTopNeos(m_IntakeV1_Lentz, 0.6));
+   // new Trigger(m_manipController::getYButton).whileTrue(new RunBottomNeos(m_IntakeV1_Lentz, 0.3));
     
     
     // btnX.onTrue(m_IntakeV1_Lentz.runTopNeo(0.5)).onFalse(m_IntakeV1_Lentz.runTopNeo(0));
@@ -183,8 +187,8 @@ public class RobotContainer {
 
     // Intake buttons for Dave's intake (X = intake)
 
-  //  new Trigger(m_manipController::getXButton).whileTrue(new SetIntake(m_Dave_Intake, 0.1, DoubleSolenoid.Value.kForward)); 
-  //  new Trigger(m_manipController::getYButton).whileTrue(new SetIntake(m_Dave_Intake, -0.1, DoubleSolenoid.Value.kReverse)); 
+   new Trigger(m_manipController::getXButton).whileTrue(new SetIntake(m_Dave_Intake, 0.6, DoubleSolenoid.Value.kForward)); 
+   new Trigger(m_manipController::getYButton).whileTrue(new SetIntake(m_Dave_Intake, -1.0, DoubleSolenoid.Value.kReverse)); 
     //commented to test 
     //whileTrue(new SetSpeed(m_Dave_Intake, 0.1));
 

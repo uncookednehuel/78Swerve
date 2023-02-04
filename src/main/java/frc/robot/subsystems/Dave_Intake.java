@@ -8,21 +8,21 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Dave_Intake extends SubsystemBase {
-  protected final CANSparkMax leftNeo;
-  protected final CANSparkMax rightNeo;
+  protected final CANSparkMax Neo;
   
   protected final DoubleSolenoid solenoid;
   protected final Compressor compressor;
 
   /** Creates a new IntakeV1_Lentz. */
   public Dave_Intake() {
-    leftNeo = new CANSparkMax(16, MotorType.kBrushless);
-    rightNeo = new CANSparkMax(15, MotorType.kBrushless);
+    Neo = new CANSparkMax(Constants.DaveNeo, MotorType.kBrushless);
+    //rightNeo = new CANSparkMax(15, MotorType.kBrushless);
 
     solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 3, 2);
     
@@ -32,8 +32,7 @@ public class Dave_Intake extends SubsystemBase {
 
 
   public void setSpeed(double speed) {
-    leftNeo.set(speed);
-    rightNeo.set(speed);
+    Neo.set(speed);
   }
 
   

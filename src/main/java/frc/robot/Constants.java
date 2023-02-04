@@ -15,14 +15,15 @@ public final class Constants {
 
     public static final int elbowNeoID = 10;
     public static final int shoulderNeoID = 9;
-    public static final int lowerManipNeoID = 11;
-    public static final int upperManipNeoID = 12;
+    public static final int lowerManipNeoID = 15;//should be 11
+    public static final int upperManipNeoID = 16;//should be 12
+    public static final int DaveNeo = 11;
     /** A class within Constants that contains most of the swerve constants */
     public static final class Swerve {
 
         public static final COTSFalconSwerveConstants CHOSEN_MODULE =
-        // COTSFalconSwerveConstants.SDSMK4i(COTSFalconSwerveConstants.driveGearRatios.SDSMK4i_L2);
-        COTSFalconSwerveConstants.SDSMK4(COTSFalconSwerveConstants.driveGearRatios.SDSMK4_L2);
+         COTSFalconSwerveConstants.SDSMK4i(COTSFalconSwerveConstants.driveGearRatios.SDSMK4i_L2);
+        // COTSFalconSwerveConstants.SDSMK4(COTSFalconSwerveConstants.driveGearRatios.SDSMK4_L2);
 
         // MK4 drivetrain constants
         // public static final double TRACK_WIDTH = Units.inchesToMeters(22);
@@ -108,8 +109,8 @@ public final class Constants {
             public static final int driveMotorID = 1;
             public static final int angleMotorID = 2;
             public static final int canCoderID = 9;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(269.29); //MK4
-            // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(10.10); // ant man
+           //  public static final Rotation2d angleOffset = Rotation2d.fromDegrees(269.29); //MK4
+             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(10.10); // ant man
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
         }
@@ -119,8 +120,8 @@ public final class Constants {
             public static final int driveMotorID = 3;
             public static final int angleMotorID = 4;
             public static final int canCoderID = 10;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(292.93); //MK4
-            // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(160.75); // ant man
+           // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(292.93); //MK4
+             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(160.75); // ant man
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
         }
@@ -130,8 +131,8 @@ public final class Constants {
             public static final int driveMotorID = 5;
             public static final int angleMotorID = 6;
             public static final int canCoderID = 11;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(17.31); //MK4
-            // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(178.68); // ant man
+            // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(17.31); //MK4
+             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(178.68); // ant man
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
         }
@@ -141,8 +142,8 @@ public final class Constants {
             public static final int driveMotorID = 7;
             public static final int angleMotorID = 8;
             public static final int canCoderID = 12;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(344.70); //MK4
-            // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(166.64); // ant man
+           // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(344.70); //MK4
+             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(166.64); // ant man
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
         }
