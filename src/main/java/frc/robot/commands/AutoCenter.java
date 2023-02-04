@@ -45,8 +45,6 @@ public class AutoCenter extends CommandBase {
     this.setPoint = setPoint;
     this.chassis = chassis;
 
-    apriltagPose = getClosestTag();
-
     speeds = new ChassisSpeeds();
 
     addRequirements(this.chassis);
@@ -56,6 +54,8 @@ public class AutoCenter extends CommandBase {
   public void initialize() {
     xController.reset();
     yController.reset();
+
+    apriltagPose = getClosestTag(chassis.getFusedPose());
 
     xController.setTolerance(0.2);
     yController.setTolerance(0.2);
@@ -67,15 +67,15 @@ public class AutoCenter extends CommandBase {
   public void execute() {
     Pose2d pose = chassis.getFusedPose();
 
-    speeds.vxMetersPerSecond = xController.calculate(pose.getX(), apriltagPose.getX() - setPoint.getX());
-    speeds.vyMetersPerSecond = yController.calculate(pose.getY() * -1, apriltagPose.getY() - setPoint.getY());
+    speeds.vxMetersPerSecond = xController.calculate(pose.getX(), apriltagPose.getX() + setPoint.getX());
+    speeds.vyMetersPerSecond = yController.calculate(pose.getY(), apriltagPose.getY() + setPoint.getY());
     speeds.omegaRadiansPerSecond = 0;//rotController.calculate(pose.getRotation().getRadians(), setPoint.getRotation().getRadians());
 
     SmartDashboard.putNumber("PIDXError", xController.getPositionError());
     SmartDashboard.putNumber("PIDYError", yController.getPositionError());
     // SmartDashboard.putNumber("PIDRotError", rotController.getPositionError());
 
-    chassis.setSpeeds(speeds);
+    chassis.setSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, pose.getRotation()));
   }
 
   // Called once the command ends or is interrupted.
@@ -90,11 +90,12 @@ public class AutoCenter extends CommandBase {
     return xController.atSetpoint() && yController.atSetpoint();
   }
 
-  private Pose2d getClosestTag () { 
+  private Pose2d getClosestTag (Pose2d robotPose) { 
     AprilTagFieldLayout apriltags;
     Pose2d closestPose = new Pose2d();
     double closestDistance = 1000.0;
     int closestID = -1;
+    
     try {
 
       apriltags = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
@@ -103,13 +104,12 @@ public class AutoCenter extends CommandBase {
       
       for(int i = 1; i < 9; i++) {
         apriltagPoses[i - 1] = fromPose3d(apriltags.getTagPose(i).get());
-        // SmartDashboard.putNumber("AprilTag Y#" + i, fromPose3d(apriltags.getTagPose(i).get()).getY());
-      } 
-
-      Pose2d robotPose = chassis.getFusedPose();
+      }
+      
       int i = 0;
       for (Pose2d pose : apriltagPoses) {
         double distance = distance(pose, robotPose);
+        SmartDashboard.putNumber("ID " + i + "distance", distance);
         if(distance < closestDistance) {
           closestDistance = distance;
           closestPose = pose;
@@ -117,6 +117,7 @@ public class AutoCenter extends CommandBase {
         }
         i++;
       }
+      // SmartDashboard.putNumber("number of i", i);
     } catch (IOException e) {
       e.printStackTrace();
     }

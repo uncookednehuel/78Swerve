@@ -48,13 +48,10 @@ public class SwerveChassis extends SubsystemBase {
     pidgeon = new Pigeon2(Constants.PIGEON_IMU);
 
     centerOfRot = new Translation2d();
-
     kinematics = Constants.Swerve.SWERVE_KINEMATICS;
-
     speeds = new ChassisSpeeds();
 
     limelight = new LimeLight();
-
     odometry = new SwerveDriveOdometry(kinematics, getGyroRot(), getPositions());
 
     poseEstimator = new SwerveDrivePoseEstimator(
