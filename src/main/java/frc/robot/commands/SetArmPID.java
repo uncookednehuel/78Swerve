@@ -7,12 +7,18 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
 
+/**
+ * implement the PID control loop for arm
+ */
 public class SetArmPID extends CommandBase {
   private Arm m_arm;
   private double shoulderPosition;
   private double elbowPosition;
 
-  /** Creates a new setArmPID. */
+  /**
+   * creates a command that takes in arm subsystem and sets shoulder and elbow to specific position
+   * @param arm arm subsystem that this command requires
+   */
   public SetArmPID(Arm arm) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(arm);
