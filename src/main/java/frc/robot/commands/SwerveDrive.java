@@ -3,7 +3,9 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.SwerveChassis;
@@ -18,6 +20,10 @@ public class SwerveDrive extends CommandBase {
   private final DoubleSupplier lTriggerSupplier;
   private final DoubleSupplier rTriggerSupplier;
 
+  private final SlewRateLimiter xLimiter;
+  private final SlewRateLimiter yLimiter;
+  private final SlewRateLimiter thetaLimiter;
+
   public SwerveDrive(
       SwerveChassis chassis,
       DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rotSupplier,
@@ -31,6 +37,9 @@ public class SwerveDrive extends CommandBase {
     this.lTriggerSupplier = lTriggerSupplier;
     this.rTriggerSupplier = rTriggerSupplier;
 
+    xLimiter = new SlewRateLimiter(11, -11, 0);
+    yLimiter = new SlewRateLimiter(11, -11, 0);
+    thetaLimiter = new SlewRateLimiter(30, -30, 0);
     addRequirements(m_chassis);
   }
 
@@ -43,24 +52,29 @@ public class SwerveDrive extends CommandBase {
   public void execute() {
     double dPadX = (dPadSupplier.getAsInt() == 0 ? 1 : 0) - (dPadSupplier.getAsInt() == 180 ? 1 : 0);
     double dPadY = (dPadSupplier.getAsInt() == 270 ? 1 : 0) - (dPadSupplier.getAsInt() == 90 ? 1 : 0);
-    dPadX = triggerAdjust(dPadX * Constants.dPadVel);
-    dPadY = triggerAdjust(dPadY * Constants.dPadVel);
+    dPadX = triggerAdjust(dPadX) * Constants.DPAD_VEL;
+    dPadY = triggerAdjust(dPadY) * Constants.DPAD_VEL;
+
+    SmartDashboard.putNumber("JoystickX", triggerAdjust(xSupplier.getAsDouble()));
+    SmartDashboard.putNumber("JoystickY", triggerAdjust(ySupplier.getAsDouble()));
+    SmartDashboard.putNumber("JoystickRot", triggerAdjust(rotSupplier.getAsDouble()));
 
     ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-        triggerAdjust(xSupplier.getAsDouble()) * Constants.maxSpeed,
-        triggerAdjust(ySupplier.getAsDouble()) * Constants.maxSpeed,
-        triggerAdjust(rotSupplier.getAsDouble()) * Constants.maxSpeed,
+        triggerAdjust(xSupplier.getAsDouble()) * Constants.Swerve.MAX_SPEED,
+        triggerAdjust(ySupplier.getAsDouble()) * Constants.Swerve.MAX_SPEED,
+        triggerAdjust(rotSupplier.getAsDouble()) * Constants.Swerve.MAX_ANGULAR_VELOCITY,
         m_chassis.getGyroRot());
 
-    speeds = new ChassisSpeeds(speeds.vxMetersPerSecond + dPadX, speeds.vyMetersPerSecond + dPadY,
-        speeds.omegaRadiansPerSecond);
+    speeds = new ChassisSpeeds(xLimiter.calculate(speeds.vxMetersPerSecond + dPadX),
+        yLimiter.calculate(speeds.vyMetersPerSecond + dPadY),
+        thetaLimiter.calculate(speeds.omegaRadiansPerSecond));
 
-    m_chassis.setSpeeds(speeds);
+    m_chassis.setSpeeds(speeds, true);
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_chassis.setSpeeds(new ChassisSpeeds(0.0, 0.0, 0.0));
+    m_chassis.setSpeeds();
   }
 
   /**
@@ -71,8 +85,8 @@ public class SwerveDrive extends CommandBase {
    * @return Adjusted speed
    */
   public double triggerAdjust(double in) {
-    double upAdjust = 0.3;
-    double downAdjust = 0.4;
+    double upAdjust = 0.5;
+    double downAdjust = 0.25;
     // Default speed = 1 - upAdjust
     // Full left trigger = 1 - upAdjust - downAdjust
     // Full right trigger = 1

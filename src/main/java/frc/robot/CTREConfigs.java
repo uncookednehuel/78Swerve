@@ -7,6 +7,8 @@ import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.SensorTimeBase;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public final class CTREConfigs {
     public TalonFXConfiguration swerveAngleFXConfig;
     public TalonFXConfiguration swerveDriveFXConfig;
@@ -28,6 +30,8 @@ public final class CTREConfigs {
         swerveAngleFXConfig.slot0.kI = Constants.Swerve.ANGLE_KI;
         swerveAngleFXConfig.slot0.kD = Constants.Swerve.ANGLE_KD;
         swerveAngleFXConfig.slot0.kF = Constants.Swerve.ANGLE_KF;
+        // swerveAngleFXConfig.slot0.allowableClosedloopError = Constants.Swerve.ANGLE_MAX_ERR;
+        SmartDashboard.putNumber("alloable error", swerveAngleFXConfig.slot0.allowableClosedloopError);
         swerveAngleFXConfig.supplyCurrLimit = angleSupplyLimit;
 
         /* Swerve Drive Motor Configuration */
