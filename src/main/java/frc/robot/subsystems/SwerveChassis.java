@@ -1,7 +1,11 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.Pigeon2;
+import com.pathplanner.lib.server.PathPlannerServer;
 
+import edu.wpi.first.math.MatBuilder;
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -11,11 +15,10 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.classes.LimeLight;
 import frc.robot.classes.Odometry;
 import frc.robot.classes.SwerveModule;
 
@@ -26,7 +29,9 @@ public class SwerveChassis extends SubsystemBase {
 
   protected SwerveDriveKinematics kinematics;
   public SwerveDriveOdometry odometry;
+  public SwerveDrivePoseEstimator poseEstimator;
   protected Pigeon2 pidgeon;
+  protected LimeLight limelight;
 
   // KINEMATICS
   protected Translation2d centerOfRot;
@@ -40,17 +45,23 @@ public class SwerveChassis extends SubsystemBase {
     moduleLD = new SwerveModule(2, Constants.Swerve.Mod2.constants);
     moduleRD = new SwerveModule(3, Constants.Swerve.Mod3.constants);
 
-    pidgeon = new Pigeon2(Constants.pigeonIMU);
+    pidgeon = new Pigeon2(Constants.PIGEON_IMU);
 
     centerOfRot = new Translation2d();
-
-    pidgeon = new Pigeon2(Constants.pigeonIMU);
-
     kinematics = Constants.Swerve.SWERVE_KINEMATICS;
-
     speeds = new ChassisSpeeds();
 
+    limelight = new LimeLight();
     odometry = new SwerveDriveOdometry(kinematics, getGyroRot(), getPositions());
+
+    poseEstimator = new SwerveDrivePoseEstimator(
+        getKinematics(),
+        getGyroRot(),
+        getPositions(),
+        new Pose2d(0, 0, getGyroRot().plus(Rotation2d.fromDegrees(90))));
+
+    // CONFGIURE THIS IN A BITs
+    // poseEstimator.setVisionMeasurementStdDevs(new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.02, 0.02, 0.01, 0.02, 0.02));
 
     Timer.delay(1.0);
     resetAllToAbsolute();
@@ -66,6 +77,19 @@ public class SwerveChassis extends SubsystemBase {
       SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
       SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
     }
+
+    poseEstimator.update(getGyroRot(), getPositions());
+    Pose2d pose = getFusedPose(); //offset by 8.5, 4.25
+    //THIS NEEDS TO BE CONSIDERED WHEN RUNNING AUTONOMOUS
+    if(limelight.hasApriltag()){
+      PathPlannerServer.sendPathFollowingData(limelight.getBotPose(), new Pose2d(pose.getX(), pose.getY(), pose.getRotation()));
+    } else {
+      PathPlannerServer.sendPathFollowingData(new Pose2d(), new Pose2d(pose.getX(), pose.getY(), pose.getRotation()));
+    }
+    
+    SmartDashboard.putNumber("FusedPoseX", pose.getX());
+    SmartDashboard.putNumber("FusedPoseY", pose.getY());
+    SmartDashboard.putNumber("FusedPoseRot", pose.getRotation().getDegrees());
   }
 
   public void resetPose(Pose2d pose) {
@@ -90,6 +114,15 @@ public class SwerveChassis extends SubsystemBase {
   }
   // #endregion
   // #region GET FUNCTIONS
+
+  public Pose2d getFusedPose() {
+    if (limelight.hasApriltag()) {
+      Pose2d pose = limelight.getBotPose();
+      poseEstimator.addVisionMeasurement(pose, limelight.getBotPoseTimestamp());
+      poseEstimator.resetPosition(getGyroRot().plus(Rotation2d.fromDegrees(0)), getPositions(), poseEstimator.getEstimatedPosition());
+    }
+    return poseEstimator.getEstimatedPosition();
+}
 
   public Pose2d getPose() {
     SmartDashboard.putNumber("OdometryX", odometry.getPoseMeters().getX());
@@ -117,32 +150,32 @@ public class SwerveChassis extends SubsystemBase {
 
   public void speedsToStates(Boolean isOpenLoop) {
     SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds, centerOfRot);
-    setStates(states, isOpenLoop);
+    setStates(states, isOpenLoop, false);
   }
 
   public void setCenter(Translation2d translation) {
     centerOfRot = translation;
   }
-
-  // Need to find a cleaner way to do this, we shouldn't have 2 set speeds
-  // functions, either it should always set the
-  // states or never set the states after
-
   /**
-   * Sets chassi speeds, with open loop and without calling speedsToStates
+   * Sets chassis speeds, with open loop and without calling speedsToStates
    * 
    * @param speeds
    */
-  public void setSpeeds(ChassisSpeeds speeds) {
-    speeds = new ChassisSpeeds(
-        speeds.vxMetersPerSecond,
-        speeds.vyMetersPerSecond,
-        speeds.omegaRadiansPerSecond);
+  public void setSpeeds(ChassisSpeeds speeds, boolean isOpenLoop) {
+    this.speeds = speeds;
+    SmartDashboard.putNumber("ChassisSpeedsX", speeds.vxMetersPerSecond);
+    SmartDashboard.putNumber("ChassisSpeedsY", speeds.vyMetersPerSecond);
+    SmartDashboard.putNumber("ChassisSpeedsRot", speeds.omegaRadiansPerSecond);
+
+    // the the teleop periodic in Robot it calls speeds to states
+    if(!isOpenLoop){
+      speedsToStates(isOpenLoop);
+    }
   }
 
   /** Overload for setSpeeds, sets speeds to 0, 0, 0 */
   public void setSpeeds() {
-    setSpeeds(new ChassisSpeeds(0, 0, 0));
+    setSpeeds(new ChassisSpeeds(0, 0, 0), false);
   }
 
   /**
@@ -150,12 +183,8 @@ public class SwerveChassis extends SubsystemBase {
    * 
    * @param speeds
    */
-  public void setSpeedsAuto(ChassisSpeeds speeds) {
-    speeds = new ChassisSpeeds(
-        speeds.vxMetersPerSecond,
-        speeds.vyMetersPerSecond,
-        speeds.omegaRadiansPerSecond);
-    speedsToStates(false);
+  public void setSpeeds(ChassisSpeeds speeds) {
+    setSpeeds(speeds, false);
   }
 
   /**
@@ -164,16 +193,16 @@ public class SwerveChassis extends SubsystemBase {
    * @param states     Must be exactly of length 4
    * @param isOpenLoop
    */
-  public void setStates(SwerveModuleState[] states, Boolean isOpenLoop) {
+  public void setStates(SwerveModuleState[] states, boolean isOpenLoop, boolean overrideDeadband) {
     if (states.length != 4) {
       throw new IllegalArgumentException("The \"setStates\" input array size should be 4!");
     } else {
       Odometry.updateOdometry(getPositions(), getGyroRot(), odometry);
-      SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.maxSpeed);
-      moduleRU.setDesiredState(states[1], isOpenLoop);
-      moduleLU.setDesiredState(states[0], isOpenLoop);
-      moduleLD.setDesiredState(states[2], isOpenLoop);
-      moduleRD.setDesiredState(states[3], isOpenLoop);
+      SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.Swerve.MAX_SPEED);
+      moduleLU.setDesiredState(states[0], isOpenLoop, overrideDeadband);
+      moduleRU.setDesiredState(states[1], isOpenLoop, overrideDeadband);
+      moduleLD.setDesiredState(states[2], isOpenLoop, overrideDeadband);
+      moduleRD.setDesiredState(states[3], isOpenLoop, overrideDeadband);
     }
   }
   // #endregion
