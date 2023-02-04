@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.classes.LimeLight;
-import frc.robot.classes.Odometry;
+// import frc.robot.classes.Odometry;
 import frc.robot.classes.SwerveModule;
 
 public class SwerveChassis extends SubsystemBase {
@@ -93,7 +93,8 @@ public class SwerveChassis extends SubsystemBase {
   }
 
   public void resetPose(Pose2d pose) {
-    Odometry.resetOdometry(pose, getGyroRot(), this, odometry);
+    // Odometry.resetOdometry(pose, getGyroRot(), this, odometry);
+    poseEstimator.resetPosition(getGyroRot(), getPositions(), pose);
   }
 
   public void resetAllToAbsolute() {
@@ -123,13 +124,6 @@ public class SwerveChassis extends SubsystemBase {
     }
     return poseEstimator.getEstimatedPosition();
 }
-
-  public Pose2d getPose() {
-    SmartDashboard.putNumber("OdometryX", odometry.getPoseMeters().getX());
-    SmartDashboard.putNumber("OdometryY", odometry.getPoseMeters().getY());
-    SmartDashboard.putNumber("OdometryRot", odometry.getPoseMeters().getRotation().getDegrees());
-    return Odometry.getPose(odometry);
-  }
 
   public SwerveDriveKinematics getKinematics() {
     return kinematics;
@@ -197,7 +191,7 @@ public class SwerveChassis extends SubsystemBase {
     if (states.length != 4) {
       throw new IllegalArgumentException("The \"setStates\" input array size should be 4!");
     } else {
-      Odometry.updateOdometry(getPositions(), getGyroRot(), odometry);
+      // Odometry.updateOdometry(getPositions(), getGyroRot(), odometry);
       SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.Swerve.MAX_SPEED);
       moduleLU.setDesiredState(states[0], isOpenLoop, overrideDeadband);
       moduleRU.setDesiredState(states[1], isOpenLoop, overrideDeadband);
