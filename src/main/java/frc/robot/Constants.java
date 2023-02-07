@@ -12,12 +12,11 @@ import frc.robot.classes.SwerveModuleConstants;
 
 public final class Constants {
 
-
-    public static final int elbowNeoID = 10;
-    public static final int shoulderNeoID = 9;
-    public static final int lowerManipNeoID = 15;//should be 11
-    public static final int upperManipNeoID = 16;//should be 12
-    public static final int DaveNeo = 11;
+    public static final int ELBOW_NEO = 10;
+    public static final int SHOULDER_NEO = 9;
+    public static final int LOWER_MANIP_NEO = 15;//should be 11
+    public static final int UPPER_MANIP_NEO = 16;//should be 12
+    public static final int DAVE_NEO = 11;
     /** A class within Constants that contains most of the swerve constants */
     public static final class Swerve {
 
@@ -152,17 +151,14 @@ public final class Constants {
     public static final int PIGEON_IMU = 0;
 
     // PNEUMATICS
-    public static final int forwardChannel = 2;
-    public static final int backwardChannel = 3;
+    public static final int FORWARD_CHANNEL = 2;
+    public static final int BACKWARD_CHANNEL = 3;
 
     // CONTROL
 
     public static final int DRIVE_CONTROLLER = 0;
-    public static final int ARM_Controller = 1;
+    public static final int MANIP_CONTROLLER = 1;
     public static final double DPAD_VEL = 1; // max meters per second (with RT down)
-
-    public static final int manipController = 2;
-
 
     // #region KINEMATICS
 
@@ -190,26 +186,29 @@ public final class Constants {
     public static final double TRAJECTORY_KI = 0;
     public static final double TRAJECTORY_KD = 0;
     // #endregion
-   // public static int armController = 3;
-    public static int shoulderEncoderID = 0;
-    public static int elbowEncoderID = 1;
-    
+    // public static int armController = 3;
+    public static int SHOULDER_ENCODER = 0;
+    public static int ELBOW_ENCODER = 1;
 
-    //Arm control constants-->
+    //  ARM
     //All encoder constants are offsets from a HOME position
-    public static final double shoulderMax = 7800; // all max and mins subject to change after testing
-    public static final double shoulderMin = -200;
-    public static final double elbowMax = 7800;
-    public static final double elbowMin = -200;
+    public static final double SHOULDER_MAX = 7800; // all max and mins subject to change after testing
+    public static final double SHOULDER_MIN = -200;
+    public static final double ELBOW_MAX = 7800;
+    public static final double ELBOW_MIN = -200;
 
     //Deadzone Buffer for encoders
-    public static final double elbowBuffer = 10;
-    public static final double shoulderBuffer = 10;
+    public static final double ELBOW_BUFFER = 10;
+    public static final double SHOULDER_BUFFER = 10;
+
+    // NEED TO BE SET
+    public static final double ELBOW_ENCODER_OFFSET = 0;
+    public static final double SHOULDER_ENCODER_OFFSET = 0;
 
     //Arm Targets--> Subject to change (Delete when changed)
-    public static final double shoulderLowTarget = 500;
-    public static final double elbowLowTarget = -200;
-    public static final double shoulderMidTarget = 500;
-    public static final double elbowMidTarget = -200;
+    public static final double SHOULDER_LOW_TARGET = 200;
+    public static final double ELBOW_LOW_TARGET = 100;
+    public static final double SHOULDER_MID_TARGET = 200;
+    public static final double ELBOW_MID_TARGET = 100;
 
 }

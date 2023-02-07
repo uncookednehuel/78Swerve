@@ -15,10 +15,10 @@ public class IntakeV1_Lentz extends SubsystemBase {
   private CANSparkMax bottomNeoCube;
   /** Creates a new IntakeV1_Lentz. */
   public IntakeV1_Lentz() {
-    topNeoCone = new CANSparkMax(Constants.upperManipNeoID, MotorType.kBrushless);
-    bottomNeoCube = new CANSparkMax(Constants.lowerManipNeoID, MotorType.kBrushless);
-    
+    topNeoCone = new CANSparkMax(Constants.UPPER_MANIP_NEO, MotorType.kBrushless);
+    bottomNeoCube = new CANSparkMax(Constants.LOWER_MANIP_NEO, MotorType.kBrushless);
   }
+
    public CommandBase runTopNeocmd(double speed){
 
     return this.runOnce(()->topNeoCone.set(speed));

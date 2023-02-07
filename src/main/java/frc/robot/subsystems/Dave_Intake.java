@@ -21,7 +21,7 @@ public class Dave_Intake extends SubsystemBase {
 
   /** Creates a new IntakeV1_Lentz. */
   public Dave_Intake() {
-    Neo = new CANSparkMax(Constants.DaveNeo, MotorType.kBrushless);
+    Neo = new CANSparkMax(Constants.DAVE_NEO, MotorType.kBrushless);
     //rightNeo = new CANSparkMax(15, MotorType.kBrushless);
 
     solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 3, 2);

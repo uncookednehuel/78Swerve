@@ -28,10 +28,10 @@ public class Arm extends SubsystemBase {
 
   /** Creates a new Arm. */
   public Arm() {
-    shoulderNeo = new CANSparkMax(Constants.shoulderNeoID, MotorType.kBrushless);
-    elbowNeo = new CANSparkMax(Constants.elbowNeoID, MotorType.kBrushless);
-    shoulderEncoder = new DutyCycleEncoder(Constants.shoulderEncoderID);
-    elbowEncoder = new DutyCycleEncoder(Constants.elbowEncoderID);
+    shoulderNeo = new CANSparkMax(Constants.SHOULDER_NEO, MotorType.kBrushless);
+    elbowNeo = new CANSparkMax(Constants.ELBOW_NEO, MotorType.kBrushless);
+    shoulderEncoder = new DutyCycleEncoder(Constants.SHOULDER_ENCODER);
+    elbowEncoder = new DutyCycleEncoder(Constants.ELBOW_ENCODER);
     elbowPIDcontroller = elbowNeo.getPIDController();
     shoulderPIDcontroller = shoulderNeo.getPIDController();
     target = 0;
@@ -58,7 +58,7 @@ public void setElbowSpeed(double motorPercentage){
  * @return double containing absolute position of shoulder
  */
 public double getShoulderAbsolutePosition(){
-  return shoulderEncoder.getAbsolutePosition() * 360;
+  return (shoulderEncoder.getAbsolutePosition() * 360) - Constants.SHOULDER_ENCODER_OFFSET;
 }
 
 /**
@@ -66,7 +66,7 @@ public double getShoulderAbsolutePosition(){
  * @return double containing absolute position of elbow
  */
 public double getElbowAbsolutePosition(){
-  return elbowEncoder.getAbsolutePosition() * 360;
+  return (elbowEncoder.getAbsolutePosition() * 360) - Constants.ELBOW_ENCODER_OFFSET;
 }
 
   @Override
@@ -74,16 +74,14 @@ public double getElbowAbsolutePosition(){
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Shoulder Encoder", getShoulderAbsolutePosition());
     SmartDashboard.putNumber("Elbow Encoder", getElbowAbsolutePosition());
-
   }
-
 
   public void elbowGoToPosition(double target){
     double elbowCurrentPosition = getElbowAbsolutePosition();
-    if(elbowCurrentPosition > Constants.elbowMin && elbowCurrentPosition < Constants.elbowMax) {
-      if(elbowCurrentPosition > (target + Constants.elbowBuffer)){
+    if(elbowCurrentPosition > Constants.ELBOW_MIN && elbowCurrentPosition < Constants.ELBOW_MAX) {
+      if(elbowCurrentPosition > (target + Constants.ELBOW_BUFFER)){
         setElbowSpeed(-0.5);
-      }else if(elbowCurrentPosition < (target + Constants.elbowBuffer)){
+      }else if(elbowCurrentPosition < (target + Constants.ELBOW_BUFFER)){
         setElbowSpeed(0.5);
       }else{
         setElbowSpeed(0);
@@ -93,15 +91,12 @@ public double getElbowAbsolutePosition(){
 
   public void shoulderGoToPosition(double target){
     double shoulderCurrentPosition = getShoulderAbsolutePosition();
-    if(shoulderCurrentPosition > target + Constants.shoulderBuffer){
+    if(shoulderCurrentPosition > target + Constants.SHOULDER_BUFFER){
       setElbowSpeed(-0.5);
-    }else if(shoulderCurrentPosition < target + Constants.shoulderBuffer){
+    }else if(shoulderCurrentPosition < target + Constants.SHOULDER_BUFFER){
       setElbowSpeed(0.5);
     }else{
       setElbowSpeed(0);
     }
   }
-
-  
-
 }
