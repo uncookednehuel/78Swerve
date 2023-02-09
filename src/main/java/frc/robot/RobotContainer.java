@@ -2,7 +2,6 @@ package frc.robot;
 
 import java.util.HashMap;
 
-import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
@@ -89,12 +88,15 @@ public class RobotContainer {
     PathPlannerTrajectory oneMeterStraight = PathFunctions.createTrajectory("1MeterStraight");
     PathPlannerTrajectory spiral = PathFunctions.createTrajectory("Spiral");  
 
-    PathFunctions.resetOdometry(m_chassis, test3);
+    
     CommandBase test3Cmd = autoBuilder.followPath(test3).andThen(() -> m_chassis.setSpeeds());
     CommandBase oneMeterStraightCmd = autoBuilder.followPath(oneMeterStraight).andThen(() -> m_chassis.setSpeeds());
     CommandBase sprialCmd = autoBuilder.followPath(spiral).andThen(() -> m_chassis.setSpeeds());
 
-    return new SequentialCommandGroup(oneMeterStraightCmd, sprialCmd);
+    // PathFunctions.resetOdometry(m_chassis, test3);
+    m_chassis.resetPose(test3.getInitialHolonomicPose());
+    return new SequentialCommandGroup(oneMeterStraightCmd, new InstantCommand(() -> m_chassis.resetPose(oneMeterStraight.getInitialHolonomicPose())), oneMeterStraightCmd);
+    // return autoBuilder.followPath(test3).andThen(() -> m_chassis.setSpeeds());
   }
 
   /**
