@@ -42,7 +42,7 @@ public class SetArmPID extends CommandBase {
     double shoulderSpeed = m_arm.shoulderPIDcontroller.calculate(m_arm.getShoulderAbsolutePosition(), m_arm.shoulderTarget);
     m_arm.setShoulderSpeed(shoulderSpeed);
     double elbowSpeed = m_arm.elbowPIDcontroller.calculate(m_arm.getElbowAbsolutePosition(), m_arm.elbowTarget);
-    m_arm.setElbowSpeed(elbowSpeed);
+    m_arm.setElbowSpeed(elbowSpeed * -1);
   }
 
   // Called once the command ends or is interrupted.

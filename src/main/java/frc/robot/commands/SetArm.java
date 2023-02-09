@@ -26,13 +26,16 @@ public class SetArm extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    arm.elbowGoToPosition(elbowTarget);
-    arm.shoulderGoToPosition(shoulderTarget);
+  //  arm.elbowGoToPosition(elbowTarget);
+    //arm.shoulderGoToPosition(shoulderTarget);
+    arm.elbowTarget = elbowTarget;
+    arm.shoulderTarget = shoulderTarget;
   }
 
   // Called once the command ends or is interrupted.

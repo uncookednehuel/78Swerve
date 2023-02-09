@@ -191,8 +191,8 @@ public final class Constants {
     public static int ELBOW_ENCODER = 1;
    
 
-    public static double elbowDefault = 50;
-    public static double shoulderDefault = 50;
+    public static double elbowDefault = 110;
+    public static double shoulderDefault = 110;
     // TODO - change to proper default positions
 
     //  ARM

@@ -34,8 +34,8 @@ public class Arm extends SubsystemBase {
     elbowNeo = new CANSparkMax(Constants.ELBOW_NEO, MotorType.kBrushless);
     shoulderEncoder = new DutyCycleEncoder(Constants.SHOULDER_ENCODER);
     elbowEncoder = new DutyCycleEncoder(Constants.ELBOW_ENCODER);
-    elbowPIDcontroller = new PIDController(0.001, 0, 0);
-    shoulderPIDcontroller = new PIDController(0.001, 0, 0);
+    elbowPIDcontroller = new PIDController(0.01, 0, 0);
+    shoulderPIDcontroller = new PIDController(0.01, 0, 0);
     target = 0;
     elbowTarget = Constants.elbowDefault;
     shoulderTarget = Constants.shoulderDefault;
@@ -78,6 +78,8 @@ public double getElbowAbsolutePosition(){
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Shoulder Encoder", getShoulderAbsolutePosition());
     SmartDashboard.putNumber("Elbow Encoder", getElbowAbsolutePosition());
+    SmartDashboard.putNumber("targetShoulder", shoulderTarget);
+    SmartDashboard.putNumber("targetElbow", elbowTarget);
   }
 
   public void elbowGoToPosition(double target){
