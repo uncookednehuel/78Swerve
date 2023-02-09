@@ -4,39 +4,44 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.IntakeV1_Lentz;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.subsystems.Arm;
 
-public class bottomNeo extends CommandBase {
-  IntakeV1_Lentz m_sub;
-  double speed = 0;
-  /** Creates a new bottomNeo. */
-  public bottomNeo(IntakeV1_Lentz sub, double speed) {
-    this.m_sub = sub;
-    this.speed = speed;
-    addRequirements(sub);
+public class SetArm extends CommandBase {
+  private double elbowTarget;
+  private double shoulderTarget;
+  private Arm arm;
+  
+  
+  /** Creates a new RunArmToTarget. */
+  public SetArm(Arm arm, double elbowTarget, double shoulderTarget) {
+    this.arm = arm;
+    this.elbowTarget = elbowTarget;
+    this.shoulderTarget = shoulderTarget;
+
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    m_sub.runBottomNeocmd(speed);
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    arm.elbowGoToPosition(elbowTarget);
+    arm.shoulderGoToPosition(shoulderTarget);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    m_sub.runBottomNeocmd(0.0);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return false;
   }
 }

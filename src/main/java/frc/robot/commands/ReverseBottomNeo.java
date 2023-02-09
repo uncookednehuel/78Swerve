@@ -4,38 +4,28 @@
 
 package frc.robot.commands;
 
-import java.lang.annotation.Target;
-
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.IntakeV1_Lentz;
 
-public class RunArmToTarget extends CommandBase {
-  private double elbowTarget;
-  private double shoulderTarget;
-  private Arm m_Arm;
-  
-  
-  /** Creates a new RunArmToTarget. */
-  public RunArmToTarget(Subsystem Arm, double elbowTarget, double shoulderTarget) {
-    Arm = m_Arm;
-    this.elbowTarget = elbowTarget;
-    this.shoulderTarget = shoulderTarget;
+public class ReverseBottomNeo extends CommandBase {
+  IntakeV1_Lentz intake;
+  /** Creates a new ReverseBottomNeo. */
+  public ReverseBottomNeo(IntakeV1_Lentz intake) {
+    this.intake = intake;
 
+    addRequirements(intake);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    intake.reverseTopNeo(-0.5);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    m_Arm.elbowGoToPosition(elbowTarget);
-    m_Arm.shoulderGoToPosition(shoulderTarget);
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override

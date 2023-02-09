@@ -1,5 +1,6 @@
-package frc.robot;
+  package frc.robot;
 
+import java.time.Instant;
 import java.util.HashMap;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -25,13 +26,17 @@ import frc.robot.classes.PathFunctions;
 import frc.robot.commands.ArmControl;
 import frc.robot.commands.AutoCenter;
 import frc.robot.commands.Park;
+import frc.robot.commands.ReverseBottomNeo;
+import frc.robot.commands.ReverseTopNeo;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.commands.TestShoulderMotor;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.SwerveChassis;
 //import frc.robot.commands.ManualControl;
-import frc.robot.commands.RunArmToTarget;
-
+import frc.robot.commands.SetArm;
+import frc.robot.commands.RunBottomNeos;
+import frc.robot.commands.RunTopBottomTemp;
+import frc.robot.commands.RunTopNeos;
 import frc.robot.commands.SetIntake;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.Dave_Intake;
@@ -48,18 +53,16 @@ public class RobotContainer {
   private final LimeLight m_limeLight;
   
   private final XboxController m_driveController;
-  private final XboxController m_armController;
   private final XboxController m_manipController;
-  private final IntakeV1_Lentz m_IntakeV1_Lentz = new IntakeV1_Lentz();
+  private final IntakeV1_Lentz m_IntakeV1_Lentz;
   private final Dave_Intake m_Dave_Intake;
   private final HashMap<String, Command> m_eventMap;
   private final SwerveAutoBuilder autoBuilder;
- private final CommandJoystick manipControl = new CommandJoystick(0);
 
- Trigger btnX = manipControl.button(1);
-  Trigger btnY = manipControl.button(2);
-  Trigger btnA = manipControl.button(3);
-  Trigger btnB = manipControl.button(4);
+  // Trigger btnX = manipControl.x(null);
+  // Trigger btnY = manipControl.y.value;
+  // Trigger btnA = manipControl.a.value;
+  // Trigger btnB = manipControl.b.value;
 
   public RobotContainer() {
     m_chassis = new SwerveChassis();
@@ -67,13 +70,11 @@ public class RobotContainer {
     m_limeLight = new LimeLight();
     m_driveController = new XboxController(Constants.DRIVE_CONTROLLER);
 
-    m_armController = new XboxController(Constants.ARM_Controller);
+    m_IntakeV1_Lentz = new IntakeV1_Lentz();
 
 
     m_Dave_Intake = new Dave_Intake();
-    m_manipController = new XboxController(Constants.manipController);
-    //private final CommandJoystick manipControl = new CommandJoystick(0);
-   // private final CommandJoystick manipControl = new CommandJoystick(0);
+    m_manipController = new XboxController(Constants.MANIP_CONTROLLER);
 
     m_chassis.setDefaultCommand(new SwerveDrive(
         m_chassis,
@@ -84,34 +85,20 @@ public class RobotContainer {
         () -> modifyAxis(m_driveController.getLeftTriggerAxis()),
         () -> modifyAxis(m_driveController.getRightTriggerAxis())));
 
-      //m_arm.setDefaultCommand(new ManualControl(m_arm, m_armController.getRightY(), m_armController.getLeftY()));
-     // m_arm.setDefaultCommand(new ArmControl(m_arm, m_armController.getLeftY(), m_armController.getRightY()));
       m_arm.setDefaultCommand(new ArmControl(m_arm,
-      () -> -modifyAxis(m_armController.getLeftY()),
-      () -> -modifyAxis(m_armController.getRightY())
+      () -> -modifyAxis(m_manipController.getLeftY()),
+      () -> -modifyAxis(m_manipController.getRightY())
       ));
-    //  m_arm.setDefaultCommand(new TestShoulderMotor(m_arm));
-    
-  //  m_arm.setDefaultCommand(new InstantCommand(()-> m_arm.setShoulderSpeed(0.2)));//will change-MG
 
-    
-    Trigger buttonA = new JoystickButton(m_armController, XboxController.Button.kX.value);
-    buttonA.onTrue(new InstantCommand(() -> new RunArmToTarget(m_arm, Constants.shoulderLowTarget, Constants.elbowLowTarget)));
+  m_Dave_Intake.setDefaultCommand(new SetIntake(m_Dave_Intake, 0.1, DoubleSolenoid.Value.kForward));
+
+    Trigger buttonA = new JoystickButton(m_manipController, XboxController.Button.kX.value);
+    buttonA.onTrue(new InstantCommand(() -> new SetArm(m_arm, Constants.SHOULDER_LOW_TARGET, Constants.ELBOW_LOW_TARGET)));
     buttonA.onFalse(new InstantCommand(() -> m_arm.setShoulderSpeed(0)));
     
-    Trigger buttonB = new JoystickButton(m_armController, XboxController.Button.kX.value);
-    buttonB.onTrue(new InstantCommand(() -> new RunArmToTarget(m_arm, Constants.shoulderMidTarget, Constants.elbowMidTarget)));
+    Trigger buttonB = new JoystickButton(m_manipController, XboxController.Button.kX.value);
+    buttonB.onTrue(new InstantCommand(() -> new SetArm(m_arm, Constants.SHOULDER_MID_TARGET, Constants.ELBOW_MID_TARGET)));
     buttonB.onFalse(new InstantCommand(() -> m_arm.setShoulderSpeed(0)));
-
-    
-    
-    //Trigger buttonY = new JoystickButton(m_armController, XboxController.Button.kY.value);
-   // buttonY.onTrue(new InstantCommand(() -> m_arm.setElbowSpeed(0.5)));
-    //buttonY.onFalse(new InstantCommand(() -> m_arm.setElbowSpeed(0)));
-
-   //Trigger buttonB = new JoystickButton(m_armController, XboxController.Button.kY.value);
-    //buttonB.onTrue(new InstantCommand(() -> m_arm.setElbowSpeed(-0.5)));
-    //buttonB.onFalse(new InstantCommand(() -> m_arm.setElbowSpeed(0)));
 
     // #region PATHPLANNER
     m_eventMap = new HashMap<>();
@@ -134,7 +121,7 @@ public class RobotContainer {
 
     configureButtonBindings();
   }
-//yay
+
   private void configureButtonBindings() {
     new Trigger(m_driveController::getStartButton).onTrue(new InstantCommand(m_chassis::zeroGyro));// (new
                                                                                                // InstantCommand(m_chassis::zeroGyro));
@@ -152,27 +139,29 @@ public class RobotContainer {
 
 
     //Intake Buttons for V1 
-    //new Trigger(m_manipController::getXButton).onTrue(m_IntakeV1_Lentz.runTopNeo(0.1)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
-    //new Trigger(m_manipController::getYButton).onTrue((m_IntakeV1_Lentz.runTopNeo(-0.1))).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
-    //new Trigger(m_manipController::getAButton).onTrue(m_IntakeV1_Lentz.runBottomNeo(1)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
-    //new Trigger(m_manipController::getXButton).onTrue(m_IntakeV1_Lentz.runBottomNeo(-0.50)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
-    btnX.onTrue(m_IntakeV1_Lentz.runTopNeo(0.1)).onFalse(m_IntakeV1_Lentz.runTopNeo(0));
-    btnY.onTrue(m_IntakeV1_Lentz.runTopNeo(-0.1)).onFalse(m_IntakeV1_Lentz.runTopNeo(0));
-    btnA.onTrue(m_IntakeV1_Lentz.runBottomNeo(1)).onFalse(m_IntakeV1_Lentz.runBottomNeo(0));
-    btnB.onTrue(m_IntakeV1_Lentz.runBottomNeo(-0.50)).onFalse(m_IntakeV1_Lentz.runBottomNeo(0.0));
+    // new Trigger(m_manipController::getXButton).onTrue(m_IntakeV1_Lentz.runTopNeo(0.5)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
+    // new Trigger(m_manipController::getYButton).onTrue(m_IntakeV1_Lentz.runTopNeo(-0.5)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
+    // new Trigger(m_manipController::getAButton).onTrue(m_IntakeV1_Lentz.runBottomNeo(0.5)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
+    // new Trigger(m_manipController::getXButton).onTrue(m_IntakeV1_Lentz.runBottomNeo(-0.50)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
+    //new Trigger(m_manipController::getAButton).onTrue(new InstantCommand(() -> m_IntakeV1_Lentz.testNeo())).onFalse(new InstantCommand(() -> m_IntakeV1_Lentz.stopNeo()));
+    //new Trigger(m_manipController::getAButton).whileTrue(new RunTopBottomTemp(m_IntakeV1_Lentz));
+    //new Trigger(m_manipController::getAButton).whileTrue(new RunTopNeos(m_IntakeV1_Lentz, -0.6));
+    //new Trigger(m_manipController::getBButton).whileTrue(new RunBottomNeos(m_IntakeV1_Lentz, -0.3));
+    //new Trigger(m_manipController::getXButton).whileTrue(new RunTopNeos(m_IntakeV1_Lentz, 0.6));
+    //new Trigger(m_manipController::getYButton).whileTrue(new RunBottomNeos(m_IntakeV1_Lentz, 0.3));
+
+   // new Trigger(m_manipController::getAButton).whileTrue(new SetArm(m_arm, 213.211, 123.627));
+    //new Trigger(m_manipController::getBButton).whileTrue(new SetArm(m_arm, 231.899, 119.261));
+    //new Trigger(m_manipController::getXButton).whileTrue(new SetArm(m_arm, 0, 0));
+   // new Trigger(m_manipController::getYButton).whileTrue(new SetArm(m_arm, 115.974, 24.974 ));
 
     //End of Intake buttons for V1
-
     // Intake buttons for Dave's intake (X = intake)
 
-    new Trigger(m_manipController::getXButton).whileTrue(new SetIntake(m_Dave_Intake, 0.1, DoubleSolenoid.Value.kForward)); 
-    new Trigger(m_manipController::getYButton).whileTrue(new SetIntake(m_Dave_Intake, -0.1, DoubleSolenoid.Value.kReverse)); 
-    
-    //whileTrue(new SetSpeed(m_Dave_Intake, 0.1));
-
+   new Trigger(m_manipController::getXButton).whileTrue(new SetIntake(m_Dave_Intake, 0.6, DoubleSolenoid.Value.kForward)); 
+   new Trigger(m_manipController::getYButton).whileTrue(new SetIntake(m_Dave_Intake, 0.6, DoubleSolenoid.Value.kReverse)); 
+   new Trigger(m_manipController::getAButton).whileTrue(new SetIntake(m_Dave_Intake, -1 , DoubleSolenoid.Value.kReverse));
   }
-
-  //value * max * joystickY
 
   public Command getAutonomousCommand() {
     PathPlannerTrajectory trajectory1 = PathFunctions.createTrajectory("Test3");
