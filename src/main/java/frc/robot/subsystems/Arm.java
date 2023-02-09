@@ -22,9 +22,11 @@ public class Arm extends SubsystemBase {
   private DutyCycleEncoder elbowEncoder;
   private CANSparkMax shoulderNeo;
   private CANSparkMax elbowNeo;
-  private SparkMaxPIDController elbowPIDcontroller;
-  private SparkMaxPIDController shoulderPIDcontroller;
+  public PIDController elbowPIDcontroller;
+  public PIDController shoulderPIDcontroller;
   private double target;
+  public double elbowTarget;
+  public double shoulderTarget; 
 
   /** Creates a new Arm. */
   public Arm() {
@@ -32,9 +34,11 @@ public class Arm extends SubsystemBase {
     elbowNeo = new CANSparkMax(Constants.ELBOW_NEO, MotorType.kBrushless);
     shoulderEncoder = new DutyCycleEncoder(Constants.SHOULDER_ENCODER);
     elbowEncoder = new DutyCycleEncoder(Constants.ELBOW_ENCODER);
-    elbowPIDcontroller = elbowNeo.getPIDController();
-    shoulderPIDcontroller = shoulderNeo.getPIDController();
+    elbowPIDcontroller = new PIDController(0.001, 0, 0);
+    shoulderPIDcontroller = new PIDController(0.001, 0, 0);
     target = 0;
+    elbowTarget = Constants.elbowDefault;
+    shoulderTarget = Constants.shoulderDefault;
   }
 
   /**

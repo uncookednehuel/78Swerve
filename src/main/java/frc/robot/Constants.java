@@ -186,9 +186,14 @@ public final class Constants {
     public static final double TRAJECTORY_KI = 0;
     public static final double TRAJECTORY_KD = 0;
     // #endregion
-    // public static int armController = 3;
+   
     public static int SHOULDER_ENCODER = 0;
     public static int ELBOW_ENCODER = 1;
+   
+
+    public static double elbowDefault = 50;
+    public static double shoulderDefault = 50;
+    // TODO - change to proper default positions
 
     //  ARM
     //All encoder constants are offsets from a HOME position

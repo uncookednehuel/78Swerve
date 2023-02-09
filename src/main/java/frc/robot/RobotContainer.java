@@ -37,6 +37,7 @@ import frc.robot.commands.SetArm;
 import frc.robot.commands.RunBottomNeos;
 import frc.robot.commands.RunTopBottomTemp;
 import frc.robot.commands.RunTopNeos;
+import frc.robot.commands.SetArmPID;
 import frc.robot.commands.SetIntake;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.Dave_Intake;
@@ -89,6 +90,9 @@ public class RobotContainer {
       () -> -modifyAxis(m_manipController.getLeftY()),
       () -> -modifyAxis(m_manipController.getRightY())
       ));
+    m_arm.setDefaultCommand(new SetArmPID(m_arm));
+    
+  //  m_arm.setDefaultCommand(new InstantCommand(()-> m_arm.setShoulderSpeed(0.2)));//will change-MG
 
   m_Dave_Intake.setDefaultCommand(new SetIntake(m_Dave_Intake, 0.1, DoubleSolenoid.Value.kForward));
 
