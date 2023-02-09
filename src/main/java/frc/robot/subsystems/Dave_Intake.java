@@ -22,7 +22,7 @@ public class Dave_Intake extends SubsystemBase {
     leftNeo = new CANSparkMax(6, MotorType.kBrushless);
     rightNeo = new CANSparkMax(5, MotorType.kBrushless);
 
-    solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 3, 2);
+    solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
     
     compressor = new Compressor(PneumaticsModuleType.REVPH);
   }
