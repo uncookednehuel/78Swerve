@@ -21,6 +21,7 @@ import frc.robot.classes.LimeLight;
 import frc.robot.classes.PathFunctions;
 import frc.robot.commands.AutoCenter;
 import frc.robot.commands.Park;
+import frc.robot.commands.ResetPose;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.SwerveChassis;
 
@@ -88,15 +89,13 @@ public class RobotContainer {
     PathPlannerTrajectory oneMeterStraight = PathFunctions.createTrajectory("1MeterStraight");
     PathPlannerTrajectory spiral = PathFunctions.createTrajectory("Spiral");  
 
-    
-    CommandBase test3Cmd = autoBuilder.followPath(test3).andThen(() -> m_chassis.setSpeeds());
-    CommandBase oneMeterStraightCmd = autoBuilder.followPath(oneMeterStraight).andThen(() -> m_chassis.setSpeeds());
-    CommandBase sprialCmd = autoBuilder.followPath(spiral).andThen(() -> m_chassis.setSpeeds());
-
     // PathFunctions.resetOdometry(m_chassis, test3);
-    m_chassis.resetPose(test3.getInitialHolonomicPose());
-    return new SequentialCommandGroup(oneMeterStraightCmd, new InstantCommand(() -> m_chassis.resetPose(oneMeterStraight.getInitialHolonomicPose())), oneMeterStraightCmd);
-    // return autoBuilder.followPath(test3).andThen(() -> m_chassis.setSpeeds());
+    // Command resetPose = new InstantCommand(() -> m_chassis.resetPose(oneMeterStraight.getInitialHolonomicPose()));
+    return new SequentialCommandGroup(
+                                      new ResetPose(oneMeterStraight.getInitialHolonomicPose(), m_chassis),
+                                      autoBuilder.followPath(oneMeterStraight).andThen(() -> m_chassis.setSpeeds()),
+                                      new ResetPose(oneMeterStraight.getInitialHolonomicPose(), m_chassis),
+                                      autoBuilder.followPath(oneMeterStraight).andThen(() -> m_chassis.setSpeeds()));
   }
 
   /**
