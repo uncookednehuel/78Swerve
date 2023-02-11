@@ -31,9 +31,9 @@ public class SetArmPID extends CommandBase {
   @Override
   public void initialize() {
     m_arm.shoulderPIDcontroller.disableContinuousInput();
-    m_arm.shoulderPIDcontroller.setTolerance(5);
+    m_arm.shoulderPIDcontroller.setTolerance(2);
     m_arm.elbowPIDcontroller.disableContinuousInput();
-    m_arm.elbowPIDcontroller.setTolerance(5);
+    m_arm.elbowPIDcontroller.setTolerance(2);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

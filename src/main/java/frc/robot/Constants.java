@@ -189,10 +189,25 @@ public final class Constants {
    
     public static int SHOULDER_ENCODER = 0;
     public static int ELBOW_ENCODER = 1;
+
+    //OCnstants for Arm Presets and such
+    public static double ELBOWSHELF = 226.293;
+    public static double SHOULDERSHELF = 126.394;
+
+    public static double ELBOWFLOOR = 110.625;
+    public static double SHOULDERFLOOR = 13.336;
+
+    public static double ELBOWMID = 194.26;
+    public static double SHOULDERMID = 107.089;
+
+    public static double ELBOWSTOW = 23.89;
+    public static double SHOULDERSTOW = 15.81;
+
+
    
 
-    public static double elbowDefault = 110;
-    public static double shoulderDefault = 110;
+    public static double elbowDefault = 23.89;
+    public static double shoulderDefault = 15.81;
     // TODO - change to proper default positions
 
     //  ARM
