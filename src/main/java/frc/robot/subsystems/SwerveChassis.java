@@ -109,10 +109,31 @@ public class SwerveChassis extends SubsystemBase {
   public void zeroGyro() {
     pidgeon.setYaw(0.0);
   }
-
-  public Rotation2d getGyroRot() {
-    return Rotation2d.fromDegrees(pidgeon.getYaw());
+  /**
+   * Gets the gyro rotation on any of 3 axises
+   * @param axis 0 is Pitch (X), 1 is Roll (Y), 2 is Yaw (Z)
+   * @return
+   */
+  public Rotation2d getGyroRot(int axis) {
+    if(axis == 0) {
+      return Rotation2d.fromDegrees(pidgeon.getPitch());
+    }
+    if(axis == 1) {
+      return Rotation2d.fromDegrees(pidgeon.getRoll());
+    }
+    if(axis == 2) {
+      return Rotation2d.fromDegrees(pidgeon.getYaw());
+    }
+    return new Rotation2d();
   }
+  /**
+   * Returns gyro rotation on Yaw axis (Z)
+   * @return
+   */
+  public Rotation2d getGyroRot() {
+    return getGyroRot(2);
+  }
+
   // #endregion
   // #region GET FUNCTIONS
 
@@ -152,7 +173,6 @@ public class SwerveChassis extends SubsystemBase {
   }
   /**
    * Sets chassis speeds, with open loop and without calling speedsToStates
-   * 
    * @param speeds
    */
   public void setSpeeds(ChassisSpeeds speeds, boolean isOpenLoop) {
@@ -174,7 +194,6 @@ public class SwerveChassis extends SubsystemBase {
 
   /**
    * Sets chassis speeds, but with a closed loop PID
-   * 
    * @param speeds
    */
   public void setSpeeds(ChassisSpeeds speeds) {

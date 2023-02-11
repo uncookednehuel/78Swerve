@@ -12,7 +12,7 @@ import frc.robot.subsystems.SwerveChassis;
 
 public class SwerveDrive extends CommandBase {
 
-  private SwerveChassis m_chassis;
+  private SwerveChassis chassis;
   private final DoubleSupplier xSupplier;
   private final DoubleSupplier ySupplier;
   private final DoubleSupplier rotSupplier;
@@ -29,7 +29,7 @@ public class SwerveDrive extends CommandBase {
       DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rotSupplier,
       IntSupplier dPadSupplier,
       DoubleSupplier lTriggerSupplier, DoubleSupplier rTriggerSupplier) {
-    m_chassis = chassis;
+    this.chassis = chassis;
     this.xSupplier = xSupplier;
     this.ySupplier = ySupplier;
     this.rotSupplier = rotSupplier;
@@ -40,7 +40,7 @@ public class SwerveDrive extends CommandBase {
     xLimiter = new SlewRateLimiter(11, -11, 0);
     yLimiter = new SlewRateLimiter(11, -11, 0);
     thetaLimiter = new SlewRateLimiter(30, -30, 0);
-    addRequirements(m_chassis);
+    addRequirements(chassis);
   }
 
   @Override
@@ -52,8 +52,9 @@ public class SwerveDrive extends CommandBase {
   public void execute() {
     double dPadX = (dPadSupplier.getAsInt() == 0 ? 1 : 0) - (dPadSupplier.getAsInt() == 180 ? 1 : 0);
     double dPadY = (dPadSupplier.getAsInt() == 270 ? 1 : 0) - (dPadSupplier.getAsInt() == 90 ? 1 : 0);
-    dPadX = triggerAdjust(dPadX) * Constants.DPAD_VEL;
-    dPadY = triggerAdjust(dPadY) * Constants.DPAD_VEL;
+    int invertRelative = Math.abs(chassis.getFusedPose().getRotation().getDegrees()) > 90 ? 1 : -1;
+    dPadX = triggerAdjust(dPadX) * Constants.DPAD_VEL * invertRelative;
+    dPadY = triggerAdjust(dPadY) * Constants.DPAD_VEL * invertRelative;
 
     SmartDashboard.putNumber("JoystickX", triggerAdjust(xSupplier.getAsDouble()));
     SmartDashboard.putNumber("JoystickY", triggerAdjust(ySupplier.getAsDouble()));
@@ -63,18 +64,18 @@ public class SwerveDrive extends CommandBase {
         triggerAdjust(xSupplier.getAsDouble()) * Constants.Swerve.MAX_SPEED,
         triggerAdjust(ySupplier.getAsDouble()) * Constants.Swerve.MAX_SPEED,
         triggerAdjust(rotSupplier.getAsDouble()) * Constants.Swerve.MAX_ANGULAR_VELOCITY,
-        m_chassis.getGyroRot());
+        chassis.getGyroRot());
 
     speeds = new ChassisSpeeds(xLimiter.calculate(speeds.vxMetersPerSecond + dPadX),
         yLimiter.calculate(speeds.vyMetersPerSecond + dPadY),
         thetaLimiter.calculate(speeds.omegaRadiansPerSecond));
 
-    m_chassis.setSpeeds(speeds, true);
+    chassis.setSpeeds(speeds, true);
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_chassis.setSpeeds();
+    chassis.setSpeeds();
   }
 
   /**
