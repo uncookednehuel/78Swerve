@@ -13,8 +13,8 @@ import frc.robot.subsystems.SwerveChassis;
 public class Park extends CommandBase {
   SwerveChassis chassis;
   SwerveModuleState parkingStates[] = {
+    new SwerveModuleState(0, Rotation2d.fromDegrees(45)),
     new SwerveModuleState(0, Rotation2d.fromDegrees(315)),
-    new SwerveModuleState(0, Rotation2d.fromDegrees(225)),
     new SwerveModuleState(0, Rotation2d.fromDegrees(135)),
     new SwerveModuleState(0, Rotation2d.fromDegrees(45))
   };
@@ -28,11 +28,6 @@ public class Park extends CommandBase {
   /** Creates a new Park. */
   public Park(SwerveChassis chassis) {
     this.chassis = chassis;
-
-    // parkingStates = {
-    //   new SwerveModuleState(0.0, 135.0),
-    // };
-
     addRequirements(chassis);
   }
 

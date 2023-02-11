@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.classes.LimeLight;
-import frc.robot.classes.Odometry;
+// import frc.robot.classes.Odometry;
 import frc.robot.classes.SwerveModule;
 
 public class SwerveChassis extends SubsystemBase {
@@ -93,7 +93,8 @@ public class SwerveChassis extends SubsystemBase {
   }
 
   public void resetPose(Pose2d pose) {
-    Odometry.resetOdometry(pose, getGyroRot(), this, odometry);
+    // Odometry.resetOdometry(pose, getGyroRot(), this, odometry);
+    poseEstimator.resetPosition(getGyroRot(), getPositions(), pose);
   }
 
   public void resetAllToAbsolute() {
@@ -108,10 +109,31 @@ public class SwerveChassis extends SubsystemBase {
   public void zeroGyro() {
     pidgeon.setYaw(0.0);
   }
-
-  public Rotation2d getGyroRot() {
-    return Rotation2d.fromDegrees(pidgeon.getYaw());
+  /**
+   * Gets the gyro rotation on any of 3 axises
+   * @param axis 0 is Pitch (X), 1 is Roll (Y), 2 is Yaw (Z)
+   * @return
+   */
+  public Rotation2d getGyroRot(int axis) {
+    if(axis == 0) {
+      return Rotation2d.fromDegrees(pidgeon.getPitch());
+    }
+    if(axis == 1) {
+      return Rotation2d.fromDegrees(pidgeon.getRoll());
+    }
+    if(axis == 2) {
+      return Rotation2d.fromDegrees(pidgeon.getYaw());
+    }
+    return new Rotation2d();
   }
+  /**
+   * Returns gyro rotation on Yaw axis (Z)
+   * @return
+   */
+  public Rotation2d getGyroRot() {
+    return getGyroRot(2);
+  }
+
   // #endregion
   // #region GET FUNCTIONS
 
@@ -123,13 +145,6 @@ public class SwerveChassis extends SubsystemBase {
     }
     return poseEstimator.getEstimatedPosition();
 }
-
-  public Pose2d getPose() {
-    SmartDashboard.putNumber("OdometryX", odometry.getPoseMeters().getX());
-    SmartDashboard.putNumber("OdometryY", odometry.getPoseMeters().getY());
-    SmartDashboard.putNumber("OdometryRot", odometry.getPoseMeters().getRotation().getDegrees());
-    return Odometry.getPose(odometry);
-  }
 
   public SwerveDriveKinematics getKinematics() {
     return kinematics;
@@ -158,7 +173,6 @@ public class SwerveChassis extends SubsystemBase {
   }
   /**
    * Sets chassis speeds, with open loop and without calling speedsToStates
-   * 
    * @param speeds
    */
   public void setSpeeds(ChassisSpeeds speeds, boolean isOpenLoop) {
@@ -180,7 +194,6 @@ public class SwerveChassis extends SubsystemBase {
 
   /**
    * Sets chassis speeds, but with a closed loop PID
-   * 
    * @param speeds
    */
   public void setSpeeds(ChassisSpeeds speeds) {
@@ -197,7 +210,7 @@ public class SwerveChassis extends SubsystemBase {
     if (states.length != 4) {
       throw new IllegalArgumentException("The \"setStates\" input array size should be 4!");
     } else {
-      Odometry.updateOdometry(getPositions(), getGyroRot(), odometry);
+      // Odometry.updateOdometry(getPositions(), getGyroRot(), odometry);
       SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.Swerve.MAX_SPEED);
       moduleLU.setDesiredState(states[0], isOpenLoop, overrideDeadband);
       moduleRU.setDesiredState(states[1], isOpenLoop, overrideDeadband);

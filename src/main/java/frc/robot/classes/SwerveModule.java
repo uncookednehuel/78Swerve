@@ -79,7 +79,7 @@ public class SwerveModule {
 
     private void setAngle(SwerveModuleState desiredState, boolean overrideDeadband) {
         Rotation2d angle;
-        if(overrideDeadband) {
+        if(!overrideDeadband) {
             angle = (Math.abs(desiredState.speedMetersPerSecond) <= (Constants.Swerve.MAX_SPEED * 0.01))
             ? lastAngle
             : desiredState.angle; // Prevent rotating module if speed is less then 1%. Prevents Jittering.
