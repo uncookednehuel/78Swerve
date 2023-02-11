@@ -6,17 +6,22 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DutyCycle;
 import frc.robot.classes.COTSFalconSwerveConstants;
 import frc.robot.classes.SwerveModuleConstants;
 
 public final class Constants {
 
+    public static final int ELBOW_NEO = 10;
+    public static final int SHOULDER_NEO = 9;
+    public static final int LOWER_MANIP_NEO = 15;//should be 11
+    public static final int UPPER_MANIP_NEO = 16;//should be 12
+    public static final int DAVE_NEO = 11;
     /** A class within Constants that contains most of the swerve constants */
     public static final class Swerve {
 
         public static final COTSFalconSwerveConstants CHOSEN_MODULE =
-        COTSFalconSwerveConstants.SDSMK4i(COTSFalconSwerveConstants.driveGearRatios.SDSMK4i_L2);
-        // COTSFalconSwerveConstants.SDSMK4(COTSFalconSwerveConstants.driveGearRatios.SDSMK4_L2);
+         COTSFalconSwerveConstants.SDSMK4i(COTSFalconSwerveConstants.driveGearRatios.SDSMK4i_L2);
 
         // MK4 drivetrain constants
         // public static final double TRACK_WIDTH = Units.inchesToMeters(22);
@@ -102,8 +107,8 @@ public final class Constants {
             public static final int driveMotorID = 1;
             public static final int angleMotorID = 2;
             public static final int canCoderID = 9;
-            // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(269.29); //MK4
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(10.10); // ant man
+           //  public static final Rotation2d angleOffset = Rotation2d.fromDegrees(269.29); //MK4
+             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(10.10); // ant man
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
         }
@@ -113,8 +118,8 @@ public final class Constants {
             public static final int driveMotorID = 3;
             public static final int angleMotorID = 4;
             public static final int canCoderID = 10;
-            // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(292.93); //MK4
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(160.75); // ant man
+           // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(292.93); //MK4
+             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(160.75); // ant man
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
         }
@@ -125,7 +130,8 @@ public final class Constants {
             public static final int angleMotorID = 6;
             public static final int canCoderID = 11;
             // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(17.31); //MK4
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(178.68); // ant man
+             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(178.68); // ant man
+
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
         }
@@ -135,8 +141,10 @@ public final class Constants {
             public static final int driveMotorID = 7;
             public static final int angleMotorID = 8;
             public static final int canCoderID = 12;
-            // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(344.70); //MK4
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(166.64); // ant man
+
+           // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(344.70); //MK4
+             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(166.64); // ant man
+             
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
         }
@@ -144,8 +152,14 @@ public final class Constants {
 
     public static final int PIGEON_IMU = 0;
 
+    // PNEUMATICS
+    public static final int FORWARD_CHANNEL = 2;
+    public static final int BACKWARD_CHANNEL = 3;
+
     // CONTROL
+
     public static final int DRIVE_CONTROLLER = 0;
+    public static final int MANIP_CONTROLLER = 1;
     public static final double DPAD_VEL = 1; // max meters per second (with RT down)
 
     // #region KINEMATICS
@@ -174,4 +188,51 @@ public final class Constants {
     public static final double TRAJECTORY_KI = 0;
     public static final double TRAJECTORY_KD = 0;
     // #endregion
+   
+    public static int SHOULDER_ENCODER = 0;
+    public static int ELBOW_ENCODER = 1;
+
+    //OCnstants for Arm Presets and such
+    public static double ELBOWSHELF = 226.293;
+    public static double SHOULDERSHELF = 126.394;
+
+    public static double ELBOWFLOOR = 110.625;
+    public static double SHOULDERFLOOR = 13.336;
+
+    public static double ELBOWMID = 194.26;
+    public static double SHOULDERMID = 107.089;
+
+    public static double ELBOWSTOW = 23.89;
+    public static double SHOULDERSTOW = 15.81;
+
+    public static double HOLDSPEED = 0.1;
+
+
+   
+
+    public static double elbowDefault = 23.89;
+    public static double shoulderDefault = 15.81;
+    // TODO - change to proper default positions
+
+    //  ARM
+    //All encoder constants are offsets from a HOME position
+    public static final double SHOULDER_MAX = 7800; // all max and mins subject to change after testing
+    public static final double SHOULDER_MIN = -200;
+    public static final double ELBOW_MAX = 7800;
+    public static final double ELBOW_MIN = -200;
+
+    //Deadzone Buffer for encoders
+    public static final double ELBOW_BUFFER = 10;
+    public static final double SHOULDER_BUFFER = 10;
+
+    // NEED TO BE SET
+    public static final double ELBOW_ENCODER_OFFSET = 0;
+    public static final double SHOULDER_ENCODER_OFFSET = 0;
+
+    //Arm Targets--> Subject to change (Delete when changed)
+    public static final double SHOULDER_LOW_TARGET = 200;
+    public static final double ELBOW_LOW_TARGET = 100;
+    public static final double SHOULDER_MID_TARGET = 200;
+    public static final double ELBOW_MID_TARGET = 100;
+
 }
