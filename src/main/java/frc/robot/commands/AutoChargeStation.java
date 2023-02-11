@@ -24,7 +24,7 @@ public class AutoChargeStation extends CommandBase {
     startTime = Timer.getFPGATimestamp();
     initialRot = chassis.getGyroRot(1).getDegrees();
     hasRotated = false;
-    chassis.setSpeeds(new ChassisSpeeds(1, 0, 0));
+    chassis.setSpeeds(new ChassisSpeeds(0.8, 0, 0));
   }
 
   @Override
