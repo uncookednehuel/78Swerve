@@ -59,7 +59,8 @@ public class PathFunctions {
      * @param trajectory
      */
     public static void resetOdometry(SwerveChassis m_chassis, PathPlannerTrajectory trajectory) {
-        Odometry.resetOdometry(trajectory.getInitialHolonomicPose(), trajectory.getInitialHolonomicPose().getRotation(),
-                m_chassis, m_chassis.odometry);
+        // Odometry.resetOdometry(trajectory.getInitialHolonomicPose(), trajectory.getInitialHolonomicPose().getRotation(),
+        //         m_chassis, m_chassis.odometry);
+        m_chassis.resetPose(trajectory.getInitialHolonomicPose());
     }
 }
