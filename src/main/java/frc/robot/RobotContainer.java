@@ -48,7 +48,7 @@ public class RobotContainer {
   
   private final XboxController m_driveController;
   private final XboxController m_manipController;
-  private final IntakeV1_Lentz m_IntakeV1_Lentz;
+  //private final IntakeV1_Lentz m_IntakeV1_Lentz;
   private final Dave_Intake m_Dave_Intake;
   private final HashMap<String, Command> m_eventMap;
   private final SwerveAutoBuilder autoBuilder;
@@ -64,7 +64,7 @@ public class RobotContainer {
     m_limeLight = new LimeLight();
     m_driveController = new XboxController(Constants.DRIVE_CONTROLLER);
 
-    m_IntakeV1_Lentz = new IntakeV1_Lentz();
+    //m_IntakeV1_Lentz = new IntakeV1_Lentz();
 
 
     m_Dave_Intake = new Dave_Intake();
@@ -175,11 +175,11 @@ public class RobotContainer {
     //Y BUTTON --> Shelf intake CONE
     new Trigger(m_manipController::getYButton).whileTrue((new SetArm(m_arm, Constants.ELBOWSHELF, Constants.SHOULDERSHELF)).alongWith(new RunIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0.6))).onFalse((new SetArm(m_arm, Constants.ELBOWSTOW, Constants.SHOULDERSTOW)).alongWith(new RunIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), 0)));
     //X BUTTON --> Floor Cube intake 
-    new Trigger(m_manipController::getXButton).whileTrue((new SetArm(m_arm, Constants.ELBOWFLOOR, Constants.SHOULDERFLOOR)).alongWith(new RunIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0.5))).onFalse((new SetArm(m_arm, Constants.ELBOWSTOW, Constants.SHOULDERSTOW)).alongWith(new RunIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), Constants.HOLDSPEED)));
+    new Trigger(m_manipController::getXButton).whileTrue((new SetArm(m_arm, Constants.ELBOWFLOOR, Constants.SHOULDERFLOOR)).alongWith(new RunIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0.35))).onFalse((new SetArm(m_arm, Constants.ELBOWSTOW, Constants.SHOULDERSTOW)).alongWith(new RunIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), Constants.HOLDSPEED)));
     //A BUTTON --> Floor Cone Intake
     new Trigger(m_manipController::getAButton).whileTrue((new SetArm(m_arm, Constants.ELBOWFLOOR, Constants.SHOULDERFLOOR)).alongWith(new RunIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0.6))).onFalse((new SetArm(m_arm, Constants.ELBOWSTOW, Constants.SHOULDERSTOW)).alongWith(new RunIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), 0)));
     //B BUTTON --> shelf Cube intake
-    new Trigger(m_manipController::getBButton).whileTrue((new SetArm(m_arm, Constants.ELBOWSHELF, Constants.SHOULDERSHELF)).alongWith(new RunIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0.5))).onFalse((new SetArm(m_arm, Constants.ELBOWSTOW, Constants.SHOULDERSTOW)).alongWith(new RunIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), Constants.HOLDSPEED)));
+    new Trigger(m_manipController::getBButton).whileTrue((new SetArm(m_arm, Constants.ELBOWSHELF, Constants.SHOULDERSHELF)).alongWith(new RunIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0.35))).onFalse((new SetArm(m_arm, Constants.ELBOWSTOW, Constants.SHOULDERSTOW)).alongWith(new RunIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), Constants.HOLDSPEED)));
     
     BooleanSupplier rightSupplier = new BooleanSupplier() {
       @Override
@@ -187,7 +187,7 @@ public class RobotContainer {
         return m_manipController.getRightTriggerAxis() > 0.5;
       }
     };
-    new Trigger(rightSupplier).whileTrue(new RunIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), -0.5));
+    new Trigger(rightSupplier).whileTrue(new RunIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), -0.1));
 
     new Trigger(m_manipController::getRightBumper).toggleOnTrue(new RunIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLDSPEED));
 
