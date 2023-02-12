@@ -87,7 +87,7 @@ public class RobotContainer {
     
   //  m_arm.setDefaultCommand(new InstantCommand(()-> m_arm.setShoulderSpeed(0.2)));//will change-MG
 
-  m_Dave_Intake.setDefaultCommand(new SetIntake(m_Dave_Intake, 0.1, DoubleSolenoid.Value.kForward));
+    m_Dave_Intake.setDefaultCommand(new SetIntake(m_Dave_Intake, 0.1, DoubleSolenoid.Value.kForward));
 
     Trigger buttonA = new JoystickButton(m_manipController, XboxController.Button.kX.value);
     buttonA.onTrue(new InstantCommand(() -> new SetArm(m_arm, Constants.SHOULDER_LOW_TARGET, Constants.ELBOW_LOW_TARGET)));
@@ -111,6 +111,7 @@ public class RobotContainer {
         new PIDConstants(0.5, 0.0, 0.0),
         m_chassis::setSpeeds,
         m_eventMap,
+        true, // BE AWARE OF AUTOMATIC MIRRORING, MAY CAUSE TRACKING PROBLEMS
         m_chassis);
 
     PathPlannerServer.startServer(5811);
@@ -216,12 +217,24 @@ public class RobotContainer {
     PathPlannerTrajectory test3 = PathFunctions.createTrajectory("Test3");
     PathPlannerTrajectory oneMeterStraight = PathFunctions.createTrajectory("1MeterStraight");
     PathPlannerTrajectory spiral = PathFunctions.createTrajectory("Spiral");  
+    PathPlannerTrajectory sixEcho = PathFunctions.createTrajectory("6Echo");
+    PathPlannerTrajectory echoSix = PathFunctions.createTrajectory("Echo6");
+    PathPlannerTrajectory SixCharge = PathFunctions.createTrajectory("6Charge");  
 
+    // return new SequentialCommandGroup(
+    //     new InstantCommand(() -> m_chassis.resetPose(oneMeterStraight.getInitialHolonomicPose())),
+    //     autoBuilder.followPath(oneMeterStraight).andThen(() -> m_chassis.setSpeeds()),
+    //     new InstantCommand(() -> m_chassis.resetPose(oneMeterStraight.getInitialHolonomicPose())),
+    //     autoBuilder.followPath(oneMeterStraight).andThen(() -> m_chassis.setSpeeds()));
     return new SequentialCommandGroup(
-        new InstantCommand(() -> m_chassis.resetPose(oneMeterStraight.getInitialHolonomicPose())),
-        autoBuilder.followPath(oneMeterStraight).andThen(() -> m_chassis.setSpeeds()),
-        new InstantCommand(() -> m_chassis.resetPose(oneMeterStraight.getInitialHolonomicPose())),
-        autoBuilder.followPath(oneMeterStraight).andThen(() -> m_chassis.setSpeeds()));
+        new InstantCommand(() -> m_chassis.resetPose(sixEcho.getInitialHolonomicPose())),
+        autoBuilder.followPath(sixEcho).andThen(() -> m_chassis.setSpeeds()),
+        new InstantCommand(() -> m_chassis.resetPose(echoSix.getInitialHolonomicPose())),
+        autoBuilder.followPath(echoSix).andThen(() -> m_chassis.setSpeeds()),
+        new InstantCommand(() -> m_chassis.resetPose(SixCharge.getInitialHolonomicPose())),
+        autoBuilder.followPath(SixCharge).andThen(() -> m_chassis.setSpeeds()),
+        new AutoChargeStation(m_chassis)
+        );
     // return new AutoChargeStation(m_chassis);
   }
   /**
