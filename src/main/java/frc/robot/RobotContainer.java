@@ -48,7 +48,7 @@ public class RobotContainer {
   
   private final XboxController m_driveController;
   private final XboxController m_manipController;
-  private final IntakeV1_Lentz m_IntakeV1_Lentz;
+  //private final IntakeV1_Lentz m_IntakeV1_Lentz;
   private final Dave_Intake m_Dave_Intake;
   private final HashMap<String, Command> m_eventMap;
   private final SwerveAutoBuilder autoBuilder;
@@ -64,7 +64,7 @@ public class RobotContainer {
     m_limeLight = new LimeLight();
     m_driveController = new XboxController(Constants.DRIVE_CONTROLLER);
 
-    m_IntakeV1_Lentz = new IntakeV1_Lentz();
+    //m_IntakeV1_Lentz = new IntakeV1_Lentz();
 
 
     m_Dave_Intake = new Dave_Intake();
@@ -87,7 +87,7 @@ public class RobotContainer {
     
   //  m_arm.setDefaultCommand(new InstantCommand(()-> m_arm.setShoulderSpeed(0.2)));//will change-MG
 
-  m_Dave_Intake.setDefaultCommand(new SetIntake(m_Dave_Intake, 0.1, DoubleSolenoid.Value.kForward));
+    m_Dave_Intake.setDefaultCommand(new SetIntake(m_Dave_Intake, 0.1, DoubleSolenoid.Value.kForward));
 
     Trigger buttonA = new JoystickButton(m_manipController, XboxController.Button.kX.value);
     buttonA.onTrue(new InstantCommand(() -> new SetArm(m_arm, Constants.SHOULDER_LOW_TARGET, Constants.ELBOW_LOW_TARGET)));
@@ -111,6 +111,7 @@ public class RobotContainer {
         new PIDConstants(0.5, 0.0, 0.0),
         m_chassis::setSpeeds,
         m_eventMap,
+        true, // BE AWARE OF AUTOMATIC MIRRORING, MAY CAUSE TRACKING PROBLEMS
         m_chassis);
 
     PathPlannerServer.startServer(5811);
@@ -173,13 +174,13 @@ public class RobotContainer {
     new Trigger(leftSupplier).whileTrue(new SetArm(m_arm, Constants.ELBOWFLOOR, Constants.SHOULDERFLOOR));
     //ALL INTAKE BUTTONS WILL RETURN TO STOW POSITION AFTER COMPLETING INTAKE. iT IS THE LAST COMMAND IN SEQUENCE AFTER THE onFalse. 
     //Y BUTTON --> Shelf intake CONE
-    new Trigger(m_manipController::getYButton).whileTrue((new SetArm(m_arm, Constants.ELBOWSHELF, Constants.SHOULDERSHELF)).alongWith(new RunIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0.6))).onFalse((new SetArm(m_arm, Constants.ELBOWSTOW, Constants.SHOULDERSTOW)).alongWith(new RunIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), Constants.HOLDSPEED)));
+    new Trigger(m_manipController::getYButton).whileTrue((new SetArm(m_arm, Constants.ELBOWSHELF, Constants.SHOULDERSHELF)).alongWith(new RunIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0.6))).onFalse((new SetArm(m_arm, Constants.ELBOWSTOW, Constants.SHOULDERSTOW)).alongWith(new RunIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), 0)));
     //X BUTTON --> Floor Cube intake 
-    new Trigger(m_manipController::getXButton).whileTrue((new SetArm(m_arm, Constants.ELBOWFLOOR, Constants.SHOULDERFLOOR)).alongWith(new RunIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0.6))).onFalse((new SetArm(m_arm, Constants.ELBOWSTOW, Constants.SHOULDERSTOW)).alongWith(new RunIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), Constants.HOLDSPEED)));
+    new Trigger(m_manipController::getXButton).whileTrue((new SetArm(m_arm, Constants.ELBOWFLOOR, Constants.SHOULDERFLOOR)).alongWith(new RunIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0.35))).onFalse((new SetArm(m_arm, Constants.ELBOWSTOW, Constants.SHOULDERSTOW)).alongWith(new RunIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), Constants.HOLDSPEED)));
     //A BUTTON --> Floor Cone Intake
-    new Trigger(m_manipController::getAButton).whileTrue((new SetArm(m_arm, Constants.ELBOWFLOOR, Constants.SHOULDERFLOOR)).alongWith(new RunIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0.6))).onFalse((new SetArm(m_arm, Constants.ELBOWSTOW, Constants.SHOULDERSTOW)).alongWith(new RunIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), Constants.HOLDSPEED)));
+    new Trigger(m_manipController::getAButton).whileTrue((new SetArm(m_arm, Constants.ELBOWFLOOR, Constants.SHOULDERFLOOR)).alongWith(new RunIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0.6))).onFalse((new SetArm(m_arm, Constants.ELBOWSTOW, Constants.SHOULDERSTOW)).alongWith(new RunIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), 0)));
     //B BUTTON --> shelf Cube intake
-    new Trigger(m_manipController::getBButton).whileTrue((new SetArm(m_arm, Constants.ELBOWSHELF, Constants.SHOULDERSHELF)).alongWith(new RunIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0.6))).onFalse((new SetArm(m_arm, Constants.ELBOWSTOW, Constants.SHOULDERSTOW)).alongWith(new RunIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), Constants.HOLDSPEED)));
+    new Trigger(m_manipController::getBButton).whileTrue((new SetArm(m_arm, Constants.ELBOWSHELF, Constants.SHOULDERSHELF)).alongWith(new RunIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0.35))).onFalse((new SetArm(m_arm, Constants.ELBOWSTOW, Constants.SHOULDERSTOW)).alongWith(new RunIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), Constants.HOLDSPEED)));
     
     BooleanSupplier rightSupplier = new BooleanSupplier() {
       @Override
@@ -187,7 +188,7 @@ public class RobotContainer {
         return m_manipController.getRightTriggerAxis() > 0.5;
       }
     };
-    new Trigger(rightSupplier).whileTrue(new RunIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), -1));
+    new Trigger(rightSupplier).whileTrue(new RunIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), -0.1));
 
     new Trigger(m_manipController::getRightBumper).toggleOnTrue(new RunIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLDSPEED));
 
@@ -216,12 +217,24 @@ public class RobotContainer {
     PathPlannerTrajectory test3 = PathFunctions.createTrajectory("Test3");
     PathPlannerTrajectory oneMeterStraight = PathFunctions.createTrajectory("1MeterStraight");
     PathPlannerTrajectory spiral = PathFunctions.createTrajectory("Spiral");  
+    PathPlannerTrajectory sixEcho = PathFunctions.createTrajectory("6Echo");
+    PathPlannerTrajectory echoSix = PathFunctions.createTrajectory("Echo6");
+    PathPlannerTrajectory SixCharge = PathFunctions.createTrajectory("6Charge");  
 
+    // return new SequentialCommandGroup(
+    //     new InstantCommand(() -> m_chassis.resetPose(oneMeterStraight.getInitialHolonomicPose())),
+    //     autoBuilder.followPath(oneMeterStraight).andThen(() -> m_chassis.setSpeeds()),
+    //     new InstantCommand(() -> m_chassis.resetPose(oneMeterStraight.getInitialHolonomicPose())),
+    //     autoBuilder.followPath(oneMeterStraight).andThen(() -> m_chassis.setSpeeds()));
     return new SequentialCommandGroup(
-        new InstantCommand(() -> m_chassis.resetPose(oneMeterStraight.getInitialHolonomicPose())),
-        autoBuilder.followPath(oneMeterStraight).andThen(() -> m_chassis.setSpeeds()),
-        new InstantCommand(() -> m_chassis.resetPose(oneMeterStraight.getInitialHolonomicPose())),
-        autoBuilder.followPath(oneMeterStraight).andThen(() -> m_chassis.setSpeeds()));
+        new InstantCommand(() -> m_chassis.resetPose(sixEcho.getInitialHolonomicPose())),
+        autoBuilder.followPath(sixEcho).andThen(() -> m_chassis.setSpeeds()),
+        new InstantCommand(() -> m_chassis.resetPose(echoSix.getInitialHolonomicPose())),
+        autoBuilder.followPath(echoSix).andThen(() -> m_chassis.setSpeeds()),
+        new InstantCommand(() -> m_chassis.resetPose(SixCharge.getInitialHolonomicPose())),
+        autoBuilder.followPath(SixCharge).andThen(() -> m_chassis.setSpeeds()),
+        new AutoChargeStation(m_chassis)
+        );
     // return new AutoChargeStation(m_chassis);
   }
   /**
