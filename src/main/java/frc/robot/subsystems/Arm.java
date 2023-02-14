@@ -34,7 +34,7 @@ public class Arm extends SubsystemBase {
     elbowNeo = new CANSparkMax(Constants.ELBOW_NEO, MotorType.kBrushless);
     shoulderEncoder = new DutyCycleEncoder(Constants.SHOULDER_ENCODER);
     elbowEncoder = new DutyCycleEncoder(Constants.ELBOW_ENCODER);
-    elbowPIDcontroller = new PIDController(0.06, 0, 0);
+    elbowPIDcontroller = new PIDController(0.03, 0, 0);
     shoulderPIDcontroller = new PIDController(0.05, 0, 0);
     target = 0;
     elbowTarget = Constants.elbowDefault;
@@ -86,9 +86,9 @@ public double getElbowAbsolutePosition(){
     double elbowCurrentPosition = getElbowAbsolutePosition();
     if(elbowCurrentPosition > Constants.ELBOW_MIN && elbowCurrentPosition < Constants.ELBOW_MAX) {
       if(elbowCurrentPosition > (target + Constants.ELBOW_BUFFER)){
-        setElbowSpeed(-0.5);
+        setElbowSpeed(-1.0);
       }else if(elbowCurrentPosition < (target + Constants.ELBOW_BUFFER)){
-        setElbowSpeed(0.5);
+        setElbowSpeed(1.0);
       }else{
         setElbowSpeed(0);
       }

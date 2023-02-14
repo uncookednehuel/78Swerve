@@ -83,7 +83,7 @@ public class RobotContainer {
       () -> -modifyAxis(m_manipController.getLeftY()),
       () -> -modifyAxis(m_manipController.getRightY())
       ));
-    m_arm.setDefaultCommand(new SetArmPID(m_arm));
+   m_arm.setDefaultCommand(new SetArmPID(m_arm));
     
   //  m_arm.setDefaultCommand(new InstantCommand(()-> m_arm.setShoulderSpeed(0.2)));//will change-MG
 

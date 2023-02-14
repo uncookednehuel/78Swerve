@@ -194,7 +194,7 @@ public final class Constants {
 
     //OCnstants for Arm Presets and such
     public static double ELBOWSHELF = 226.293;
-    public static double SHOULDERSHELF = 126.394;
+    public static double SHOULDERSHELF = 130.394;
 
     public static double ELBOWFLOOR = 110.625;
     public static double SHOULDERFLOOR = 13.336;
