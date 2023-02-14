@@ -24,7 +24,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -55,14 +57,10 @@ public class RobotContainer {
   private final HashMap<String, Command> m_eventMap;
   private final SwerveAutoBuilder autoBuilder;
 
-  private SendableChooser<Command> firstAutoCmd = new SendableChooser<Command>();
+  static enum AUTOS {EMPTY, SIXTAXI, SIXCHARGE};
+  public SendableChooser<AUTOS> firstAutoCmd = new SendableChooser<>();
   // private SendableChooser<Command> secondAutoCmd = new SendableChooser();
   // private SendableChooser<Command> thirdAutoCmd = new SendableChooser();
-
-  // Trigger btnX = manipControl.x(null);
-  // Trigger btnY = manipControl.y.value;
-  // Trigger btnA = manipControl.a.value;
-  // Trigger btnB = manipControl.b.value;
 
   public RobotContainer() {
     m_chassis = new SwerveChassis();
@@ -71,7 +69,6 @@ public class RobotContainer {
     m_driveController = new XboxController(Constants.DRIVE_CONTROLLER);
 
     //m_IntakeV1_Lentz = new IntakeV1_Lentz();
-
 
     m_Dave_Intake = new Dave_Intake();
     m_manipController = new XboxController(Constants.MANIP_CONTROLLER);
@@ -122,25 +119,13 @@ public class RobotContainer {
 
     PathPlannerServer.startServer(5811);
 
-    PathPlannerTrajectory test3 = PathFunctions.createTrajectory("Test3");
-    PathPlannerTrajectory oneMeterStraight = PathFunctions.createTrajectory("1MeterStraight");
-    PathPlannerTrajectory spiral = PathFunctions.createTrajectory("Spiral");  
-    PathPlannerTrajectory eightEcho = PathFunctions.createTrajectory("8Echo");
-    PathPlannerTrajectory echoEight = PathFunctions.createTrajectory("Echo8");
-    PathPlannerTrajectory eightCharge = PathFunctions.createTrajectory("8Charge");
-    PathPlannerTrajectory sixTaxi = PathFunctions.createTrajectory("6Taxi");
+    firstAutoCmd.setDefaultOption("Empty", AUTOS.EMPTY);
+    firstAutoCmd.addOption("6Taxi", AUTOS.SIXTAXI);
+    firstAutoCmd.addOption("6Charge", AUTOS.SIXCHARGE);
 
-    firstAutoCmd.setDefaultOption("Empty", null);
-    firstAutoCmd.addOption("Taxi", new SequentialCommandGroup(
-        new InstantCommand(() -> m_chassis.resetPose(sixTaxi.getInitialHolonomicPose())),
-        autoBuilder.followPathWithEvents(sixTaxi)));
-    firstAutoCmd.addOption("Charge", null);
-    firstAutoCmd.addOption("MidConeTaxi", null);
-    firstAutoCmd.addOption("MidConeCharge", null);
-
-    SmartDashboard.putData(firstAutoCmd);
-
+    SmartDashboard.putData("Auto Selector", firstAutoCmd);
     // #endregion
+    
     configureButtonBindings();
   }
 
@@ -235,6 +220,23 @@ public class RobotContainer {
     PathPlannerTrajectory eightEcho = PathFunctions.createTrajectory("8Echo");
     PathPlannerTrajectory echoEight = PathFunctions.createTrajectory("Echo8");
     PathPlannerTrajectory eightCharge = PathFunctions.createTrajectory("8Charge");
+    PathPlannerTrajectory sixTaxi = PathFunctions.createTrajectory("6Taxi");
+
+    CommandBase autoCommand = null;
+
+    switch (firstAutoCmd.getSelected()) {
+      case EMPTY:
+        autoCommand = new InstantCommand();
+      break;
+      case SIXTAXI:
+        autoCommand = new SequentialCommandGroup(
+          new InstantCommand(() -> m_chassis.resetPose(sixTaxi.getInitialHolonomicPose())),
+          autoBuilder.followPathWithEvents(sixTaxi));
+      break;
+      case SIXCHARGE:
+        autoCommand = new InstantCommand();
+      break;
+    }
 
     // return new SequentialCommandGroup(
     //     new InstantCommand(() -> m_chassis.resetPose(oneMeterStraight.getInitialHolonomicPose())),
@@ -250,7 +252,7 @@ public class RobotContainer {
     //     autoBuilder.followPath(eightCharge).andThen(() -> m_chassis.setSpeeds()),
     //     new AutoChargeStation(m_chassis)
     //     );
-    return new SequentialCommandGroup(firstAutoCmd.getSelected());
+    return autoCommand;
   }
   /**
    * Applies a deadband to the given joystick axis value
