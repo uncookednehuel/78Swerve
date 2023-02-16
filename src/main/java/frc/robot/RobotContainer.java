@@ -57,7 +57,7 @@ public class RobotContainer {
   private final HashMap<String, Command> m_eventMap;
   private final SwerveAutoBuilder autoBuilder;
 
-  static enum AUTOS {EMPTY, SIXTAXI, SIXCHARGE};
+  static enum AUTOS {EMPTY, SIXTAXI, SIXCHARGE, SIXCONETAXI, SIXCONECHARGE, SIXCUBETAXI, SIXCUBECHARGE};
   public SendableChooser<AUTOS> firstAutoCmd = new SendableChooser<>();
   // private SendableChooser<Command> secondAutoCmd = new SendableChooser();
   // private SendableChooser<Command> thirdAutoCmd = new SendableChooser();
@@ -234,6 +234,18 @@ public class RobotContainer {
           autoBuilder.followPathWithEvents(sixTaxi));
       break;
       case SIXCHARGE:
+        autoCommand = new InstantCommand();
+      break;
+      case SIXCONETAXI:
+        autoCommand = new InstantCommand();
+      break;
+      case SIXCONECHARGE:
+        autoCommand = new InstantCommand();
+      break;
+      case SIXCUBETAXI:
+        autoCommand = new InstantCommand();
+      break;
+      case SIXCUBECHARGE:
         autoCommand = new InstantCommand();
       break;
     }
