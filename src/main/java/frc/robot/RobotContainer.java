@@ -163,7 +163,7 @@ public class RobotContainer {
 
     //Button Map for Wasp Controls 
     //TOP LEFT TRIGGER --> ARM MID GRID PRESET
-    new Trigger(m_manipController::getLeftBumper).whileTrue(new SetArm(m_arm, Constants.ELBOWMID, Constants.SHOULDERMID));
+    new Trigger(m_manipController::getLeftBumper).whileTrue(new SetArm(m_arm, Constants.ELBOWMID, Constants.SHOULDERMID)).onFalse((new SetArm(m_arm, Constants.ELBOWSTOW, Constants.SHOULDERSTOW)).alongWith(new RunIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), Constants.HOLDSPEED)));
     //LOWER LEFT TRIGGER --> ARM LOW GRID
     BooleanSupplier leftSupplier = new BooleanSupplier() {
       @Override
