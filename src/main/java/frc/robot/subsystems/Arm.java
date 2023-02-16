@@ -86,9 +86,9 @@ public double getElbowAbsolutePosition(){
     double elbowCurrentPosition = getElbowAbsolutePosition();
     if(elbowCurrentPosition > Constants.ELBOW_MIN && elbowCurrentPosition < Constants.ELBOW_MAX) {
       if(elbowCurrentPosition > (target + Constants.ELBOW_BUFFER)){
-        setElbowSpeed(-0.5);
+        setElbowSpeed(-1.0);
       }else if(elbowCurrentPosition < (target + Constants.ELBOW_BUFFER)){
-        setElbowSpeed(0.5);
+        setElbowSpeed(1.0);
       }else{
         setElbowSpeed(0);
       }

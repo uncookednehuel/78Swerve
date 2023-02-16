@@ -40,8 +40,15 @@ public class SetArmPID extends CommandBase {
   @Override
   public void execute() {
     double shoulderSpeed = m_arm.shoulderPIDcontroller.calculate(m_arm.getShoulderAbsolutePosition(), m_arm.shoulderTarget);
+    if (shoulderSpeed < 0){
+      shoulderSpeed = shoulderSpeed * 0.1;
+    }
     m_arm.setShoulderSpeed(shoulderSpeed);
+    
     double elbowSpeed = m_arm.elbowPIDcontroller.calculate(m_arm.getElbowAbsolutePosition(), m_arm.elbowTarget);
+    if (elbowSpeed > 0){
+      elbowSpeed = elbowSpeed * 0.5;
+    }
     m_arm.setElbowSpeed(elbowSpeed * -1);
   }
 

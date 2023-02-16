@@ -86,7 +86,7 @@ public class RobotContainer {
       () -> -modifyAxis(m_manipController.getLeftY()),
       () -> -modifyAxis(m_manipController.getRightY())
       ));
-    m_arm.setDefaultCommand(new SetArmPID(m_arm));
+   m_arm.setDefaultCommand(new SetArmPID(m_arm));
     
   //  m_arm.setDefaultCommand(new InstantCommand(()-> m_arm.setShoulderSpeed(0.2)));//will change-MG
 
@@ -171,7 +171,7 @@ public class RobotContainer {
 
     //Button Map for Wasp Controls 
     //TOP LEFT TRIGGER --> ARM MID GRID PRESET
-    new Trigger(m_manipController::getLeftBumper).whileTrue(new SetArm(m_arm, Constants.ELBOWMID, Constants.SHOULDERMID));
+    new Trigger(m_manipController::getLeftBumper).whileTrue(new SetArm(m_arm, Constants.ELBOWMID, Constants.SHOULDERMID)).onFalse((new SetArm(m_arm, Constants.ELBOWSTOW, Constants.SHOULDERSTOW)).alongWith(new RunIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), Constants.HOLDSPEED)));
     //LOWER LEFT TRIGGER --> ARM LOW GRID
     BooleanSupplier leftSupplier = new BooleanSupplier() {
       @Override
