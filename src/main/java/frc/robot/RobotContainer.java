@@ -1,13 +1,8 @@
   package frc.robot;
 
-import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.BooleanSupplier;
-import java.util.ArrayList;
-import java.util.List;
-
-
-import org.ejml.simple.AutomaticSimpleMatrixConvert;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
@@ -20,28 +15,31 @@ import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.SwerveChassis;
-import frc.robot.subsystems.Dave_Intake;
-import frc.robot.subsystems.IntakeV1_Lentz;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.classes.*;
-import frc.robot.commands.*;
+import frc.robot.classes.LimeLight;
+import frc.robot.classes.PathFunctions;
+import frc.robot.commands.ArmControl;
+import frc.robot.commands.AutoCenter;
+import frc.robot.commands.AutoChargeStation;
+import frc.robot.commands.Park;
+import frc.robot.commands.RunIntake;
+import frc.robot.commands.SetArm;
+import frc.robot.commands.SetArmPID;
+import frc.robot.commands.SetIntake;
+import frc.robot.commands.SwerveDrive;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Dave_Intake;
 import frc.robot.subsystems.SwerveChassis;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 
 public class RobotContainer {
@@ -57,7 +55,7 @@ public class RobotContainer {
   private final HashMap<String, Command> m_eventMap;
   private final SwerveAutoBuilder autoBuilder;
 
-  static enum AUTOS {EMPTY, SIXTAXI, SIXCHARGE, SIXCONETAXI, SIXCONECHARGE, SIXCUBETAXI, SIXCUBECHARGE};
+  static enum AUTOS {EMPTY, SIX_TAXI, SEVEN_CHARGE};
   public SendableChooser<AUTOS> firstAutoCmd = new SendableChooser<>();
   // private SendableChooser<Command> secondAutoCmd = new SendableChooser();
   // private SendableChooser<Command> thirdAutoCmd = new SendableChooser();
@@ -114,14 +112,14 @@ public class RobotContainer {
         new PIDConstants(0.5, 0.0, 0.0),
         m_chassis::setSpeeds,
         m_eventMap,
-        true, // BE AWARE OF AUTOMATIC MIRRORING, MAY CAUSE TRACKING PROBLEMS
+        false, // BE AWARE OF AUTOMATIC MIRRORING, MAY CAUSE TRACKING PROBLEMS
         m_chassis);
 
     PathPlannerServer.startServer(5811);
 
     firstAutoCmd.setDefaultOption("Empty", AUTOS.EMPTY);
-    firstAutoCmd.addOption("6Taxi", AUTOS.SIXTAXI);
-    firstAutoCmd.addOption("6Charge", AUTOS.SIXCHARGE);
+    firstAutoCmd.addOption("6Taxi", AUTOS.SIX_TAXI);
+    firstAutoCmd.addOption("7Charge", AUTOS.SEVEN_CHARGE);
 
     SmartDashboard.putData("Auto Selector", firstAutoCmd);
     // #endregion
@@ -206,7 +204,7 @@ public class RobotContainer {
    //new Trigger(m_manipController::getYButton).whileTrue(new SetIntake(m_Dave_Intake, 0.6, DoubleSolenoid.Value.kReverse)); 
    //new Trigger(m_manipController::getAButton).whileTrue(new SetIntake(m_Dave_Intake, -1 , DoubleSolenoid.Value.kReverse));
     new Trigger(m_driveController::getAButton).whileTrue(new Park(m_chassis));
-    new Trigger(m_driveController::getLeftBumper).whileTrue(new AutoChargeStation(m_chassis).andThen(new Park(m_chassis)));
+    new Trigger(m_driveController::getLeftBumper).whileTrue(new AutoChargeStation(m_chassis, 1, -0.7).andThen(new Park(m_chassis)));
     new Trigger(() -> m_driveController.getRawButton(3)).whileTrue( //BUTTON NEEDS TO BE SET TO THE PROPER ID
         autoBuilder.followPath(PathPlanner.generatePath(
             new PathConstraints(1, 1), pathList)));
@@ -221,6 +219,7 @@ public class RobotContainer {
     PathPlannerTrajectory echoEight = PathFunctions.createTrajectory("Echo8");
     PathPlannerTrajectory eightCharge = PathFunctions.createTrajectory("8Charge");
     PathPlannerTrajectory sixTaxi = PathFunctions.createTrajectory("6Taxi");
+    PathPlannerTrajectory sevenCharge = PathFunctions.createTrajectory("7Charge");
 
     CommandBase autoCommand = null;
 
@@ -228,25 +227,16 @@ public class RobotContainer {
       case EMPTY:
         autoCommand = new InstantCommand();
       break;
-      case SIXTAXI:
+      case SIX_TAXI:
         autoCommand = new SequentialCommandGroup(
           new InstantCommand(() -> m_chassis.resetPose(sixTaxi.getInitialHolonomicPose())),
-          autoBuilder.followPathWithEvents(sixTaxi));
+          autoBuilder.followPathWithEvents(sixTaxi)
+          );
       break;
-      case SIXCHARGE:
-        autoCommand = new InstantCommand();
-      break;
-      case SIXCONETAXI:
-        autoCommand = new InstantCommand();
-      break;
-      case SIXCONECHARGE:
-        autoCommand = new InstantCommand();
-      break;
-      case SIXCUBETAXI:
-        autoCommand = new InstantCommand();
-      break;
-      case SIXCUBECHARGE:
-        autoCommand = new InstantCommand();
+      case SEVEN_CHARGE:
+        autoCommand = new SequentialCommandGroup(
+          new AutoChargeStation(m_chassis, -1, 0.7)
+        );
       break;
     }
 

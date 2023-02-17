@@ -207,9 +207,6 @@ public final class Constants {
 
     public static double HOLDSPEED = 0.05;
 
-
-   
-
     public static double elbowDefault = 23.89;
     public static double shoulderDefault = 15.81;
     // TODO - change to proper default positions

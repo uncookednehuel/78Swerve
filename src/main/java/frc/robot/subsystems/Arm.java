@@ -5,16 +5,13 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.PIDCommand;
 
 public class Arm extends SubsystemBase {
 
@@ -37,6 +34,14 @@ public class Arm extends SubsystemBase {
     elbowPIDcontroller = new PIDController(0.03, 0, 0);
     shoulderPIDcontroller = new PIDController(0.05, 0, 0);
     target = 0;
+
+    shoulderPIDcontroller.disableContinuousInput();
+    shoulderPIDcontroller.setTolerance(2);
+    elbowPIDcontroller.disableContinuousInput();
+    elbowPIDcontroller.setTolerance(2);
+  }
+
+  public void initialize() {
     elbowTarget = Constants.elbowDefault;
     shoulderTarget = Constants.shoulderDefault;
   }
