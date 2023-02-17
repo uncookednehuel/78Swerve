@@ -30,18 +30,22 @@ public class SetArmPID extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_arm.shoulderPIDcontroller.disableContinuousInput();
-    m_arm.shoulderPIDcontroller.setTolerance(2);
-    m_arm.elbowPIDcontroller.disableContinuousInput();
-    m_arm.elbowPIDcontroller.setTolerance(2);
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     double shoulderSpeed = m_arm.shoulderPIDcontroller.calculate(m_arm.getShoulderAbsolutePosition(), m_arm.shoulderTarget);
+    if (shoulderSpeed < 0){
+      shoulderSpeed = shoulderSpeed * 0.1;
+    }
     m_arm.setShoulderSpeed(shoulderSpeed);
+    
     double elbowSpeed = m_arm.elbowPIDcontroller.calculate(m_arm.getElbowAbsolutePosition(), m_arm.elbowTarget);
+    if (elbowSpeed > 0){
+      elbowSpeed = elbowSpeed * 0.5;
+    }
     m_arm.setElbowSpeed(elbowSpeed * -1);
   }
 

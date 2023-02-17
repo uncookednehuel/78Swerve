@@ -31,8 +31,8 @@ public class ArmControl extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-   arm.setShoulderSpeed(shoulderJoyVal.getAsDouble() * 0.5);
-   arm.setElbowSpeed(elbowJoyVal.getAsDouble() * 0.5);
+   arm.setShoulderSpeed(shoulderJoyVal.getAsDouble() * 0.75);
+   arm.setElbowSpeed(elbowJoyVal.getAsDouble() * 1.0);
    SmartDashboard.putNumber("shoulderJoy", shoulderJoyVal.getAsDouble());
    SmartDashboard.putNumber("elbowJoy", elbowJoyVal.getAsDouble());
   }

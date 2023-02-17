@@ -1,13 +1,8 @@
   package frc.robot;
 
-import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.BooleanSupplier;
-import java.util.ArrayList;
-import java.util.List;
-
-
-import org.ejml.simple.AutomaticSimpleMatrixConvert;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
@@ -20,24 +15,31 @@ import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.SwerveChassis;
-import frc.robot.subsystems.Dave_Intake;
-import frc.robot.subsystems.IntakeV1_Lentz;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.classes.*;
-import frc.robot.commands.*;
+import frc.robot.classes.LimeLight;
+import frc.robot.classes.PathFunctions;
+import frc.robot.commands.ArmControl;
+import frc.robot.commands.AutoCenter;
+import frc.robot.commands.AutoChargeStation;
+import frc.robot.commands.Park;
+import frc.robot.commands.RunIntake;
+import frc.robot.commands.SetArm;
+import frc.robot.commands.SetArmPID;
+import frc.robot.commands.SetIntake;
+import frc.robot.commands.SwerveDrive;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Dave_Intake;
 import frc.robot.subsystems.SwerveChassis;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 
 public class RobotContainer {
@@ -53,10 +55,10 @@ public class RobotContainer {
   private final HashMap<String, Command> m_eventMap;
   private final SwerveAutoBuilder autoBuilder;
 
-  // Trigger btnX = manipControl.x(null);
-  // Trigger btnY = manipControl.y.value;
-  // Trigger btnA = manipControl.a.value;
-  // Trigger btnB = manipControl.b.value;
+  static enum AUTOS {EMPTY, SIX_TAXI, SEVEN_CHARGE};
+  public SendableChooser<AUTOS> firstAutoCmd = new SendableChooser<>();
+  // private SendableChooser<Command> secondAutoCmd = new SendableChooser();
+  // private SendableChooser<Command> thirdAutoCmd = new SendableChooser();
 
   public RobotContainer() {
     m_chassis = new SwerveChassis();
@@ -65,7 +67,6 @@ public class RobotContainer {
     m_driveController = new XboxController(Constants.DRIVE_CONTROLLER);
 
     //m_IntakeV1_Lentz = new IntakeV1_Lentz();
-
 
     m_Dave_Intake = new Dave_Intake();
     m_manipController = new XboxController(Constants.MANIP_CONTROLLER);
@@ -83,7 +84,7 @@ public class RobotContainer {
       () -> -modifyAxis(m_manipController.getLeftY()),
       () -> -modifyAxis(m_manipController.getRightY())
       ));
-    m_arm.setDefaultCommand(new SetArmPID(m_arm));
+   m_arm.setDefaultCommand(new SetArmPID(m_arm));
     
   //  m_arm.setDefaultCommand(new InstantCommand(()-> m_arm.setShoulderSpeed(0.2)));//will change-MG
 
@@ -111,12 +112,18 @@ public class RobotContainer {
         new PIDConstants(0.5, 0.0, 0.0),
         m_chassis::setSpeeds,
         m_eventMap,
-        true, // BE AWARE OF AUTOMATIC MIRRORING, MAY CAUSE TRACKING PROBLEMS
+        false, // BE AWARE OF AUTOMATIC MIRRORING, MAY CAUSE TRACKING PROBLEMS
         m_chassis);
 
     PathPlannerServer.startServer(5811);
-    // #endregion
 
+    firstAutoCmd.setDefaultOption("Empty", AUTOS.EMPTY);
+    firstAutoCmd.addOption("6Taxi", AUTOS.SIX_TAXI);
+    firstAutoCmd.addOption("7Charge", AUTOS.SEVEN_CHARGE);
+
+    SmartDashboard.putData("Auto Selector", firstAutoCmd);
+    // #endregion
+    
     configureButtonBindings();
   }
 
@@ -136,8 +143,6 @@ public class RobotContainer {
         .onFalse(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
 
     new Trigger(m_driveController::getBackButton).whileTrue(new Park(m_chassis));
-
-
 
     //Intake Buttons for V1 
     // new Trigger(m_manipController::getXButton).onTrue(m_IntakeV1_Lentz.runTopNeo(0.5)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
@@ -164,7 +169,7 @@ public class RobotContainer {
 
     //Button Map for Wasp Controls 
     //TOP LEFT TRIGGER --> ARM MID GRID PRESET
-    new Trigger(m_manipController::getLeftBumper).whileTrue(new SetArm(m_arm, Constants.ELBOWMID, Constants.SHOULDERMID));
+    new Trigger(m_manipController::getLeftBumper).whileTrue(new SetArm(m_arm, Constants.ELBOWMID, Constants.SHOULDERMID)).onFalse((new SetArm(m_arm, Constants.ELBOWSTOW, Constants.SHOULDERSTOW)).alongWith(new RunIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), Constants.HOLDSPEED)));
     //LOWER LEFT TRIGGER --> ARM LOW GRID
     BooleanSupplier leftSupplier = new BooleanSupplier() {
       @Override
@@ -192,13 +197,6 @@ public class RobotContainer {
 
     new Trigger(m_manipController::getRightBumper).toggleOnTrue(new RunIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLDSPEED));
 
-
-
-  
-
-
-
-
     //End of Intake buttons for V1
     // Intake buttons for Dave's intake (X = intake)
 
@@ -206,7 +204,7 @@ public class RobotContainer {
    //new Trigger(m_manipController::getYButton).whileTrue(new SetIntake(m_Dave_Intake, 0.6, DoubleSolenoid.Value.kReverse)); 
    //new Trigger(m_manipController::getAButton).whileTrue(new SetIntake(m_Dave_Intake, -1 , DoubleSolenoid.Value.kReverse));
     new Trigger(m_driveController::getAButton).whileTrue(new Park(m_chassis));
-    new Trigger(m_driveController::getLeftBumper).whileTrue(new AutoChargeStation(m_chassis).andThen(new Park(m_chassis)));
+    new Trigger(m_driveController::getLeftBumper).whileTrue(new AutoChargeStation(m_chassis, 1, -0.7).andThen(new Park(m_chassis)));
     new Trigger(() -> m_driveController.getRawButton(3)).whileTrue( //BUTTON NEEDS TO BE SET TO THE PROPER ID
         autoBuilder.followPath(PathPlanner.generatePath(
             new PathConstraints(1, 1), pathList)));
@@ -217,25 +215,46 @@ public class RobotContainer {
     PathPlannerTrajectory test3 = PathFunctions.createTrajectory("Test3");
     PathPlannerTrajectory oneMeterStraight = PathFunctions.createTrajectory("1MeterStraight");
     PathPlannerTrajectory spiral = PathFunctions.createTrajectory("Spiral");  
-    PathPlannerTrajectory sixEcho = PathFunctions.createTrajectory("6Echo");
-    PathPlannerTrajectory echoSix = PathFunctions.createTrajectory("Echo6");
-    PathPlannerTrajectory SixCharge = PathFunctions.createTrajectory("6Charge");  
+    PathPlannerTrajectory eightEcho = PathFunctions.createTrajectory("8Echo");
+    PathPlannerTrajectory echoEight = PathFunctions.createTrajectory("Echo8");
+    PathPlannerTrajectory eightCharge = PathFunctions.createTrajectory("8Charge");
+    PathPlannerTrajectory sixTaxi = PathFunctions.createTrajectory("6Taxi");
+    PathPlannerTrajectory sevenCharge = PathFunctions.createTrajectory("7Charge");
+
+    CommandBase autoCommand = null;
+
+    switch (firstAutoCmd.getSelected()) {
+      case EMPTY:
+        autoCommand = new InstantCommand();
+      break;
+      case SIX_TAXI:
+        autoCommand = new SequentialCommandGroup(
+          new InstantCommand(() -> m_chassis.resetPose(sixTaxi.getInitialHolonomicPose())),
+          autoBuilder.followPathWithEvents(sixTaxi)
+          );
+      break;
+      case SEVEN_CHARGE:
+        autoCommand = new SequentialCommandGroup(
+          new AutoChargeStation(m_chassis, -1, 0.7)
+        );
+      break;
+    }
 
     // return new SequentialCommandGroup(
     //     new InstantCommand(() -> m_chassis.resetPose(oneMeterStraight.getInitialHolonomicPose())),
     //     autoBuilder.followPath(oneMeterStraight).andThen(() -> m_chassis.setSpeeds()),
     //     new InstantCommand(() -> m_chassis.resetPose(oneMeterStraight.getInitialHolonomicPose())),
     //     autoBuilder.followPath(oneMeterStraight).andThen(() -> m_chassis.setSpeeds()));
-    return new SequentialCommandGroup(
-        new InstantCommand(() -> m_chassis.resetPose(sixEcho.getInitialHolonomicPose())),
-        autoBuilder.followPath(sixEcho).andThen(() -> m_chassis.setSpeeds()),
-        new InstantCommand(() -> m_chassis.resetPose(echoSix.getInitialHolonomicPose())),
-        autoBuilder.followPath(echoSix).andThen(() -> m_chassis.setSpeeds()),
-        new InstantCommand(() -> m_chassis.resetPose(SixCharge.getInitialHolonomicPose())),
-        autoBuilder.followPath(SixCharge).andThen(() -> m_chassis.setSpeeds()),
-        new AutoChargeStation(m_chassis)
-        );
-    // return new AutoChargeStation(m_chassis);
+    // return new SequentialCommandGroup(
+    //     new InstantCommand(() -> m_chassis.resetPose(eightEcho.getInitialHolonomicPose())),
+    //     autoBuilder.followPath(eightEcho).andThen(() -> m_chassis.setSpeeds()),
+    //     new InstantCommand(() -> m_chassis.resetPose(echoEight.getInitialHolonomicPose())),
+    //     autoBuilder.followPath(echoEight).andThen(() -> m_chassis.setSpeeds()),
+    //     new InstantCommand(() -> m_chassis.resetPose(eightCharge.getInitialHolonomicPose())),
+    //     autoBuilder.followPath(eightCharge).andThen(() -> m_chassis.setSpeeds()),
+    //     new AutoChargeStation(m_chassis)
+    //     );
+    return autoCommand;
   }
   /**
    * Applies a deadband to the given joystick axis value

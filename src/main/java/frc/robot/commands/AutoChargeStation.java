@@ -14,21 +14,23 @@ public class AutoChargeStation extends CommandBase {
   private double startTime;
   private double startReverseTime;
 
+  private double speed;
+  private double reverseSpeed;
   private static final double threshold = 10;
   private static final double maxTime = 10; // should be lowered
   private static final double revereseTime = 0.8;
-  private static final double speed = 1;
-  private static final double reverseSpeed = -0.7;
  
-  public AutoChargeStation(SwerveChassis chassis) {
+  public AutoChargeStation(SwerveChassis chassis, double speed, double reverseSpeed) {
     this.chassis = chassis;
+    this.speed = speed;
+    this.reverseSpeed = reverseSpeed;
     addRequirements(chassis);
   }
 
   @Override
   public void initialize() {
     startTime = Timer.getFPGATimestamp();
-    initialRot = chassis.getGyroRot(1).getDegrees();
+    initialRot = Math.abs(chassis.getGyroRot(1).getDegrees());
     hasRotated = false;
     hasFlattened = false;
     isReversing = false;
@@ -37,10 +39,10 @@ public class AutoChargeStation extends CommandBase {
 
   @Override
   public void execute() {
-    if (chassis.getGyroRot(1).getDegrees() - initialRot > threshold) {
+    if (Math.abs(chassis.getGyroRot(1).getDegrees()) - initialRot > threshold) {
       hasRotated = true;
     }
-    if ((chassis.getGyroRot(1).getDegrees() - initialRot < threshold) && hasRotated) {
+    if ((Math.abs(chassis.getGyroRot(1).getDegrees()) - initialRot < threshold) && hasRotated) {
       hasFlattened = true;
     }
     if (hasRotated && hasFlattened && !isReversing) {
@@ -48,7 +50,7 @@ public class AutoChargeStation extends CommandBase {
       isReversing = true;
       startReverseTime = Timer.getFPGATimestamp();
     }
-    SmartDashboard.putNumber("GyroPitch", chassis.getGyroRot(1).getDegrees());
+    SmartDashboard.putNumber("GyroPitch", Math.abs(chassis.getGyroRot(1).getDegrees()));
   }
 
   @Override
