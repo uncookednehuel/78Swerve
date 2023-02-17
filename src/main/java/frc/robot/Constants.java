@@ -199,13 +199,13 @@ public final class Constants {
     public static double ELBOWFLOOR = 110.625;
     public static double SHOULDERFLOOR = 13.336;
 
-    public static double ELBOWMID = 194.26;
-    public static double SHOULDERMID = 110.089;
+    public static double ELBOWMID = 198.26;
+    public static double SHOULDERMID = 114.089;
 
     public static double ELBOWSTOW = 23.89;
     public static double SHOULDERSTOW = 15.81;
 
-    public static double HOLDSPEED = 0.05;
+    public static double HOLDSPEED = 0.03;
 
     public static double elbowDefault = 23.89;
     public static double shoulderDefault = 15.81;

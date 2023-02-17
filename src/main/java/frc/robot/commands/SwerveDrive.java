@@ -52,7 +52,8 @@ public class SwerveDrive extends CommandBase {
   public void execute() {
     double dPadX = (dPadSupplier.getAsInt() == 0 ? 1 : 0) - (dPadSupplier.getAsInt() == 180 ? 1 : 0);
     double dPadY = (dPadSupplier.getAsInt() == 270 ? 1 : 0) - (dPadSupplier.getAsInt() == 90 ? 1 : 0);
-    int invertRelative = Math.abs(chassis.getFusedPose().getRotation().getDegrees()) > 90 ? 1 : -1;
+    // int invertRelative = Math.abs(chassis.getFusedPose().getRotation().getDegrees()) > 90 ? -1 : 1;
+    int invertRelative = 1;
     dPadX = triggerAdjust(dPadX) * Constants.DPAD_VEL * invertRelative;
     dPadY = triggerAdjust(dPadY) * Constants.DPAD_VEL * invertRelative;
 
