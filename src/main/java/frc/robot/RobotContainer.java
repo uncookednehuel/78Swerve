@@ -243,11 +243,11 @@ public class RobotContainer {
         );
       break;
       case SIX_CONE_TAXI:
-        // autoCommand = new SequentialCommandGroup(
-        //   new SetArm(m_arm, 0, 0),
-        //   new InstantCommand(() -> m_chassis.resetPose(sixTaxi.getInitialHolonomicPose())),
-        //   autoBuilder.followPathWithEvents(sixTaxi)
-        // );
+        autoCommand = new SequentialCommandGroup(
+          // new SetArm(m_arm, Constants.ELBOWMID, Constants.SHOULDERMID),
+          // new InstantCommand(() -> m_chassis.resetPose(sixTaxi.getInitialHolonomicPose())),
+          // autoBuilder.followPathWithEvents(sixTaxi)
+        );
         autoCommand = new InstantCommand();
       break;
     }
