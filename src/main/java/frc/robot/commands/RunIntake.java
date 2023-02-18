@@ -10,12 +10,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Dave_Intake;
 
 public class RunIntake extends CommandBase {
-  Dave_Intake m_intake;
+  Dave_Intake intake;
   private Value solenoid;
   private double speed;
   /** Creates a new RunIntake. */
   public RunIntake(Dave_Intake intake, Value solenoid, double speed) {
-    m_intake = intake;
+    this.intake = intake;
     this.solenoid = solenoid;
     this.speed = speed;
     
@@ -25,19 +25,20 @@ public class RunIntake extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_intake.setSolenoid(solenoid);
+    intake.setSolenoid(solenoid);
+    intake.setSpeed(0.1);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_intake.setSpeed(speed);
+    intake.setSpeed(speed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_intake.setSpeed(0.1);
+    intake.setSpeed(0.1);
   }
 
   // Returns true when the command should end.

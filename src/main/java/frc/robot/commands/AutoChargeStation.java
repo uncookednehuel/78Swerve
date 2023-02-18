@@ -18,7 +18,7 @@ public class AutoChargeStation extends CommandBase {
   private double reverseSpeed;
   private static final double threshold = 10;
   private static final double maxTime = 10; // should be lowered
-  private static final double revereseTime = 0.8;
+  private static final double revereseTime = 0.7;
  
   public AutoChargeStation(SwerveChassis chassis, double speed, double reverseSpeed) {
     this.chassis = chassis;

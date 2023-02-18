@@ -160,7 +160,7 @@ public final class Constants {
 
     public static final int DRIVE_CONTROLLER = 0;
     public static final int MANIP_CONTROLLER = 1;
-    public static final double DPAD_VEL = 1; // max meters per second (with RT down)
+    public static final double DPAD_VEL = 2; // max meters per second (with RT down)
 
     // #region KINEMATICS
 
@@ -192,9 +192,9 @@ public final class Constants {
     public static int SHOULDER_ENCODER = 0;
     public static int ELBOW_ENCODER = 1;
 
-    //OCnstants for Arm Presets and such
-    public static double ELBOWSHELF = 226.293;
-    public static double SHOULDERSHELF = 130.394;
+    //Constants for Arm Presets and such
+    public static double ELBOWSHELF = 228.293;
+    public static double SHOULDERSHELF = 132.394;
 
     public static double ELBOWFLOOR = 110.625;
     public static double SHOULDERFLOOR = 13.336;
@@ -205,7 +205,7 @@ public final class Constants {
     public static double ELBOWSTOW = 23.89;
     public static double SHOULDERSTOW = 15.81;
 
-    public static double HOLDSPEED = 0.03;
+    public static double HOLDSPEED = 0.15;
 
     public static double elbowDefault = 23.89;
     public static double shoulderDefault = 15.81;
