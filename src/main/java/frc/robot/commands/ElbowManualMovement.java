@@ -4,12 +4,10 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
 
 public class ElbowManualMovement extends CommandBase {
- // protected final XboxController armController;
   protected final Arm m_Arm;
   private double joystickValue;
   /** Creates a new ElbowShoulderMovement. */
@@ -18,7 +16,6 @@ public class ElbowManualMovement extends CommandBase {
     this.m_Arm = m_Arm;
     this.joystickValue = joystickValue;
     addRequirements(m_Arm);
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.

@@ -42,8 +42,8 @@ public class Arm extends SubsystemBase {
   }
 
   public void initialize() {
-    elbowTarget = Constants.elbowDefault;
-    shoulderTarget = Constants.shoulderDefault;
+    elbowTarget = Constants.ELBOW_STOW;
+    shoulderTarget = Constants.SHOULDER_STOW;
   }
 
   /**

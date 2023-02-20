@@ -9,18 +9,17 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Dave_Intake;
 
 public class SetIntake extends CommandBase {
-  /** Creates a new SetSpeed. */
   Dave_Intake intake;
   double speed;
   DoubleSolenoid.Value solenoidValue;
-  public SetIntake(Dave_Intake intake, double speed, DoubleSolenoid.Value solenoidValue) {
+
+  public SetIntake(Dave_Intake intake, DoubleSolenoid.Value solenoidValue, double speed) {
     this.intake = intake;
     this.speed = speed;
     this.solenoidValue = solenoidValue;
     addRequirements(intake);
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     intake.setSpeed(speed);
@@ -28,14 +27,10 @@ public class SetIntake extends CommandBase {
   }
 
   @Override
-  public void end(boolean interrupted) {
-    intake.setSpeed(0);
-    intake.setSolenoid(DoubleSolenoid.Value.kReverse);
-  }
+  public void end(boolean interrupted) { }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

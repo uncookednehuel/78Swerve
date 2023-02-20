@@ -20,31 +20,22 @@ public class SetArm extends CommandBase {
     this.arm = arm;
     this.elbowTarget = elbowTarget;
     this.shoulderTarget = shoulderTarget;
-
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-  }
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-  //  arm.elbowGoToPosition(elbowTarget);
-    //arm.shoulderGoToPosition(shoulderTarget);
     arm.elbowTarget = elbowTarget;
     arm.shoulderTarget = shoulderTarget;
   }
 
-  // Called once the command ends or is interrupted.
+  @Override
+  public void execute() { }
+
   @Override
   public void end(boolean interrupted) {
     System.out.print("SetArm command ended!");
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return arm.shoulderPIDcontroller.atSetpoint() && arm.elbowPIDcontroller.atSetpoint();
