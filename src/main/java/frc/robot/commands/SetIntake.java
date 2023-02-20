@@ -13,7 +13,7 @@ public class SetIntake extends CommandBase {
   Dave_Intake intake;
   double speed;
   DoubleSolenoid.Value solenoidValue;
-  public SetIntake(Dave_Intake intake, double speed, DoubleSolenoid.Value solenoidValue) {
+  public SetIntake(Dave_Intake intake, DoubleSolenoid.Value solenoidValue, double speed) {
     this.intake = intake;
     this.speed = speed;
     this.solenoidValue = solenoidValue;
