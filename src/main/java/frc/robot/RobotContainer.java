@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -52,7 +53,7 @@ public class RobotContainer {
   private final HashMap<String, Command> m_eventMap;
   private final SwerveAutoBuilder autoBuilder;
 
-  static enum AUTOS {EMPTY, SIX_TAXI, SEVEN_CHARGE, SIX_CONE_TAXI, SEVEN_CONE_CHARGE};
+  static enum AUTOS {EMPTY, SIX_TAXI, SEVEN_CHARGE, SIX_CONE_TAXI, CONE_TAXI_CHARGE, CONE_PICKUP_CONE};
   public SendableChooser<AUTOS> firstAutoCmd = new SendableChooser<>();
   // private SendableChooser<Command> secondAutoCmd = new SendableChooser();
   // private SendableChooser<Command> thirdAutoCmd = new SendableChooser();
@@ -101,7 +102,10 @@ public class RobotContainer {
     // #region PATHPLANNER
     m_eventMap = new HashMap<>();
     m_eventMap.put("Waypoint1Reached", new PrintCommand("Waypoint 1 reached!"));
-    m_eventMap.put("command1", new PrintCommand("Hello World"));
+    // m_eventMap.put("armPickupCone", new ParallelCommandGroup(
+    //   new SetArm(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR),
+    //   new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0.2))
+    //   );
     m_eventMap.put("Park", new Park(m_chassis));
 
     // An object used to do much of the creating path following commands
@@ -121,7 +125,8 @@ public class RobotContainer {
     firstAutoCmd.addOption("6Taxi", AUTOS.SIX_TAXI);
     firstAutoCmd.addOption("7Charge", AUTOS.SEVEN_CHARGE);
     firstAutoCmd.addOption("6ConeTaxi", AUTOS.SIX_CONE_TAXI);
-    firstAutoCmd.addOption("7ConeCharge", AUTOS.SEVEN_CONE_CHARGE);
+    firstAutoCmd.addOption("ConeTaxiCharge", AUTOS.CONE_TAXI_CHARGE);
+    firstAutoCmd.addOption("ConePickupCone", AUTOS.CONE_PICKUP_CONE);
 
     SmartDashboard.putData("Auto Selector", firstAutoCmd);
     // #endregion
@@ -204,7 +209,7 @@ public class RobotContainer {
    //new Trigger(m_manipController::getYButton).whileTrue(new SetIntake(m_Dave_Intake, 0.6, DoubleSolenoid.Value.kReverse)); 
    //new Trigger(m_manipController::getAButton).whileTrue(new SetIntake(m_Dave_Intake, -1 , DoubleSolenoid.Value.kReverse));
     new Trigger(m_driveController::getAButton).whileTrue(new Park(m_chassis));
-    new Trigger(m_driveController::getLeftBumper).whileTrue(new AutoChargeStation(m_chassis, 1, -0.7).andThen(new Park(m_chassis)));
+    new Trigger(m_driveController::getLeftBumper).whileTrue(new AutoChargeStation(m_chassis, 1).andThen(new Park(m_chassis)));
     new Trigger(() -> m_driveController.getRawButton(3)).whileTrue( //BUTTON NEEDS TO BE SET TO THE PROPER ID
         autoBuilder.followPath(PathPlanner.generatePath(
             new PathConstraints(1, 1), pathList)));
@@ -220,11 +225,13 @@ public class RobotContainer {
     PathPlannerTrajectory eightCharge = PathFunctions.createTrajectory("8Charge");
     PathPlannerTrajectory sixTaxi = PathFunctions.createTrajectory("6Taxi");
     PathPlannerTrajectory sevenCharge = PathFunctions.createTrajectory("7Charge");
+    PathPlannerTrajectory sixPickup = PathFunctions.createTrajectory("6Pickup");
+    PathPlannerTrajectory pickupSix = PathFunctions.createTrajectory("Pickup6");
 
     CommandBase autoCommand = null;
 
     switch (firstAutoCmd.getSelected()) {
-      case EMPTY:
+        case EMPTY:
         autoCommand = new InstantCommand();
       break;
       case SIX_TAXI:
@@ -235,48 +242,54 @@ public class RobotContainer {
       break;
       case SEVEN_CHARGE:
         autoCommand = new SequentialCommandGroup(
-          new AutoChargeStation(m_chassis, -1, 0.7),
-          new Park(m_chassis)
+          new InstantCommand(() -> m_chassis.resetPose(new Pose2d(0, 0, Rotation2d.fromDegrees(0)))),
+          new AutoChargeStation(m_chassis, -1)
         );
       break;
       case SIX_CONE_TAXI:
         autoCommand = new SequentialCommandGroup(
-          new SetArm(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR),
-          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, -0.25),
-          new WaitCommand(1),
-          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, Constants.HOLD_SPEED),
-          new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
-          new InstantCommand(() -> m_chassis.resetPose(sixTaxi.getInitialHolonomicPose())),
-          autoBuilder.followPathWithEvents(sixTaxi)
+          // new SetArm(m_arm, Constants.ELBOWMID, Constants.SHOULDERMID),
+          // new InstantCommand(() -> m_chassis.resetPose(sixTaxi.getInitialHolonomicPose())),
+          // autoBuilder.followPathWithEvents(sixTaxi)
         );
-        case SEVEN_CONE_CHARGE:
+        autoCommand = new InstantCommand();
+      break;
+      case CONE_TAXI_CHARGE:
         autoCommand = new SequentialCommandGroup(
-          new SetArm(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR),
-          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, -0.25),
-          new WaitCommand(1),
-          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, Constants.HOLD_SPEED),
+          new InstantCommand(() -> m_chassis.resetPose(new Pose2d(0, 0, Rotation2d.fromDegrees(0)))),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
+          new SetArm(m_arm, Constants.ELBOW_MID, Constants.SHOULDER_MID),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.1),
+          new WaitCommand(0.5),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
           new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
-          new InstantCommand(() -> m_chassis.resetPose(sixTaxi.getInitialHolonomicPose())),
-          autoBuilder.followPathWithEvents(sixTaxi)
+          new TraverseChargeStation(m_chassis, -Constants.CHARGE_SPEED),
+          new WaitCommand(1),
+          new AutoChargeStation(m_chassis, Constants.CHARGE_SPEED),
+          new Park(m_chassis)
         );
-        // autoCommand = new InstantCommand();
+      break;
+      case CONE_PICKUP_CONE:
+        autoCommand = new SequentialCommandGroup(
+          new InstantCommand(() -> m_chassis.resetPose(sixPickup.getInitialHolonomicPose())),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
+          new SetArm(m_arm, Constants.ELBOW_MID, Constants.SHOULDER_MID),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.1),
+          new WaitCommand(0.5),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0.2),
+          new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
+          new ParallelCommandGroup(
+            autoBuilder.followPathWithEvents(sixPickup),
+            new SetArm(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR)
+          ),
+          new ParallelCommandGroup(
+            autoBuilder.followPathWithEvents(pickupSix),
+            new SetArm(m_arm, Constants.ELBOW_MID, Constants.SHOULDER_MID)
+          ),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.1)
+        );
       break;
     }
-
-    // return new SequentialCommandGroup(
-    //     new InstantCommand(() -> m_chassis.resetPose(oneMeterStraight.getInitialHolonomicPose())),
-    //     autoBuilder.followPath(oneMeterStraight).andThen(() -> m_chassis.setSpeeds()),
-    //     new InstantCommand(() -> m_chassis.resetPose(oneMeterStraight.getInitialHolonomicPose())),
-    //     autoBuilder.followPath(oneMeterStraight).andThen(() -> m_chassis.setSpeeds()));
-    // return new SequentialCommandGroup(
-    //     new InstantCommand(() -> m_chassis.resetPose(eightEcho.getInitialHolonomicPose())),
-    //     autoBuilder.followPath(eightEcho).andThen(() -> m_chassis.setSpeeds()),
-    //     new InstantCommand(() -> m_chassis.resetPose(echoEight.getInitialHolonomicPose())),
-    //     autoBuilder.followPath(echoEight).andThen(() -> m_chassis.setSpeeds()),
-    //     new InstantCommand(() -> m_chassis.resetPose(eightCharge.getInitialHolonomicPose())),
-    //     autoBuilder.followPath(eightCharge).andThen(() -> m_chassis.setSpeeds()),
-    //     new AutoChargeStation(m_chassis)
-    //     );
     return autoCommand;
   }
   /**
