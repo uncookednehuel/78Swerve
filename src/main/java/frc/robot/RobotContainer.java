@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.classes.*;
 import frc.robot.commands.*;
@@ -44,7 +45,7 @@ public class RobotContainer {
   private final LimeLight m_limeLight;
   private final UsbCamera m_driverCam;
   public final MjpegServer m_mjpegServer;
-  
+  public final RevBlinkin m_blinkin;
   private final XboxController m_driveController;
   private final XboxController m_manipController;
   //private final IntakeV1_Lentz m_IntakeV1_Lentz;
@@ -58,6 +59,7 @@ public class RobotContainer {
   // private SendableChooser<Command> thirdAutoCmd = new SendableChooser();
 
   public RobotContainer() {
+    m_blinkin = new RevBlinkin();
     m_chassis = new SwerveChassis();
     m_arm = new Arm();
     m_limeLight = new LimeLight();
@@ -167,6 +169,14 @@ public class RobotContainer {
     //new Trigger(m_manipController::getYButton).whileTrue(new SetArm(m_arm, 120.974, 36.974 ));
     //stow 
    // new Trigger(m_manipController::getXButton).whileTrue(new SetArm(m_arm, 30.92, 37.581));
+
+   //LED CONTROLLER CONTROLS
+   POVButton dPadUp = new POVButton(m_manipController, 0);
+   POVButton dPadRight = new POVButton(m_manipController, 90);
+   POVButton dPadDown = new POVButton(m_manipController, 180);
+   POVButton dPadLeft = new POVButton(m_manipController, 270);
+   new Trigger(dPadLeft).onTrue(new InstantCommand(() -> m_blinkin.set(0.91)));
+   new Trigger(dPadRight).onTrue(new InstantCommand(() -> m_blinkin.set(0.69)));
 
     //Button Map for Wasp Controls 
     //TOP LEFT TRIGGER --> ARM MID GRID PRESET
