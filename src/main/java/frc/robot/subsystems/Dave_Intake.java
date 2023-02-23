@@ -49,29 +49,16 @@ public class Dave_Intake extends SubsystemBase {
   public DoubleSolenoid.Value getSolenoid(){
     return solenoid.get();
   }
+  public boolean hasItem(){
+    return Neo.getOutputCurrent()>30;
+  }
 
   @Override
   public void periodic() {
-    boolean itemIntake;
-    if(Neo.getOutputCurrent()>20){
-      itemIntake = true;
-    }else{
-      itemIntake = false;
-    }
+    boolean itemIntake = hasItem();
     SmartDashboard.putBoolean("HaveItem", itemIntake);
     SmartDashboard.putNumber("IntakeAmps", Neo.getOutputCurrent());
   }  
-  public void no(double speed){
-    Neo.set(speed);
-    boolean itemIntake;
-    if(Neo.getOutputCurrent()>20){
-      itemIntake = true;
-    }else{
-      itemIntake = false;
-    }
-    SmartDashboard.putBoolean("HaveItem", itemIntake);
-    SmartDashboard.putNumber("IntakeAmps", Neo.getOutputCurrent());
-  }
 }
 
 

@@ -57,7 +57,6 @@ public class RobotContainer {
   // private SendableChooser<Command> thirdAutoCmd = new SendableChooser();
 
   public RobotContainer() {
-    m_blinkin = new RevBlinkin();
     m_chassis = new SwerveChassis();
     m_arm = new Arm();
     m_limeLight = new LimeLight();
@@ -66,6 +65,7 @@ public class RobotContainer {
     //m_IntakeV1_Lentz = new IntakeV1_Lentz();
 
     m_Dave_Intake = new Dave_Intake();
+    m_blinkin = new RevBlinkin();
     m_manipController = new XboxController(Constants.MANIP_CONTROLLER);
 
     m_chassis.setDefaultCommand(new SwerveDrive(
