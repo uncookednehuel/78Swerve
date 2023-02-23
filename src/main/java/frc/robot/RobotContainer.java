@@ -48,12 +48,13 @@ public class RobotContainer {
   
   private final XboxController m_driveController;
   private final XboxController m_manipController;
+  private final XboxController m_testController;
   //private final IntakeV1_Lentz m_IntakeV1_Lentz;
   private final Dave_Intake m_Dave_Intake;
   private final HashMap<String, Command> m_eventMap;
   private final SwerveAutoBuilder autoBuilder;
 
-  static enum AUTOS {EMPTY, SIX_TAXI, SEVEN_CHARGE, SIX_CONE_TAXI, CONE_TAXI_CHARGE, CONE_PICKUP_CONE};
+  static enum AUTOS {EMPTY, SIX_TAXI, SEVEN_CHARGE, SIX_CONE_TAXI, CONE_TAXI_CHARGE, CONE_PICKUP_CONE, CUBE_HIGH_CHARGE_TAXI};
   public SendableChooser<AUTOS> firstAutoCmd = new SendableChooser<>();
   // private SendableChooser<Command> secondAutoCmd = new SendableChooser();
   // private SendableChooser<Command> thirdAutoCmd = new SendableChooser();
@@ -68,6 +69,8 @@ public class RobotContainer {
 
     m_Dave_Intake = new Dave_Intake();
     m_manipController = new XboxController(Constants.MANIP_CONTROLLER);
+
+    m_testController = new XboxController(5);
 
     m_chassis.setDefaultCommand(new SwerveDrive(
         m_chassis,
@@ -98,6 +101,7 @@ public class RobotContainer {
     Trigger buttonB = new JoystickButton(m_manipController, XboxController.Button.kX.value);
     buttonB.onTrue(new InstantCommand(() -> new SetArm(m_arm, Constants.SHOULDER_MID_TARGET, Constants.ELBOW_MID_TARGET)));
     buttonB.onFalse(new InstantCommand(() -> m_arm.setShoulderSpeed(0)));
+  
 
     // #region PATHPLANNER
     m_eventMap = new HashMap<>();
@@ -127,6 +131,7 @@ public class RobotContainer {
     firstAutoCmd.addOption("6ConeTaxi", AUTOS.SIX_CONE_TAXI);
     firstAutoCmd.addOption("ConeTaxiCharge", AUTOS.CONE_TAXI_CHARGE);
     firstAutoCmd.addOption("ConePickupCone", AUTOS.CONE_PICKUP_CONE);
+    firstAutoCmd.addOption("6CubeHighTaxiCharge", AUTOS.CUBE_HIGH_CHARGE_TAXI);
 
     SmartDashboard.putData("Auto Selector", firstAutoCmd);
     // #endregion
@@ -213,6 +218,9 @@ public class RobotContainer {
     new Trigger(() -> m_driveController.getRawButton(3)).whileTrue( //BUTTON NEEDS TO BE SET TO THE PROPER ID
         autoBuilder.followPath(PathPlanner.generatePath(
             new PathConstraints(1, 1), pathList)));
+
+    //TestController Buttons 
+    new Trigger(m_testController::getAButton).whileTrue((new SetArm(m_arm, Constants.ELBOW_HIGH_CUBE, Constants.SHOULDER_HIGH_CUBE)).alongWith(new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0.5))).onFalse((new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_HIGH_CUBE)).alongWith(new SetIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), Constants.HOLD_SPEED)));
 
   }
 
@@ -310,6 +318,22 @@ public class RobotContainer {
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.1)
         );
       break;
+      case CUBE_HIGH_CHARGE_TAXI:
+      autoCommand = new SequentialCommandGroup(
+        new InstantCommand(() -> m_chassis.resetPose(new Pose2d(0, 0, Rotation2d.fromDegrees(0)))),
+        new ParallelCommandGroup(
+          new SetArm(m_arm, Constants.ELBOW_HIGH_CUBE, Constants.SHOULDER_HIGH_CUBE),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLD_SPEED)
+        ),
+        new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.5),
+        new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
+        new TraverseChargeStation(m_chassis, -Constants.CHARGE_SPEED),
+        new WaitCommand(1),
+        new AutoChargeStation(m_chassis, Constants.CHARGE_SPEED),
+        new Park(m_chassis)
+
+      
+      );
     }
     return autoCommand;
   }
