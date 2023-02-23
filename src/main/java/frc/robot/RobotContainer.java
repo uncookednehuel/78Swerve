@@ -247,12 +247,33 @@ public class RobotContainer {
         );
       break;
       case SIX_CONE_TAXI:
+        // autoCommand = new SequentialCommandGroup(
+        //   new InstantCommand(() -> m_chassis.resetPose(new Pose2d(0, 0, Rotation2d.fromDegrees(0)))),
+        //   new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
+        //   new SetArm(m_arm, Constants.ELBOW_MID, Constants.SHOULDER_MID),
+        //   new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.1),
+        //   new WaitCommand(0.5),
+        //   new InstantCommand(() -> m_chassis.resetPose(sixTaxi.getInitialHolonomicPose())),
+        //   autoBuilder.followPathWithEvents(sixTaxi)
+        SmartDashboard.putString("output 6 cone", "I AM HERE");
         autoCommand = new SequentialCommandGroup(
+          
+          new InstantCommand(() -> m_chassis.resetPose(new Pose2d(0, 0, Rotation2d.fromDegrees(0)))),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
+          new SetArm(m_arm, Constants.ELBOW_MID, Constants.SHOULDER_MID),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.1),
+          new WaitCommand(0.5),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
+          new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
+          new InstantCommand(() -> m_chassis.resetPose(sixTaxi.getInitialHolonomicPose())),
+          autoBuilder.followPathWithEvents(sixTaxi)
+          //MAY RUN INTO BARRIAR CHECK AT WPI--- maddie 2-22-23
+        
           // new SetArm(m_arm, Constants.ELBOWMID, Constants.SHOULDERMID),
           // new InstantCommand(() -> m_chassis.resetPose(sixTaxi.getInitialHolonomicPose())),
           // autoBuilder.followPathWithEvents(sixTaxi)
         );
-        autoCommand = new InstantCommand();
+         //autoCommand = new InstantCommand();
       break;
       case CONE_TAXI_CHARGE:
         autoCommand = new SequentialCommandGroup(
