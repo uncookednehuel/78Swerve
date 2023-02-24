@@ -65,7 +65,7 @@ public class RobotContainer {
     //m_IntakeV1_Lentz = new IntakeV1_Lentz();
 
     m_Dave_Intake = new Dave_Intake();
-    m_blinkin = new RevBlinkin();
+    m_blinkin = new RevBlinkin(m_Dave_Intake);
     m_manipController = new XboxController(Constants.MANIP_CONTROLLER);
 
     m_chassis.setDefaultCommand(new SwerveDrive(
@@ -172,8 +172,10 @@ public class RobotContainer {
    POVButton dPadRight = new POVButton(m_manipController, 90);
    POVButton dPadDown = new POVButton(m_manipController, 180);
    POVButton dPadLeft = new POVButton(m_manipController, 270);
-   new Trigger(dPadLeft).onTrue(new InstantCommand(() -> m_blinkin.set(0.91)));
-   new Trigger(dPadRight).onTrue(new InstantCommand(() -> m_blinkin.set(0.69)));
+   new Trigger(dPadLeft).onTrue(new SetLEDs(0.91, m_blinkin));
+   new Trigger(dPadRight).onTrue(new SetLEDs(0.69, m_blinkin));
+  //  new Trigger(dPadLeft).onTrue(new PrintCommand("DPAD LEFT"));
+  //  new Trigger(dPadRight).onTrue(new PrintCommand("DPAD RIGHT"));
 
     //Button Map for Wasp Controls 
     //TOP LEFT TRIGGER --> ARM MID GRID PRESET
