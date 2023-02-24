@@ -1,7 +1,9 @@
 package frc.robot.subsystems;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 
 public class RevBlinkin extends SubsystemBase {
@@ -14,17 +16,23 @@ public class RevBlinkin extends SubsystemBase {
   }
 
   public void set(double val) {
+    new PrintCommand("Setting LEDs to " + val);
     if ((val >= -1.0) && (val <= 1.0)) {
-      m_blinkin.set(0.71);
+      m_blinkin.set(0.91);
     }
   }
   
- // @Override
-  //public void periodic() {
-    //while (daveIntake.hasItem() == true) {
-      //m_blinkin.set(0.71);
-    //}
- // }
+ @Override
+  public void periodic() {
+    SmartDashboard.putBoolean("Running", daveIntake.hasItem());
+    if (daveIntake.hasItem() == true) {                                
+      m_blinkin.set(0.75);
+    } else {
+
+      m_blinkin.set(0.81);
+    }
+    m_blinkin.set(0.01);
+ }
 
  
  // public void solid_orange() {
