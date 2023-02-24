@@ -222,7 +222,7 @@ public class RobotContainer {
             new PathConstraints(1, 1), pathList)));
 
     //TestController Buttons 
-    new Trigger(m_testController::getAButton).whileTrue((new SetArm(m_arm, Constants.ELBOW_HIGH_CUBE, Constants.SHOULDER_HIGH_CUBE)).alongWith(new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0.5))).onFalse((new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_HIGH_CUBE)));
+    new Trigger(m_testController::getAButton).whileTrue((new SetArm(m_arm, Constants.ELBOW_HIGH_CUBE, Constants.SHOULDER_HIGH_CUBE)).alongWith(new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLD_SPEED))).onFalse((new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_HIGH_CUBE)));
     new Trigger(m_testController::getBButton).whileTrue((new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.5))).onFalse(new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, Constants.HOLD_SPEED));
 
   }
@@ -317,6 +317,7 @@ public class RobotContainer {
           new SetArm(m_arm, Constants.ELBOW_HIGH_CUBE, Constants.SHOULDER_HIGH_CUBE),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLD_SPEED)
         ),
+        new WaitCommand(0.25),
         new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.5),
         new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
         new TraverseChargeStation(m_chassis, -Constants.CHARGE_SPEED),
