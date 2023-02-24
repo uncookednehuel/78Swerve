@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -228,16 +229,14 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    PathPlannerTrajectory test3 = PathFunctions.createTrajectory("Test3");
-    PathPlannerTrajectory oneMeterStraight = PathFunctions.createTrajectory("1MeterStraight");
-    PathPlannerTrajectory spiral = PathFunctions.createTrajectory("Spiral");  
-    PathPlannerTrajectory eightEcho = PathFunctions.createTrajectory("8Echo");
-    PathPlannerTrajectory echoEight = PathFunctions.createTrajectory("Echo8");
-    PathPlannerTrajectory eightCharge = PathFunctions.createTrajectory("8Charge");
+    PathPlannerTrajectory test3 = PathPlannerTrajectory.transformTrajectoryForAlliance(PathFunctions.createTrajectory("Test3"), DriverStation.getAlliance());
+    PathPlannerTrajectory test2 = PathFunctions.createTrajectory("Test2");
+    PathPlannerTrajectory taxi = PathFunctions.createTrajectory("Taxi");
+    PathPlannerTrajectory sixEcho = PathFunctions.createTrajectory("6Echo");
+    PathPlannerTrajectory echoSix = PathFunctions.createTrajectory("Echo6");
     PathPlannerTrajectory sixTaxi = PathFunctions.createTrajectory("6Taxi");
+    PathPlannerTrajectory eightCharge = PathFunctions.createTrajectory("8Charge");
     PathPlannerTrajectory sevenCharge = PathFunctions.createTrajectory("7Charge");
-    PathPlannerTrajectory sixPickup = PathFunctions.createTrajectory("6Pickup");
-    PathPlannerTrajectory pickupSix = PathFunctions.createTrajectory("Pickup6");
     PathPlannerTrajectory eightHotel = PathFunctions.createTrajectory("8 Hotel");
     PathPlannerTrajectory hotelEight = PathFunctions.createTrajectory("Hotel 8");
 
@@ -259,10 +258,8 @@ public class RobotContainer {
           new AutoChargeStation(m_chassis, -1)
         );
       break;
-      case SIX_CONE_TAXI:
-        SmartDashboard.putString("output 6 cone", "I AM HERE");
+      case SIX_CONE_TAXI: 
         autoCommand = new SequentialCommandGroup(
-          
           new InstantCommand(() -> m_chassis.resetPose(new Pose2d(0, 0, Rotation2d.fromDegrees(0)))),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
           new SetArm(m_arm, Constants.ELBOW_MID, Constants.SHOULDER_MID),
@@ -292,7 +289,7 @@ public class RobotContainer {
       break;
       case CONE_PICKUP_CONE:
         autoCommand = new SequentialCommandGroup(
-          new InstantCommand(() -> m_chassis.resetPose(sixPickup.getInitialHolonomicPose())),
+          new InstantCommand(() -> m_chassis.resetPose(sixEcho.getInitialHolonomicPose())),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
           new SetArm(m_arm, Constants.ELBOW_MID, Constants.SHOULDER_MID),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.1),
@@ -300,11 +297,11 @@ public class RobotContainer {
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0.2),
           new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
           new ParallelCommandGroup(
-            autoBuilder.followPathWithEvents(sixPickup),
+            autoBuilder.followPathWithEvents(sixEcho),
             new SetArm(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR)
           ),
           new ParallelCommandGroup(
-            autoBuilder.followPathWithEvents(pickupSix),
+            autoBuilder.followPathWithEvents(sixEcho),
             new SetArm(m_arm, Constants.ELBOW_MID, Constants.SHOULDER_MID)
           ),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.1)
@@ -340,13 +337,13 @@ public class RobotContainer {
       break;
       case CONE_PICKUP_CONE_EIGHT:
       autoCommand = new SequentialCommandGroup(
-        new InstantCommand(() -> m_chassis.resetPose(sixPickup.getInitialHolonomicPose())),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
           new SetArm(m_arm, Constants.ELBOW_MID, Constants.SHOULDER_MID),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.1),
           new WaitCommand(0.5),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0.2),
           new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
+          new InstantCommand(() -> m_chassis.resetPose(eightHotel.getInitialHolonomicPose())),
           new ParallelCommandGroup(
             autoBuilder.followPathWithEvents(eightHotel),
             new SetArm(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR)
