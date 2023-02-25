@@ -229,36 +229,31 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    PathPlannerTrajectory test3 = PathPlannerTrajectory.transformTrajectoryForAlliance(PathFunctions.createTrajectory("Test3"), DriverStation.getAlliance());
-    PathPlannerTrajectory test2 = PathFunctions.createTrajectory("Test2");
-    PathPlannerTrajectory taxi = PathFunctions.createTrajectory("Taxi");
-    PathPlannerTrajectory sixEcho = PathFunctions.createTrajectory("6Echo");
-    PathPlannerTrajectory echoSix = PathFunctions.createTrajectory("Echo6");
-    PathPlannerTrajectory sixTaxi = PathFunctions.createTrajectory("6Taxi");
-    PathPlannerTrajectory eightCharge = PathFunctions.createTrajectory("8Charge");
-    PathPlannerTrajectory sevenCharge = PathFunctions.createTrajectory("7Charge");
-    PathPlannerTrajectory eightHotel = PathFunctions.createTrajectory("8 Hotel");
-    PathPlannerTrajectory hotelEight = PathFunctions.createTrajectory("Hotel 8");
-
     CommandBase autoCommand = null;
 
     switch (firstAutoCmd.getSelected()) {
-        case EMPTY:
+
+      case EMPTY: {
         autoCommand = new InstantCommand();
-      break;
-      case SIX_TAXI:
+      break; }
+
+      case SIX_TAXI: {
+      PathPlannerTrajectory sixTaxi = PathFunctions.createTrajectory("6Taxi");
         autoCommand = new SequentialCommandGroup(
-          new InstantCommand(() -> m_chassis.resetPose(sixTaxi.getInitialHolonomicPose())),
-          autoBuilder.followPathWithEvents(sixTaxi)
+        PathFunctions.resetOdometry(m_chassis, sixTaxi),
+        autoBuilder.followPathWithEvents(sixTaxi)
           );
-      break;
-      case SEVEN_CHARGE:
+      break; }
+
+      case SEVEN_CHARGE: {
         autoCommand = new SequentialCommandGroup(
           new InstantCommand(() -> m_chassis.resetPose(new Pose2d(0, 0, Rotation2d.fromDegrees(0)))),
           new AutoChargeStation(m_chassis, -1)
         );
-      break;
-      case SIX_CONE_TAXI: 
+      break; }
+
+      case SIX_CONE_TAXI: {
+      PathPlannerTrajectory sixTaxi = PathFunctions.createTrajectory("6Taxi");
         autoCommand = new SequentialCommandGroup(
           new InstantCommand(() -> m_chassis.resetPose(new Pose2d(0, 0, Rotation2d.fromDegrees(0)))),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
@@ -267,12 +262,12 @@ public class RobotContainer {
           new WaitCommand(0.5),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
           new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
-          new InstantCommand(() -> m_chassis.resetPose(sixTaxi.getInitialHolonomicPose())),
+          PathFunctions.resetOdometry(m_chassis, sixTaxi),
           autoBuilder.followPathWithEvents(sixTaxi)
-          //MAY RUN INTO BARRIAR CHECK AT WPI--- maddie 2-22-23
         );
-      break;
-      case CONE_TAXI_CHARGE:
+      break; }
+
+      case CONE_TAXI_CHARGE: {
         autoCommand = new SequentialCommandGroup(
           new InstantCommand(() -> m_chassis.resetPose(new Pose2d(0, 0, Rotation2d.fromDegrees(0)))),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
@@ -286,10 +281,12 @@ public class RobotContainer {
           new AutoChargeStation(m_chassis, Constants.CHARGE_SPEED),
           new Park(m_chassis)
         );
-      break;
-      case CONE_PICKUP_CONE:
+      break; }
+
+      case CONE_PICKUP_CONE: {
+        PathPlannerTrajectory sixEcho = PathFunctions.createTrajectory("6Echo");
         autoCommand = new SequentialCommandGroup(
-          new InstantCommand(() -> m_chassis.resetPose(sixEcho.getInitialHolonomicPose())),
+          PathFunctions.resetOdometry(m_chassis, sixEcho),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
           new SetArm(m_arm, Constants.ELBOW_MID, Constants.SHOULDER_MID),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.1),
@@ -298,22 +295,19 @@ public class RobotContainer {
           new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
           new ParallelCommandGroup(
             autoBuilder.followPathWithEvents(sixEcho),
-            new SetArm(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR)
-          ),
+            new SetArm(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR)),
           new ParallelCommandGroup(
             autoBuilder.followPathWithEvents(sixEcho),
-            new SetArm(m_arm, Constants.ELBOW_MID, Constants.SHOULDER_MID)
-          ),
+            new SetArm(m_arm, Constants.ELBOW_MID, Constants.SHOULDER_MID)),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.1)
         );
-      break;
-      case CUBE_HIGH_CHARGE_TAXI:
+      break; }
+
+      case CUBE_HIGH_CHARGE_TAXI: {
       autoCommand = new SequentialCommandGroup(
         new InstantCommand(() -> m_chassis.resetPose(new Pose2d(0, 0, Rotation2d.fromDegrees(0)))),
-        new ParallelCommandGroup(
-          new SetArm(m_arm, Constants.ELBOW_HIGH_CUBE, Constants.SHOULDER_HIGH_CUBE),
-          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLD_SPEED)
-        ),
+        new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLD_SPEED),
+        new SetArm(m_arm, Constants.ELBOW_HIGH_CUBE, Constants.SHOULDER_HIGH_CUBE),
         new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.5),
         new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
         new TraverseChargeStation(m_chassis, -Constants.CHARGE_SPEED),
@@ -321,8 +315,10 @@ public class RobotContainer {
         new AutoChargeStation(m_chassis, Constants.CHARGE_SPEED),
         new Park(m_chassis)
       );
-      break;
-      case CONE_TAXI_EIGHT:
+      break; }
+
+      case CONE_TAXI_EIGHT: {
+      PathPlannerTrajectory eightHotel = PathFunctions.createTrajectory("8 Hotel");
       autoCommand = new SequentialCommandGroup(
         new InstantCommand(() -> m_chassis.resetPose(new Pose2d(0, 0, Rotation2d.fromDegrees(0)))),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
@@ -331,11 +327,14 @@ public class RobotContainer {
           new WaitCommand(0.5),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
           new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
-          new InstantCommand(() -> m_chassis.resetPose(sixTaxi.getInitialHolonomicPose())),
+          PathFunctions.resetOdometry(m_chassis, eightHotel),
           autoBuilder.followPathWithEvents(eightHotel)
       );
-      break;
-      case CONE_PICKUP_CONE_EIGHT:
+      break; }
+
+      case CONE_PICKUP_CONE_EIGHT: {
+      PathPlannerTrajectory eightHotel = PathFunctions.createTrajectory("8 Hotel");
+      PathPlannerTrajectory hotelEight = PathFunctions.createTrajectory("Hotel 8");
       autoCommand = new SequentialCommandGroup(
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
           new SetArm(m_arm, Constants.ELBOW_MID, Constants.SHOULDER_MID),
@@ -343,7 +342,7 @@ public class RobotContainer {
           new WaitCommand(0.5),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0.2),
           new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
-          new InstantCommand(() -> m_chassis.resetPose(eightHotel.getInitialHolonomicPose())),
+          PathFunctions.resetOdometry(m_chassis, eightHotel),
           new ParallelCommandGroup(
             autoBuilder.followPathWithEvents(eightHotel),
             new SetArm(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR)
@@ -354,8 +353,7 @@ public class RobotContainer {
           ),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.1)
       );
-
-
+      break; }
     }
     return autoCommand;
   }
