@@ -3,6 +3,7 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,6 +24,7 @@ public class SwerveDrive extends CommandBase {
   private final SlewRateLimiter xLimiter;
   private final SlewRateLimiter yLimiter;
   private final SlewRateLimiter thetaLimiter;
+  private final PIDController thetaPID;
 
   public SwerveDrive(
       SwerveChassis chassis,
@@ -36,6 +38,7 @@ public class SwerveDrive extends CommandBase {
     this.dPadSupplier = dPadSupplier;
     this.lTriggerSupplier = lTriggerSupplier;
     this.rTriggerSupplier = rTriggerSupplier;
+
 
     xLimiter = new SlewRateLimiter(11, -11, 0);
     yLimiter = new SlewRateLimiter(11, -11, 0);
