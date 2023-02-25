@@ -55,7 +55,10 @@ public class RobotContainer {
   private final HashMap<String, Command> m_eventMap;
   private final SwerveAutoBuilder autoBuilder;
 
-  static enum AUTOS {EMPTY, SIX_TAXI, SEVEN_CHARGE, SIX_CONE_TAXI, CONE_TAXI_CHARGE, CONE_PICKUP_CONE, CUBE_HIGH_CHARGE_TAXI, CONE_TAXI_EIGHT, CONE_PICKUP_CONE_EIGHT};
+  static enum AUTOS {
+    EMPTY, SIX_TAXI, SEVEN_CHARGE, SIX_CONE_TAXI, CONE_TAXI_CHARGE,
+    CONE_PICKUP_CONE, CUBE_HIGH_CHARGE_TAXI, CONE_TAXI_EIGHT, CONE_PICKUP_CONE_EIGHT,
+    TEST, TEST_2};
   public SendableChooser<AUTOS> firstAutoCmd = new SendableChooser<>();
   // private SendableChooser<Command> secondAutoCmd = new SendableChooser();
   // private SendableChooser<Command> thirdAutoCmd = new SendableChooser();
@@ -135,6 +138,8 @@ public class RobotContainer {
     firstAutoCmd.addOption("Cube High Taxi Charge (7)", AUTOS.CUBE_HIGH_CHARGE_TAXI);
     firstAutoCmd.addOption("Cone Taxi (8)", AUTOS.CONE_TAXI_EIGHT);
     firstAutoCmd.addOption("Cone Pickup Cone (8)", AUTOS.CONE_PICKUP_CONE_EIGHT);
+    firstAutoCmd.addOption("Test", AUTOS.TEST);
+    firstAutoCmd.addOption("Test2", AUTOS.TEST_2);
 
     SmartDashboard.putData("Auto Selector", firstAutoCmd);
     // #endregion
@@ -354,7 +359,21 @@ public class RobotContainer {
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.1)
       );
       break; }
-    }
+
+      case TEST: {
+        PathPlannerTrajectory test3 = PathPlanner.loadPath("Test3", Constants.PATH_CONSTRAINTS);
+        autoCommand = new SequentialCommandGroup(
+          autoBuilder.fullAuto(test3));
+      break; }
+
+      case TEST_2: {
+        PathPlannerTrajectory test3 = PathFunctions.createTrajectory("Test3");
+        autoCommand = new SequentialCommandGroup(
+          PathFunctions.resetOdometry(m_chassis, test3),
+          autoBuilder.followPathWithEvents(test3)
+        );
+      break; }
+      }
     return autoCommand;
   }
   /**
