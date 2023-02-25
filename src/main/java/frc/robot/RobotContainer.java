@@ -13,7 +13,6 @@ import com.pathplanner.lib.PathPoint;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.server.PathPlannerServer;
-
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
@@ -34,11 +33,12 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.classes.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-
+import frc.robot.subsystems.RevBlinkin.BlinkinLEDMode;
 
 public class RobotContainer {
 
@@ -47,7 +47,7 @@ public class RobotContainer {
   private final LimeLight m_limeLight;
   private final UsbCamera m_driverCam;
   public final MjpegServer m_mjpegServer;
-  
+  public final RevBlinkin m_blinkin;
   private final XboxController m_driveController;
   private final XboxController m_manipController;
   private final XboxController m_testController;
@@ -70,6 +70,7 @@ public class RobotContainer {
     //m_IntakeV1_Lentz = new IntakeV1_Lentz();
 
     m_Dave_Intake = new Dave_Intake();
+    m_blinkin = new RevBlinkin(m_Dave_Intake);
     m_manipController = new XboxController(Constants.MANIP_CONTROLLER);
 
     m_testController = new XboxController(5);
@@ -158,7 +159,6 @@ public class RobotContainer {
         .onFalse(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
 
     new Trigger(m_driveController::getBackButton).whileTrue(new Park(m_chassis));
-
     //Intake Buttons for V1 
     // new Trigger(m_manipController::getXButton).onTrue(m_IntakeV1_Lentz.runTopNeo(0.5)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
     // new Trigger(m_manipController::getYButton).onTrue(m_IntakeV1_Lentz.runTopNeo(-0.5)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
@@ -181,6 +181,16 @@ public class RobotContainer {
     //new Trigger(m_manipController::getYButton).whileTrue(new SetArm(m_arm, 120.974, 36.974 ));
     //stow 
    // new Trigger(m_manipController::getXButton).whileTrue(new SetArm(m_arm, 30.92, 37.581));
+
+   //LED CONTROLLER CONTROLS
+   POVButton dPadUp = new POVButton(m_manipController, 0);
+   POVButton dPadRight = new POVButton(m_manipController, 90);
+   POVButton dPadDown = new POVButton(m_manipController, 180);
+   POVButton dPadLeft = new POVButton(m_manipController, 270);
+   new Trigger(dPadLeft).onTrue(new InstantCommand(() -> m_blinkin.ledMode(BlinkinLEDMode.PURPLE)));
+   new Trigger(dPadRight).onTrue(new InstantCommand(() -> m_blinkin.ledMode(BlinkinLEDMode.YELLOW)));
+  //  new Trigger(dPadLeft).onTrue(new PrintCommand("DPAD LEFT"));
+  //  new Trigger(dPadRight).onTrue(new PrintCommand("DPAD RIGHT"));
 
     //Button Map for Wasp Controls 
     //TOP LEFT TRIGGER --> ARM MID GRID PRESET
