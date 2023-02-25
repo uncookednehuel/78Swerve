@@ -19,7 +19,6 @@ public class ShoulderManualMovement extends CommandBase {
     this.m_Arm = m_Arm;
     this.joystickValue = joystickValue;
     addRequirements(m_Arm);
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.

@@ -1,6 +1,7 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.pathplanner.lib.PathConstraints;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -177,8 +178,7 @@ public final class Constants {
     // #endregion
 
     // #region AUTONOMOUS
-    public static final double PATH_MAX_VEL = 1; // in meters per second
-    public static final double PATH_MAX_ACC = 1; // in meters per second squared
+    public static final PathConstraints PATH_CONSTRAINTS = new PathConstraints(1, 1);
     public static final double PATH_ROT_MAX_VEL = 6.28; // 6.28 is 1 rotation (it is 2xPI but I don't know why exactly)
     public static final double PATH_ROT_MAX_ACC = 3.14; // 3.14 is half a rotation
     public static final double X_ERROR_VEL = 1; // I don't know what "additional meter per second in the x direction for

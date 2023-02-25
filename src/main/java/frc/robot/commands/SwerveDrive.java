@@ -74,10 +74,10 @@ public class SwerveDrive extends CommandBase {
     SmartDashboard.putNumber("DPAD setpoint", thetaPID.getSetpoint());
 
     ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-        triggerAdjust(xSupplier.getAsDouble()) * Constants.Swerve.MAX_SPEED,
-        triggerAdjust(ySupplier.getAsDouble()) * Constants.Swerve.MAX_SPEED,
-        triggerAdjust(rotSupplier.getAsDouble()) * Constants.Swerve.MAX_ANGULAR_VELOCITY,
-        chassis.getFusedPose().getRotation());
+      triggerAdjust(modifyAxis(xSupplier.getAsDouble())) * Constants.Swerve.MAX_SPEED,
+      triggerAdjust(modifyAxis(ySupplier.getAsDouble())) * Constants.Swerve.MAX_SPEED,
+      triggerAdjust(modifyAxis(rotSupplier.getAsDouble())) * Constants.Swerve.MAX_ANGULAR_VELOCITY,
+      chassis.getFusedPose().getRotation());
 
     double currentRot = chassis.getFusedPose().getRotation().getRadians() % (Math.PI * 2);
     double dpadSpeed =
@@ -108,8 +108,34 @@ public class SwerveDrive extends CommandBase {
     // Default speed = 1 - upAdjust
     // Full left trigger = 1 - upAdjust - downAdjust
     // Full right trigger = 1
-    double triggers = (1 - upAdjust) + (rTriggerSupplier.getAsDouble() * upAdjust)
-        - (lTriggerSupplier.getAsDouble() * downAdjust);
+    double triggers = (1 - upAdjust) + (modifyAxis(rTriggerSupplier.getAsDouble()) * upAdjust)
+        - (modifyAxis(lTriggerSupplier.getAsDouble()) * downAdjust);
     return in * triggers;
+  }
+    /**
+   * Applies a deadband to the given joystick axis value
+   * @param value
+   * @param deadband
+   * @return
+   */
+  private static double deadband(double value, double deadband) {
+    if (Math.abs(value) > deadband) {
+      return (value > 0.0 ? value - deadband : value + deadband) / (1.0 - deadband);
+    } else {
+      return 0.0;
+    }
+  }
+
+  /**
+   * Processes the given joystick axis value, applying deadband and squaring it
+   * @param value
+   * @return
+   */
+  private static double modifyAxis(double value) {
+    // Deadband
+    value = deadband(value, 0.05);
+    // Square the axis
+    // value = Math.copySign(value * value, value);
+    return value;
   }
 }
