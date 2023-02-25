@@ -80,9 +80,13 @@ public class RobotContainer {
         () -> -modifyAxis(m_driveController.getLeftY()),
         () -> -modifyAxis(m_driveController.getLeftX()),
         () -> -modifyAxis(m_driveController.getRightX()),
-        () -> m_driveController.getPOV(),
         () -> modifyAxis(m_driveController.getLeftTriggerAxis()),
-        () -> modifyAxis(m_driveController.getRightTriggerAxis())));
+        () -> modifyAxis(m_driveController.getRightTriggerAxis()),
+        m_driveController::getYButton,
+        m_driveController::getBButton,
+        m_driveController::getAButton,
+        m_driveController::getXButton
+        ));
 
    m_arm.setDefaultCommand(new SetArmPID(m_arm));
 
@@ -149,16 +153,21 @@ public class RobotContainer {
     pathList.add(new PathPoint(new Translation2d(0, 0), new Rotation2d(), new Rotation2d(), 0));
     pathList.add(new PathPoint(new Translation2d(1.5, 0), new Rotation2d(), new Rotation2d(), 0));
 
-    new Trigger(m_driveController::getStartButton).onTrue(new InstantCommand(m_chassis::zeroGyro));
-    new Trigger(m_driveController::getYButton).whileTrue(new AutoCenter(m_limeLight, new Pose2d(1.5, 0, new Rotation2d(0)), m_chassis));
-    new Trigger(m_driveController::getXButton).whileTrue(new AutoCenter(m_limeLight, new Pose2d(1.5, -0.8, new Rotation2d(0)), m_chassis));
-    new Trigger(m_driveController::getBButton).whileTrue(new AutoCenter(m_limeLight, new Pose2d(1.5, 0.8, new Rotation2d(0)), m_chassis));
+    new Trigger(m_driveController::getStartButton).onTrue(new InstantCommand(() -> m_chassis.resetPose(new Pose2d(m_chassis.getFusedPose().getX(), m_chassis.getFusedPose().getY(), new Rotation2d()))));
+    new POVButton(m_driveController, 0).whileTrue(new AutoCenter(m_limeLight, new Pose2d(1.5, 0, new Rotation2d(0)), m_chassis));
+    new POVButton(m_driveController, 270).whileTrue(new AutoCenter(m_limeLight, new Pose2d(1.5, -0.8, new Rotation2d(0)), m_chassis));
+    new POVButton(m_driveController, 90).whileTrue(new AutoCenter(m_limeLight, new Pose2d(1.5, 0.8, new Rotation2d(0)), m_chassis));
+    new POVButton(m_driveController, 180).whileTrue(new Park(m_chassis));
     new Trigger(m_driveController::getRightBumper)
         .onTrue(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0.5, 0))));
     new Trigger(m_driveController::getRightBumper)
         .onFalse(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
 
-    new Trigger(m_driveController::getBackButton).whileTrue(new Park(m_chassis));
+    new Trigger(m_driveController::getLeftBumper).whileTrue(new AutoChargeStation(m_chassis, 1, -0.7).andThen(new Park(m_chassis)));
+    // new Trigger(() -> m_driveController.getRawButton(3)).whileTrue( //BUTTON NEEDS TO BE SET TO THE PROPER ID
+    //     autoBuilder.followPath(PathPlanner.generatePath(
+    //         new PathConstraints(1, 1), pathList)));
+
     //Intake Buttons for V1 
     // new Trigger(m_manipController::getXButton).onTrue(m_IntakeV1_Lentz.runTopNeo(0.5)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
     // new Trigger(m_manipController::getYButton).onTrue(m_IntakeV1_Lentz.runTopNeo(-0.5)).onFalse((m_IntakeV1_Lentz.runTopNeo(0)));
@@ -247,20 +256,6 @@ public class RobotContainer {
       //new Trigger(m_manipController::getXButton).whileTrue((new SetArm(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR))).onFalse(new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW));
       //new Trigger(m_manipController::getYButton).whileTrue((new SetArm(m_arm, Constants.ELBOW_MID, Constants.SHOULDER_MID))).onFalse(new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW));
     
-      //new Trigger(rightSupplier).whileTrue(new SetIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), -0.1));
-  
-
-    //End of Intake buttons for V1
-    // Intake buttons for Dave's intake (X = intake)
-
-   //new Trigger(m_manipController::getXButton).whileTrue(new SetIntake(m_Dave_Intake, 0.6, DoubleSolenoid.Value.kForward)); 
-   //new Trigger(m_manipController::getYButton).whileTrue(new SetIntake(m_Dave_Intake, 0.6, DoubleSolenoid.Value.kReverse)); 
-   //new Trigger(m_manipController::getAButton).whileTrue(new SetIntake(m_Dave_Intake, -1 , DoubleSolenoid.Value.kReverse));
-    new Trigger(m_driveController::getAButton).whileTrue(new Park(m_chassis));
-    new Trigger(m_driveController::getLeftBumper).whileTrue(new AutoChargeStation(m_chassis, 1).andThen(new Park(m_chassis)));
-    new Trigger(() -> m_driveController.getRawButton(3)).whileTrue( //BUTTON NEEDS TO BE SET TO THE PROPER ID
-        autoBuilder.followPath(PathPlanner.generatePath(
-            new PathConstraints(1, 1), pathList)));
 
     //TestController Buttons 
     new Trigger(m_testController::getAButton).whileTrue((new SetArm(m_arm, Constants.ELBOW_HIGH_CUBE, Constants.SHOULDER_HIGH_CUBE)).alongWith(new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLD_SPEED))).onFalse((new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_HIGH_CUBE)));
