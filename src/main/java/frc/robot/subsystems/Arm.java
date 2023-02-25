@@ -108,7 +108,8 @@ public double getElbowAbsolutePosition(){
   public boolean isLimitShoulder(){
     SmartDashboard.putBoolean("Limit switch", shoulderLimitSwitch.get());
     // SmartDashboard.putData("Input Limit", shoulderLimitSwitch.get());
-    return shoulderLimitSwitch.get();
+    // return shoulderLimitSwitch.get();
+    return false; // TEMPORARY, UNTIL LIMIT SWITCH SIGNAL WIRED
   }
 
   public void shoulderGoToPosition(double target){
