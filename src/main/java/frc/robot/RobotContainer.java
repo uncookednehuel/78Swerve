@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.classes.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.RevBlinkin.BlinkinLEDMode;
 
 public class RobotContainer {
 
@@ -172,8 +173,8 @@ public class RobotContainer {
    POVButton dPadRight = new POVButton(m_manipController, 90);
    POVButton dPadDown = new POVButton(m_manipController, 180);
    POVButton dPadLeft = new POVButton(m_manipController, 270);
-   new Trigger(dPadLeft).onTrue(new SetLEDs(0.91, m_blinkin));
-   new Trigger(dPadRight).onTrue(new SetLEDs(0.69, m_blinkin));
+   new Trigger(dPadLeft).onTrue(new InstantCommand(() -> m_blinkin.ledMode(BlinkinLEDMode.PURPLE)));
+   new Trigger(dPadRight).onTrue(new InstantCommand(() -> m_blinkin.ledMode(BlinkinLEDMode.YELLOW)));
   //  new Trigger(dPadLeft).onTrue(new PrintCommand("DPAD LEFT"));
   //  new Trigger(dPadRight).onTrue(new PrintCommand("DPAD RIGHT"));
 
