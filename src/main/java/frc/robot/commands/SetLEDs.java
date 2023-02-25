@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.subsystems.RevBlinkin;
 
 public class SetLEDs extends CommandBase {
@@ -17,6 +18,8 @@ public class SetLEDs extends CommandBase {
 
   @Override
   public void initialize() {
+    //print stuff here
+    new PrintCommand("Setting LEDs to " + val);
     blinkin.set(val);
   }
 

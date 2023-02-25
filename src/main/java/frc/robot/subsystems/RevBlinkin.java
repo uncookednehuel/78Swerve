@@ -16,9 +16,10 @@ public class RevBlinkin extends SubsystemBase {
   }
 
   public void set(double val) {
-    new PrintCommand("Setting LEDs to " + val);
     if ((val >= -1.0) && (val <= 1.0)) {
-      m_blinkin.set(0.91);
+      m_blinkin.set(val);
+    new PrintCommand("Setting LEDs to " + val);
+    SmartDashboard.putNumber("LedValue", val);
     }
   }
   
@@ -27,11 +28,11 @@ public class RevBlinkin extends SubsystemBase {
     SmartDashboard.putBoolean("Running", daveIntake.hasItem());
     if (daveIntake.hasItem() == true) {                                
       m_blinkin.set(0.75);
-    } else {
-
-      m_blinkin.set(0.81);
-    }
-    m_blinkin.set(0.01);
+    } 
+    // else {
+    //   m_blinkin.set(0.81);
+    // }
+    // this was put in for testing as nothing else was working, but this effectively changed the color to aqua
  }
 
  
