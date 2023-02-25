@@ -81,11 +81,11 @@ public class RobotContainer {
 
     m_chassis.setDefaultCommand(new SwerveDrive(
         m_chassis,
-        () -> -modifyAxis(m_driveController.getLeftY()),
-        () -> -modifyAxis(m_driveController.getLeftX()),
-        () -> -modifyAxis(m_driveController.getRightX()),
-        () -> modifyAxis(m_driveController.getLeftTriggerAxis()),
-        () -> modifyAxis(m_driveController.getRightTriggerAxis()),
+        -m_driveController::getLeftY,
+        -m_driveController::getLeftX,
+        -m_driveController::getRightX,
+        m_driveController::getLeftTriggerAxis,
+        m_driveController::getRightTriggerAxis,
         m_driveController::getYButton,
         m_driveController::getBButton,
         m_driveController::getAButton,
@@ -412,31 +412,5 @@ public class RobotContainer {
       break; }
       }
     return autoCommand;
-  }
-  /**
-   * Applies a deadband to the given joystick axis value
-   * @param value
-   * @param deadband
-   * @return
-   */
-  private static double deadband(double value, double deadband) {
-    if (Math.abs(value) > deadband) {
-      return (value > 0.0 ? value - deadband : value + deadband) / (1.0 - deadband);
-    } else {
-      return 0.0;
-    }
-  }
-
-  /**
-   * Processes the given joystick axis value, applying deadband and squaring it
-   * @param value
-   * @return
-   */
-  private static double modifyAxis(double value) {
-    // Deadband
-    value = deadband(value, 0.05);
-    // Square the axis
-    // value = Math.copySign(value * value, value);
-    return value;
   }
 }
