@@ -105,17 +105,10 @@ public double getElbowAbsolutePosition(){
     }
   }
 
-  public void isLimitShoulder(DigitalInput shoulderDigitalInput){
-    SmartDashboard.putBoolean("Limit switch", shoulderDigitalInput.get());
-    SmartDashboard.putData("Input Limit", shoulderDigitalInput);
-    if(shoulderDigitalInput.get()){
-      //setElbowSpeed(0);
-      setShoulderSpeed(0);
-    }
-    else{
-      elbowGoToPosition(target);
-      shoulderGoToPosition(target);
-    }
+  public boolean isLimitShoulder(){
+    SmartDashboard.putBoolean("Limit switch", shoulderLimitSwitch.get());
+    // SmartDashboard.putData("Input Limit", shoulderLimitSwitch.get());
+    return shoulderLimitSwitch.get();
   }
 
   public void shoulderGoToPosition(double target){
