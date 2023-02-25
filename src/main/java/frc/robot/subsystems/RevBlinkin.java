@@ -23,7 +23,12 @@ public static enum BlinkinLEDMode{
   PURPLE(0.91),
   RED(0.61),
   BLUE(0.87),
-  WHITE(0.93);
+  WHITE(0.93),
+  SHOT1(0.13), //Shot1 correlates to color pattern 1 
+  STROBE1(0.15), //Strobe1 correlates to color pattern 1
+  SHOT2(0.33), //Shot2 correlates to color pattern 2
+  STROBE2(0.35); //Strobe2 correlates to color pattern 2
+
   private double value;
   private BlinkinLEDMode(double val){
     this.value = val;
@@ -47,41 +52,12 @@ public void set(double BlinkinLEDMode) {
   public void periodic() {
     SmartDashboard.putBoolean("Running", daveIntake.hasItem());
     // BlinkinLEDMode ledMode = BlinkinLEDMode.BLUE;
-    switch(ledMode) {
-      case YELLOW:
-        set(BlinkinLEDMode.YELLOW.getValue());
-        break;
-      case PURPLE:
-        set(BlinkinLEDMode.PURPLE.getValue());
-        break;
-      case RED:
-        set(BlinkinLEDMode.RED.getValue());
-        break;
-      case BLUE:
-        set(BlinkinLEDMode.BLUE.getValue());
-        break;
-      case WHITE:
-        set(BlinkinLEDMode.WHITE.getValue());
-        break;
-    }
+    set(ledMode.getValue());
     
-    // if (daveIntake.hasItem() == true) {                                
-    //   ledMode(BlinkinLEDMode.WHITE);
-    // }
-
-    // if (daveIntake.hasItem() == true) {                                
-    //   m_blinkin.set(0.75);
-    // } 
-    // else {
-    //   m_blinkin.set(0.81);
-    // }
-    // this was put in for testing as nothing else was working, but this effectively changed the color to aqua
+    if (daveIntake.hasItem() == true) {                                
+      ledMode(BlinkinLEDMode.WHITE);
+    }
  }
-
- 
- // public void solid_orange() {
- // set(0.65);
- // }
 }
 
 
