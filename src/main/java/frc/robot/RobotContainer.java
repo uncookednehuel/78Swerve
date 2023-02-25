@@ -163,7 +163,7 @@ public class RobotContainer {
     new Trigger(m_driveController::getRightBumper)
         .onFalse(new InstantCommand(() -> m_chassis.setCenter(new Translation2d(0, 0))));
 
-    new Trigger(m_driveController::getLeftBumper).whileTrue(new AutoChargeStation(m_chassis, 1, -0.7).andThen(new Park(m_chassis)));
+    new Trigger(m_driveController::getLeftBumper).whileTrue(new AutoChargeStation(m_chassis, Constants.CHARGE_SPEED).andThen(new Park(m_chassis)));
     // new Trigger(() -> m_driveController.getRawButton(3)).whileTrue( //BUTTON NEEDS TO BE SET TO THE PROPER ID
     //     autoBuilder.followPath(PathPlanner.generatePath(
     //         new PathConstraints(1, 1), pathList)));
