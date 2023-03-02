@@ -59,7 +59,7 @@ public class RobotContainer {
 
   static enum AUTOS {
     EMPTY, SIX_TAXI, SEVEN_CHARGE, SIX_CONE_TAXI, CONE_TAXI_CHARGE,
-    CONE_PICKUP_CONE, CUBE_HIGH_CHARGE_TAXI, CONE_TAXI_EIGHT, CONE_PICKUP_CONE_EIGHT,
+    CONE_PICKUP_CONE, CUBE_HIGH_TAXI_CHARGE, CONE_TAXI_EIGHT, CONE_PICKUP_CONE_EIGHT,
     TEST, TEST_2};
   public SendableChooser<AUTOS> firstAutoCmd = new SendableChooser<>();
   // private SendableChooser<Command> secondAutoCmd = new SendableChooser();
@@ -142,7 +142,7 @@ public class RobotContainer {
     firstAutoCmd.addOption("Cone Taxi (6)", AUTOS.SIX_CONE_TAXI);
     firstAutoCmd.addOption("ConeTaxiCharge (7)", AUTOS.CONE_TAXI_CHARGE);
     firstAutoCmd.addOption("ConePickupCone (6)", AUTOS.CONE_PICKUP_CONE);
-    firstAutoCmd.addOption("Cube High Taxi Charge (7)", AUTOS.CUBE_HIGH_CHARGE_TAXI);
+    firstAutoCmd.addOption("Cube High Taxi Charge (7)", AUTOS.CUBE_HIGH_TAXI_CHARGE);
     firstAutoCmd.addOption("Cone Taxi (8)", AUTOS.CONE_TAXI_EIGHT);
     firstAutoCmd.addOption("Cone Pickup Cone (8)", AUTOS.CONE_PICKUP_CONE_EIGHT);
     firstAutoCmd.addOption("Test", AUTOS.TEST);
@@ -344,7 +344,7 @@ public class RobotContainer {
         );
       break; }
 
-      case CUBE_HIGH_CHARGE_TAXI: {
+      case CUBE_HIGH_TAXI_CHARGE: {
       autoCommand = new SequentialCommandGroup(
         new InstantCommand(() -> m_chassis.resetPose(new Pose2d(0, 0, Rotation2d.fromDegrees(0)))),
         new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLD_SPEED),
