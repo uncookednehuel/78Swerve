@@ -109,7 +109,7 @@ public final class Constants {
             public static final int angleMotorID = 2;
             public static final int canCoderID = 9;
            //  public static final Rotation2d angleOffset = Rotation2d.fromDegrees(269.29); //MK4
-             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(10.10); // ant man
+             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(8.70); // ant man
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
         }
@@ -120,7 +120,7 @@ public final class Constants {
             public static final int angleMotorID = 4;
             public static final int canCoderID = 10;
            // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(292.93); //MK4
-             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(160.75); // ant man
+             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(162.77); // ant man
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
         }
@@ -131,7 +131,7 @@ public final class Constants {
             public static final int angleMotorID = 6;
             public static final int canCoderID = 11;
             // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(17.31); //MK4
-             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(178.68); // ant man
+             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(178.50); // ant man
 
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
@@ -144,7 +144,7 @@ public final class Constants {
             public static final int canCoderID = 12;
 
            // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(344.70); //MK4
-             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(166.64); // ant man
+             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(165.93); // ant man
              
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
@@ -194,7 +194,7 @@ public final class Constants {
     // public static final double THRESHOLD = 9;
     // competition values
     public static final double REVERSE_SPEED = 0.7;
-    public static final double REVERSE_TIME = 0.45;
+    public static final double REVERSE_TIME = 0.2;
     public static final double THRESHOLD = 8;
 
     public static final double TRAJECTORY_KI = 0;
@@ -205,10 +205,10 @@ public final class Constants {
     public static int ELBOW_ENCODER = 1;
 
     //Constants for Arm Presets and such
-    public static double ELBOW_SHELF = 230.293;
+    public static double ELBOW_SHELF = 233.293;
     public static double SHOULDER_SHELF = 132.394;
 
-    public static double ELBOW_FLOOR = 110.625;
+    public static double ELBOW_FLOOR = 113.625;
     public static double SHOULDER_FLOOR = 13.336;
 
     public static double ELBOW_MID = 198.26;
@@ -220,7 +220,7 @@ public final class Constants {
     public static double ELBOW_HIGH_CUBE = 50.000;
     public static double SHOULDER_HIGH_CUBE = 13.336;
 
-    public static double HOLD_SPEED = 0.2;
+    public static double HOLD_SPEED = 0.15;
 
     // TODO - change to proper default positions
 
