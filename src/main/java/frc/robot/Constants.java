@@ -182,20 +182,20 @@ public final class Constants {
     public static final double PATH_ROT_MAX_VEL = 6.28; // 6.28 is 1 rotation (it is 2xPI but I don't know why exactly)
     public static final double PATH_ROT_MAX_ACC = 3.14; // 3.14 is half a rotation
     public static final double X_ERROR_VEL = 1; // I don't know what "additional meter per second in the x direction for
-                                                // every meter of error in the x direction" means in the docs
+    public static final double Y_ERROR_VEL = 1; // every meter of error in the x direction" means in the docs
+
     // AutoChargeStation and TraverseChargeStation constants
-    public static final double Y_ERROR_VEL = 1;
     public static final double CHARGE_SPEED = 1;
     public static final double MAX_TIME = 10;
     public static final double EXTRA_TIME = 0.5;
     // wooden values
-    public static final double REVERSE_SPEED = 0.7;
-    public static final double REVERSE_TIME = 0.8;
-    public static final double THRESHOLD = 9;
-    // competition values
     // public static final double REVERSE_SPEED = 0.7;
     // public static final double REVERSE_TIME = 0.8;
-    // public static final double THRESHOLD = 10;
+    // public static final double THRESHOLD = 9;
+    // competition values
+    public static final double REVERSE_SPEED = 0.7;
+    public static final double REVERSE_TIME = 0.45;
+    public static final double THRESHOLD = 8;
 
     public static final double TRAJECTORY_KI = 0;
     public static final double TRAJECTORY_KD = 0;
@@ -205,7 +205,7 @@ public final class Constants {
     public static int ELBOW_ENCODER = 1;
 
     //Constants for Arm Presets and such
-    public static double ELBOW_SHELF = 228.293;
+    public static double ELBOW_SHELF = 230.293;
     public static double SHOULDER_SHELF = 132.394;
 
     public static double ELBOW_FLOOR = 110.625;
@@ -220,7 +220,7 @@ public final class Constants {
     public static double ELBOW_HIGH_CUBE = 50.000;
     public static double SHOULDER_HIGH_CUBE = 13.336;
 
-    public static double HOLD_SPEED = 0.15;
+    public static double HOLD_SPEED = 0.2;
 
     // TODO - change to proper default positions
 
