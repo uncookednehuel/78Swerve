@@ -315,11 +315,11 @@ public class RobotContainer {
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
           new SetArm(m_arm, Constants.ELBOW_MID, Constants.SHOULDER_MID),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0),
-          new WaitCommand(0.5),
+          new WaitCommand(0.25),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
           new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
           new TraverseChargeStation(m_chassis, Constants.CHARGE_SPEED),
-          new WaitCommand(1),
+          new WaitCommand(0.5),
           new AutoChargeStation(m_chassis, -Constants.CHARGE_SPEED),
           new Park(m_chassis)
         );
