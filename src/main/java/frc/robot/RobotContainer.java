@@ -59,7 +59,7 @@ public class RobotContainer {
 
   static enum AUTOS {
     EMPTY, SIX_TAXI, SEVEN_CHARGE, SIX_CONE_TAXI, CONE_TAXI_CHARGE,
-    CONE_PICKUP_CONE, CUBE_HIGH_TAXI_CHARGE, CONE_TAXI_EIGHT, CONE_PICKUP_CONE_EIGHT,
+    CONE_PICKUP_CONE, CUBE_MID_TAXI_CHARGE, CONE_TAXI_EIGHT, CONE_PICKUP_CONE_EIGHT,
     TEST, TEST_2};
   public SendableChooser<AUTOS> firstAutoCmd = new SendableChooser<>();
   // private SendableChooser<Command> secondAutoCmd = new SendableChooser();
@@ -137,7 +137,7 @@ public class RobotContainer {
     PathPlannerServer.startServer(5811);
 
    // firstAutoCmd.setDefaultOption("Empty", AUTOS.EMPTY);
-    firstAutoCmd.setDefaultOption("Cube High Taxi Charge (7)", AUTOS.CUBE_HIGH_TAXI_CHARGE);
+    firstAutoCmd.setDefaultOption("Cube Mid Taxi Charge (7)", AUTOS.CUBE_MID_TAXI_CHARGE);
     firstAutoCmd.addOption("Taxi (6)", AUTOS.SIX_TAXI);
     firstAutoCmd.addOption("Charge (7)", AUTOS.SEVEN_CHARGE);
     firstAutoCmd.addOption("Cone Taxi (6)", AUTOS.SIX_CONE_TAXI);
@@ -345,12 +345,12 @@ public class RobotContainer {
         );
       break; }
 
-      case CUBE_HIGH_TAXI_CHARGE: {
+      case CUBE_MID_TAXI_CHARGE: {
       autoCommand = new SequentialCommandGroup(
         new InstantCommand(() -> m_chassis.resetPose(new Pose2d(0, 0, Rotation2d.fromDegrees(180)))),
         new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLD_SPEED),
-        new SetArm(m_arm, Constants.ELBOW_HIGH_CUBE, Constants.SHOULDER_HIGH_CUBE),
-        new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.5),
+        new SetArm(m_arm, Constants.ELBOW_MID, Constants.SHOULDER_MID),
+        new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.1),
         new WaitCommand(0.4),
         new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLD_SPEED),
         new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
