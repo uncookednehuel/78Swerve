@@ -244,7 +244,7 @@ public class RobotContainer {
     new Trigger(m_manipController::getBButton).whileTrue((new SetArm(m_arm, Constants.ELBOW_SHELF, Constants.SHOULDER_SHELF)).alongWith(new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0.35))).onFalse((new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW)).alongWith(new SetIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), 0)));
     new Trigger(m_manipController::getXButton).whileTrue((new SetArm(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR))).onFalse(new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW));
     new Trigger(m_manipController::getYButton).whileTrue((new SetArm(m_arm, Constants.ELBOW_MID, Constants.SHOULDER_MID))).onFalse(new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW));
-    new Trigger(new POVButton(m_manipController, 0)).whileTrue((new SetArm(m_arm, Constants.ELBOW_MID_DIAG, Constants.SHOULDER_MID_DIAG))).onFalse(new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW));
+    new Trigger(new POVButton(m_manipController, 0)).whileTrue((new SetArm(m_arm, Constants.ELBOW_MID_DIAG_TELEOP, Constants.SHOULDER_MID_DIAG_TELEOP))).onFalse(new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW));
 
     //CUBE BUTTONS
     new Trigger(rightSupplier).whileTrue(new SetIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), -0.1));
@@ -314,7 +314,7 @@ public class RobotContainer {
         autoCommand = new SequentialCommandGroup(
           new InstantCommand(() -> m_chassis.resetPose(new Pose2d(0, 0, Rotation2d.fromDegrees(180)))),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
-          new SetArm(m_arm, Constants.ELBOW_MID_DIAG, Constants.SHOULDER_MID_DIAG),
+          new SetArm(m_arm, Constants.ELBOW_MID_DIAG_AUTO_CONE, Constants.SHOULDER_MID_DIAG_AUTO_CONE),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0),
           new WaitCommand(0.25),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
@@ -350,7 +350,7 @@ public class RobotContainer {
       autoCommand = new SequentialCommandGroup(
         new InstantCommand(() -> m_chassis.resetPose(new Pose2d(0, 0, Rotation2d.fromDegrees(180)))),
         new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLD_SPEED),
-        new SetArm(m_arm, Constants.ELBOW_MID_DIAG, Constants.SHOULDER_MID_DIAG),
+        new SetArm(m_arm, Constants.ELBOW_MID_DIAG_AUTO_CUBE, Constants.SHOULDER_MID_DIAG_AUTO_CUBE),
         new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.1),
         new WaitCommand(0.4),
         new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLD_SPEED),
