@@ -3,12 +3,12 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
-
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Relay.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -25,13 +25,14 @@ public class Dave_Intake extends SubsystemBase {
     Neo = new CANSparkMax(Constants.DAVE_NEO, MotorType.kBrushless);
     //rightNeo = new CANSparkMax(15, MotorType.kBrushless);
 
-    solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
+    solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 15, 14);
     
     compressor = new Compressor(PneumaticsModuleType.REVPH);
   }
 
   public void setSpeed(double speed) {
     Neo.set(speed);
+    
   }
   
   public void setCompressor(boolean isOn){
@@ -48,11 +49,18 @@ public class Dave_Intake extends SubsystemBase {
   public DoubleSolenoid.Value getSolenoid(){
     return solenoid.get();
   }
+  public boolean hasItem(){
+    return Neo.getOutputCurrent()>30;
+  }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    boolean itemIntake = hasItem();
+    SmartDashboard.putBoolean("HaveItem", itemIntake);
+    SmartDashboard.putNumber("IntakeAmps", Neo.getOutputCurrent());
   }  
 }
+
+
 
 

@@ -1,6 +1,7 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.pathplanner.lib.PathConstraints;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -108,7 +109,7 @@ public final class Constants {
             public static final int angleMotorID = 2;
             public static final int canCoderID = 9;
            //  public static final Rotation2d angleOffset = Rotation2d.fromDegrees(269.29); //MK4
-             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(10.10); // ant man
+             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(8.70); // ant man
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
         }
@@ -119,7 +120,7 @@ public final class Constants {
             public static final int angleMotorID = 4;
             public static final int canCoderID = 10;
            // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(292.93); //MK4
-             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(160.75); // ant man
+             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(162.77); // ant man
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
         }
@@ -130,7 +131,7 @@ public final class Constants {
             public static final int angleMotorID = 6;
             public static final int canCoderID = 11;
             // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(17.31); //MK4
-             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(178.68); // ant man
+             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(178.50); // ant man
 
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
@@ -143,7 +144,7 @@ public final class Constants {
             public static final int canCoderID = 12;
 
            // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(344.70); //MK4
-             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(166.64); // ant man
+             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(165.93); // ant man
              
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
@@ -176,14 +177,25 @@ public final class Constants {
     public static final double MAX_SPEED = 6380.0 / 60.0 * Swerve.DRIVE_GEAR_RATIO * Units.inchesToMeters(Swerve.WHEEL_CIRCUMFERENCE) * Math.PI;
     // #endregion
 
-    // #region PATH FOLLOWING
-    public static final double PATH_MAX_VEL = 1; // in meters per second
-    public static final double PATH_MAX_ACC = 1; // in meters per second squared
+    // #region AUTONOMOUS
+    public static final PathConstraints PATH_CONSTRAINTS = new PathConstraints(1, 1);
     public static final double PATH_ROT_MAX_VEL = 6.28; // 6.28 is 1 rotation (it is 2xPI but I don't know why exactly)
     public static final double PATH_ROT_MAX_ACC = 3.14; // 3.14 is half a rotation
     public static final double X_ERROR_VEL = 1; // I don't know what "additional meter per second in the x direction for
-                                                // every meter of error in the x direction" means in the docs
-    public static final double Y_ERROR_VEL = 1;
+    public static final double Y_ERROR_VEL = 1; // every meter of error in the x direction" means in the docs
+
+    // AutoChargeStation and TraverseChargeStation constants
+    public static final double CHARGE_SPEED = 1;
+    public static final double MAX_TIME = 10;
+    public static final double EXTRA_TIME = 0.5;
+    // wooden values
+    // public static final double REVERSE_SPEED = 0.7;
+    // public static final double REVERSE_TIME = 0.8;
+    // public static final double THRESHOLD = 9;
+    // competition values
+    public static final double REVERSE_SPEED = 0.7;
+    public static final double REVERSE_TIME = 0.2;
+    public static final double THRESHOLD = 8;
 
     public static final double TRAJECTORY_KI = 0;
     public static final double TRAJECTORY_KD = 0;
@@ -193,17 +205,20 @@ public final class Constants {
     public static int ELBOW_ENCODER = 1;
 
     //Constants for Arm Presets and such
-    public static double ELBOW_SHELF = 228.293;
+    public static double ELBOW_SHELF = 233.293;
     public static double SHOULDER_SHELF = 132.394;
 
-    public static double ELBOW_FLOOR = 110.625;
+    public static double ELBOW_FLOOR = 113.625;
     public static double SHOULDER_FLOOR = 13.336;
 
     public static double ELBOW_MID = 198.26;
     public static double SHOULDER_MID = 114.089;
 
-    public static double ELBOW_STOW = 23.89;
+    public static double ELBOW_STOW = 26.89;
     public static double SHOULDER_STOW = 15.81;
+
+    public static double ELBOW_HIGH_CUBE = 50.000;
+    public static double SHOULDER_HIGH_CUBE = 13.336;
 
     public static double HOLD_SPEED = 0.15;
 

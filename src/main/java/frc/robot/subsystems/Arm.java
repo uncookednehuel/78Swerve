@@ -4,10 +4,13 @@
 
 package frc.robot.subsystems;
 
+import org.opencv.highgui.HighGui;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,6 +27,7 @@ public class Arm extends SubsystemBase {
   private double target;
   public double elbowTarget;
   public double shoulderTarget; 
+  public DigitalInput shoulderLimitSwitch;
 
   /** Creates a new Arm. */
   public Arm() {
@@ -39,6 +43,7 @@ public class Arm extends SubsystemBase {
     shoulderPIDcontroller.setTolerance(2);
     elbowPIDcontroller.disableContinuousInput();
     elbowPIDcontroller.setTolerance(2);
+    shoulderLimitSwitch = new DigitalInput(9);
   }
 
   public void initialize() {
@@ -98,6 +103,13 @@ public double getElbowAbsolutePosition(){
         setElbowSpeed(0);
       }
     }
+  }
+
+  public boolean isLimitShoulder(){
+    SmartDashboard.putBoolean("Limit switch", shoulderLimitSwitch.get());
+    // SmartDashboard.putData("Input Limit", shoulderLimitSwitch.get());
+    // return shoulderLimitSwitch.get();
+    return false; // TEMPORARY, UNTIL LIMIT SWITCH SIGNAL WIRED
   }
 
   public void shoulderGoToPosition(double target){

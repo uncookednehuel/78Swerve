@@ -34,10 +34,12 @@ public class SetArm extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     System.out.print("SetArm command ended!");
+    arm.shoulderPIDcontroller.reset();
+    arm.elbowPIDcontroller.reset();
   }
 
   @Override
   public boolean isFinished() {
-    return arm.shoulderPIDcontroller.atSetpoint() && arm.elbowPIDcontroller.atSetpoint();
+    return Math.abs(arm.shoulderPIDcontroller.getPositionError()) < 2 && Math.abs(arm.elbowPIDcontroller.getPositionError()) < 2;
   }
 }
