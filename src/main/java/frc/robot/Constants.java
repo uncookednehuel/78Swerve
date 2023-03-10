@@ -214,9 +214,9 @@ public final class Constants {
     public static double ELBOW_MID = 198.26;
     public static double SHOULDER_MID = 114.089;
 
-    public static double ELBOW_MID_DIAG_TELEOP = 138.7;
+    public static double ELBOW_MID_DIAG_TELEOP = 136.7;
     public static double SHOULDER_MID_DIAG_TELEOP = 80.0;
-    public static double ELBOW_MID_DIAG_AUTO_CUBE = 94.5;
+    public static double ELBOW_MID_DIAG_AUTO_CUBE = 90.5;
     public static double SHOULDER_MID_DIAG_AUTO_CUBE = 40.7;
     public static double ELBOW_MID_DIAG_AUTO_CONE = 138.7; // teleop but shoulder is slightly less
     public static double SHOULDER_MID_DIAG_AUTO_CONE = 74.0;
