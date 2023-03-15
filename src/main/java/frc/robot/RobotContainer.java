@@ -59,7 +59,7 @@ public class RobotContainer {
 
   static enum AUTOS {
     EMPTY, SIX_TAXI, SEVEN_CHARGE, SIX_CONE_TAXI, CONE_TAXI_CHARGE,
-    CONE_PICKUP_CONE, CUBE_MID_TAXI_CHARGE, CONE_TAXI_EIGHT, CONE_PICKUP_CONE_EIGHT,
+    CONE_PICKUP_CONE, CUBE_MID_TAXI_CHARGE, CONE_TAXI_EIGHT, CONE_PICKUP_CONE_EIGHT, CUBE_HIGH_TAXI_CHARGE, 
     TEST, TEST_2};
   public SendableChooser<AUTOS> firstAutoCmd = new SendableChooser<>();
   // private SendableChooser<Command> secondAutoCmd = new SendableChooser();
@@ -137,7 +137,7 @@ public class RobotContainer {
     PathPlannerServer.startServer(5811);
 
    // firstAutoCmd.setDefaultOption("Empty", AUTOS.EMPTY);
-    firstAutoCmd.setDefaultOption("Cube Mid Taxi Charge (7)", AUTOS.CUBE_MID_TAXI_CHARGE);
+    firstAutoCmd.setDefaultOption("Cube High Taxi Charge", AUTOS.CUBE_HIGH_TAXI_CHARGE);
     firstAutoCmd.addOption("Taxi (6)", AUTOS.SIX_TAXI);
     firstAutoCmd.addOption("Charge (7)", AUTOS.SEVEN_CHARGE);
     firstAutoCmd.addOption("Cone Taxi (6)", AUTOS.SIX_CONE_TAXI);
@@ -146,8 +146,10 @@ public class RobotContainer {
     //firstAutoCmd.addOption("Cube High Taxi Charge (7)", AUTOS.CUBE_HIGH_TAXI_CHARGE);
     firstAutoCmd.addOption("Cone Taxi (8)", AUTOS.CONE_TAXI_EIGHT);
     firstAutoCmd.addOption("Cone Pickup Cone (8)", AUTOS.CONE_PICKUP_CONE_EIGHT);
+    firstAutoCmd.addOption("Mid Cube Taxi Charge", AUTOS.CUBE_MID_TAXI_CHARGE);
     firstAutoCmd.addOption("Test", AUTOS.TEST);
     firstAutoCmd.addOption("Test2", AUTOS.TEST_2);
+    
 
     SmartDashboard.putData("Auto Selector", firstAutoCmd);
     // #endregion
@@ -253,8 +255,8 @@ public class RobotContainer {
     new Trigger(m_manipController::getLeftBumper).and(new Trigger(m_manipController::getXButton)).whileTrue((new SetArm(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR))).onFalse(new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW));
     new Trigger(m_manipController::getLeftBumper).and(new Trigger(m_manipController::getYButton)).whileTrue((new SetArm(m_arm, Constants.ELBOW_MID_DIAG_AUTO_CUBE, Constants.SHOULDER_MID_DIAG_AUTO_CUBE))).onFalse(new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW));
     //HIGH CUBE BUTTONS
-    new Trigger(m_manipController::getRightBumper).and(new Trigger(rightSupplier)).whileTrue(new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.5)).onFalse(new SetIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), Constants.HOLD_SPEED));
-    new Trigger(m_manipController::getRightBumper).whileTrue((new SetArm(m_arm, Constants.ELBOW_HIGH_CUBE, Constants.SHOULDER_HIGH_CUBE))).onFalse(new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW));
+    new Trigger(m_manipController::getRightBumper).and(new Trigger(rightSupplier)).whileTrue(new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.2)).onFalse(new SetIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), Constants.HOLD_SPEED));
+    //new Trigger(m_manipController::getRightBumper).whileTrue((new SetArm(m_arm, Constants.ELBOW_HIGH_CUBE, Constants.SHOULDER_HIGH_CUBE))).onFalse(new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW));
 
     
     new Trigger(leftSupplier).toggleOnTrue(new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLD_SPEED));
@@ -361,6 +363,22 @@ public class RobotContainer {
         new Park(m_chassis)
       );
       break; }
+
+      case CUBE_HIGH_TAXI_CHARGE: {
+        autoCommand = new SequentialCommandGroup(
+          new InstantCommand(() -> m_chassis.resetPose(new Pose2d(0, 0, Rotation2d.fromDegrees(180)))),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLD_SPEED),
+          new SetArm(m_arm, Constants.ELBOW_MID_DIAG_TELEOP, Constants.SHOULDER_MID_DIAG_TELEOP),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.2),
+          new WaitCommand(0.4),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLD_SPEED),
+          new SetArmEnd(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
+          new TraverseChargeStation(m_chassis, Constants.CHARGE_SPEED),
+          new WaitCommand(1),
+          new AutoChargeStation(m_chassis, -Constants.CHARGE_SPEED),
+          new Park(m_chassis)
+        );
+        break; }
 
       case CONE_TAXI_EIGHT: {
       PathPlannerTrajectory eightHotel = PathFunctions.createTrajectory("8Hotel");

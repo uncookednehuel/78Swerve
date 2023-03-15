@@ -36,7 +36,7 @@ public class SetArmPID extends CommandBase {
     
     double elbowSpeed = arm.elbowPIDcontroller.calculate(arm.getElbowAbsolutePosition(), arm.elbowTarget);
     if (elbowSpeed > 0){
-      elbowSpeed = elbowSpeed * 0.5;
+      elbowSpeed = elbowSpeed * 0.55;
     }
     arm.setElbowSpeed(arm.isLimitShoulder() && shoulderSpeed < 0 ? 0 : elbowSpeed * -1);
   }

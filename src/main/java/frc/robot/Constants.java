@@ -208,7 +208,7 @@ public final class Constants {
     public static double ELBOW_SHELF = 233.293;
     public static double SHOULDER_SHELF = 132.394;
 
-    public static double ELBOW_FLOOR = 113.625;
+    public static double ELBOW_FLOOR = 111.625;
     public static double SHOULDER_FLOOR = 13.336;
 
     public static double ELBOW_MID = 198.26;
@@ -221,13 +221,13 @@ public final class Constants {
     public static double ELBOW_MID_DIAG_AUTO_CONE = 138.7; // teleop but shoulder is slightly less
     public static double SHOULDER_MID_DIAG_AUTO_CONE = 74.0;
 
-    public static double ELBOW_STOW = 33;
+    public static double ELBOW_STOW = 30;
     public static double SHOULDER_STOW = 15.81;
 
     public static double ELBOW_HIGH_CUBE = 50.000;
     public static double SHOULDER_HIGH_CUBE = 13.336;
 
-    public static double HOLD_SPEED = 0.15;
+    public static double HOLD_SPEED = 0.2;
 
     // TODO - change to proper default positions
 
@@ -243,7 +243,7 @@ public final class Constants {
     public static final double SHOULDER_BUFFER = 10;
 
     // NEED TO BE SET
-    public static final double ELBOW_ENCODER_OFFSET = 0;
+    public static final double ELBOW_ENCODER_OFFSET = -6;
     public static final double SHOULDER_ENCODER_OFFSET = 0;
 
     //Arm Targets--> Subject to change (Delete when changed)
