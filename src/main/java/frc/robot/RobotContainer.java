@@ -59,7 +59,7 @@ public class RobotContainer {
 
   static enum AUTOS {
     EMPTY, SIX_TAXI, SEVEN_CHARGE, SIX_CONE_TAXI, CONE_TAXI_CHARGE,
-    CONE_PICKUP_CONE, CUBE_MID_TAXI_CHARGE, CONE_TAXI_EIGHT, CONE_PICKUP_CONE_EIGHT, CUBE_HIGH_TAXI_CHARGE, 
+    CONE_PICKUP_CONE, CUBE_MID_TAXI_CHARGE, CONE_TAXI_EIGHT, CONE_PICKUP_CONE_EIGHT, CUBE_HIGH_TAXI_CHARGE, Red_Two_CubeH_Bravo_Cone_Engage,
     TEST, TEST_2};
   public SendableChooser<AUTOS> firstAutoCmd = new SendableChooser<>();
   // private SendableChooser<Command> secondAutoCmd = new SendableChooser();
@@ -250,8 +250,8 @@ public class RobotContainer {
 
     //CUBE BUTTONS
     new Trigger(rightSupplier).whileTrue(new SetIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), -0.1));
-    new Trigger(m_manipController::getLeftBumper).and(new Trigger(m_manipController::getAButton)).whileTrue((new SetArm(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR)).alongWith(new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0.3))).onFalse((new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW)).alongWith(new SetIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), Constants.HOLD_SPEED)));
-    new Trigger(m_manipController::getLeftBumper).and(new Trigger(m_manipController::getBButton)).whileTrue((new SetArm(m_arm, Constants.ELBOW_SHELF, Constants.SHOULDER_SHELF)).alongWith(new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0.3))).onFalse((new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW)).alongWith(new SetIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), Constants.HOLD_SPEED)));
+    new Trigger(m_manipController::getLeftBumper).and(new Trigger(m_manipController::getAButton)).whileTrue((new SetArm(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR)).alongWith(new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0.4))).onFalse((new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW)).alongWith(new SetIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), Constants.HOLD_SPEED)));
+    new Trigger(m_manipController::getLeftBumper).and(new Trigger(m_manipController::getBButton)).whileTrue((new SetArm(m_arm, Constants.ELBOW_SHELF, Constants.SHOULDER_SHELF)).alongWith(new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0.4))).onFalse((new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW)).alongWith(new SetIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), Constants.HOLD_SPEED)));
     new Trigger(m_manipController::getLeftBumper).and(new Trigger(m_manipController::getXButton)).whileTrue((new SetArm(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR))).onFalse(new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW));
     new Trigger(m_manipController::getLeftBumper).and(new Trigger(m_manipController::getYButton)).whileTrue((new SetArm(m_arm, Constants.ELBOW_MID_DIAG_AUTO_CUBE, Constants.SHOULDER_MID_DIAG_AUTO_CUBE))).onFalse(new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW));
     //HIGH CUBE BUTTONS
@@ -363,6 +363,37 @@ public class RobotContainer {
         new Park(m_chassis)
       );
       break; }
+      case Red_Two_CubeH_Bravo_Cone_Engage: {
+        PathPlannerTrajectory red_Two_CubeH_Bravo_Cone_E_PartOne = PathFunctions.createTrajectory("Red-2-CubeH-Bravo-Cone-E(Part 1)");
+        PathPlannerTrajectory red_Two_CubeH_Bravo_Cone_E_PartTwo = PathFunctions.createTrajectory("Red-2-CubeH-Bravo-Cone-E(Part 2)(post ChargeStation");
+        PathPlannerTrajectory red_Two_CubeH_Bravo_Cone_E_PartThree = PathFunctions.createTrajectory("Red-2-CubeH-Bravo-Cone-E(Part 3)(prep for engage)");
+        autoCommand = new SequentialCommandGroup(
+          new InstantCommand(() -> m_chassis.resetPose(new Pose2d(0, 0, Rotation2d.fromDegrees(180)))),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLD_SPEED),
+          new SetArm(m_arm, Constants.ELBOW_MID_DIAG_TELEOP, Constants.SHOULDER_MID_DIAG_TELEOP),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.2),
+          new WaitCommand(0.2),
+          new ParallelCommandGroup(
+            new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
+            new SetArmEnd(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
+            autoBuilder.followPathWithEvents(red_Two_CubeH_Bravo_Cone_E_PartOne)
+          ),
+          new TraverseChargeStation(m_chassis, Constants.CHARGE_SPEED),
+          new WaitCommand(0.2),
+          new ParallelCommandGroup(
+            new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0.3),
+            new SetArmEnd(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR),
+            autoBuilder.followPathWithEvents(red_Two_CubeH_Bravo_Cone_E_PartTwo)
+          ),
+          new WaitCommand(0.5),
+          new ParallelCommandGroup(
+            new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
+            new SetArmEnd(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
+            autoBuilder.followPathWithEvents(red_Two_CubeH_Bravo_Cone_E_PartThree)
+          ),
+          new TraverseChargeStation(m_chassis, Constants.CHARGE_SPEED)
+        );
+      }
 
       case CUBE_HIGH_TAXI_CHARGE: {
         autoCommand = new SequentialCommandGroup(
