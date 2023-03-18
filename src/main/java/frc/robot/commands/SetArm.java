@@ -16,6 +16,9 @@ public class SetArm extends CommandBase {
   private Arm arm;
   private TrapezoidProfile elbowProfile;  
   private TrapezoidProfile shoulderProfile;
+  private TrapezoidProfile.State elbow_goal = new TrapezoidProfile.State();
+  private TrapezoidProfile.State elbow_setpoint = new TrapezoidProfile.State();
+
 
   /** Creates a new RunArmToTarget. */
   public SetArm(Arm arm, double elbowTarget, double shoulderTarget) {
@@ -27,20 +30,27 @@ public class SetArm extends CommandBase {
   @Override
   public void initialize() {
 System.out.println("starting trapezoid");
-    elbowProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(10,10),
-      new TrapezoidProfile.State(elbowTarget, 0), 
-      new TrapezoidProfile.State(arm.getElbowAbsolutePosition(), 0));
-    shoulderProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(10,10),
+    //  elbowProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(10,0.1),
+    //    new TrapezoidProfile.State(elbowTarget, 0), 
+    //    new TrapezoidProfile.State(arm.getElbowAbsolutePosition(), 0));
+    shoulderProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(150,90),
      new TrapezoidProfile.State(shoulderTarget, 0), 
      new TrapezoidProfile.State(arm.getShoulderAbsolutePosition(), 0));
+    elbow_setpoint = new TrapezoidProfile.State(arm.getElbowAbsolutePosition(), 0);
   }
 
   @Override
   public void execute() { 
-    double elbow = elbowProfile.calculate(0.05).position;
+    elbow_goal = new TrapezoidProfile.State(elbowTarget, 0);
+    elbowProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(150,90),
+    elbow_goal,
+    elbow_setpoint);
+    elbow_setpoint = elbowProfile.calculate(0.05);
     double shoulder = shoulderProfile.calculate(0.05).position;
-    System.out.println(elbow);
-    System.out.println(shoulder);
+    System.out.println(elbow_setpoint.position);
+    //System.out.println(shoulder);
+    arm.elbowTarget = elbow_setpoint.position;
+    arm.shoulderTarget = shoulder;
   }
 
   @Override
