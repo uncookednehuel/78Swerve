@@ -18,7 +18,8 @@ public class SetArm extends CommandBase {
   private TrapezoidProfile shoulderProfile;
   private TrapezoidProfile.State elbow_goal = new TrapezoidProfile.State();
   private TrapezoidProfile.State elbow_setpoint = new TrapezoidProfile.State();
-
+  private TrapezoidProfile.State shoulder_goal = new TrapezoidProfile.State();
+  private TrapezoidProfile.State shoulder_setpoint = new TrapezoidProfile.State();
 
   /** Creates a new RunArmToTarget. */
   public SetArm(Arm arm, double elbowTarget, double shoulderTarget) {
@@ -30,27 +31,30 @@ public class SetArm extends CommandBase {
   @Override
   public void initialize() {
 System.out.println("starting trapezoid");
-    //  elbowProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(10,0.1),
+    // elbowProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(10,0.1),
     //    new TrapezoidProfile.State(elbowTarget, 0), 
     //    new TrapezoidProfile.State(arm.getElbowAbsolutePosition(), 0));
-    shoulderProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(150,90),
-     new TrapezoidProfile.State(shoulderTarget, 0), 
-     new TrapezoidProfile.State(arm.getShoulderAbsolutePosition(), 0));
+    // shoulderProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(150,90),
+    //  new TrapezoidProfile.State(shoulderTarget, 0), 
+    //  new TrapezoidProfile.State(arm.getShoulderAbsolutePosition(), 0));
     elbow_setpoint = new TrapezoidProfile.State(arm.getElbowAbsolutePosition(), 0);
+    shoulder_setpoint = new TrapezoidProfile.State(arm.getShoulderAbsolutePosition(), 0);
   }
 
   @Override
   public void execute() { 
     elbow_goal = new TrapezoidProfile.State(elbowTarget, 0);
-    elbowProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(150,90),
+    shoulder_goal = new TrapezoidProfile.State(shoulderTarget, 0);
+    elbowProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(185,60),
     elbow_goal,
     elbow_setpoint);
+    shoulderProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(165, 35), 
+    shoulder_goal,
+    shoulder_setpoint);
     elbow_setpoint = elbowProfile.calculate(0.05);
-    double shoulder = shoulderProfile.calculate(0.05).position;
-    System.out.println(elbow_setpoint.position);
-    //System.out.println(shoulder);
+    shoulder_setpoint = shoulderProfile.calculate(0.05);
     arm.elbowTarget = elbow_setpoint.position;
-    arm.shoulderTarget = shoulder;
+    arm.shoulderTarget = shoulder_setpoint.position;
   }
 
   @Override
