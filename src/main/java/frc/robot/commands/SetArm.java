@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -13,8 +14,13 @@ public class SetArm extends CommandBase {
   private double elbowTarget;
   private double shoulderTarget;
   private Arm arm;
-  
-  
+  private TrapezoidProfile elbowProfile;  
+  private TrapezoidProfile shoulderProfile;
+  private TrapezoidProfile.State elbow_goal = new TrapezoidProfile.State();
+  private TrapezoidProfile.State elbow_setpoint = new TrapezoidProfile.State();
+  private TrapezoidProfile.State shoulder_goal = new TrapezoidProfile.State();
+  private TrapezoidProfile.State shoulder_setpoint = new TrapezoidProfile.State();
+
   /** Creates a new RunArmToTarget. */
   public SetArm(Arm arm, double elbowTarget, double shoulderTarget) {
     this.arm = arm;
@@ -24,12 +30,32 @@ public class SetArm extends CommandBase {
 
   @Override
   public void initialize() {
-    arm.elbowTarget = elbowTarget;
-    arm.shoulderTarget = shoulderTarget;
+System.out.println("starting trapezoid");
+    // elbowProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(10,0.1),
+    //    new TrapezoidProfile.State(elbowTarget, 0), 
+    //    new TrapezoidProfile.State(arm.getElbowAbsolutePosition(), 0));
+    // shoulderProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(150,90),
+    //  new TrapezoidProfile.State(shoulderTarget, 0), 
+    //  new TrapezoidProfile.State(arm.getShoulderAbsolutePosition(), 0));
+    elbow_setpoint = new TrapezoidProfile.State(arm.getElbowAbsolutePosition(), 0);
+    shoulder_setpoint = new TrapezoidProfile.State(arm.getShoulderAbsolutePosition(), 0);
   }
 
   @Override
-  public void execute() { }
+  public void execute() { 
+    elbow_goal = new TrapezoidProfile.State(elbowTarget, 0);
+    shoulder_goal = new TrapezoidProfile.State(shoulderTarget, 0);
+    elbowProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(185,80),
+    elbow_goal,
+    elbow_setpoint);
+    shoulderProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(165, 80), 
+    shoulder_goal,
+    shoulder_setpoint);
+    elbow_setpoint = elbowProfile.calculate(0.05);
+    shoulder_setpoint = shoulderProfile.calculate(0.05);
+    arm.elbowTarget = elbow_setpoint.position;
+    arm.shoulderTarget = shoulder_setpoint.position;
+  }
 
   @Override
   public void end(boolean interrupted) {
@@ -40,6 +66,7 @@ public class SetArm extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return Math.abs(arm.shoulderPIDcontroller.getPositionError()) < 2 && Math.abs(arm.elbowPIDcontroller.getPositionError()) < 2;
+    //return Math.abs(arm.shoulderPIDcontroller.getPositionError()) < 2 && Math.abs(arm.elbowPIDcontroller.getPositionError()) < 2;
+    return false;
   }
 }
