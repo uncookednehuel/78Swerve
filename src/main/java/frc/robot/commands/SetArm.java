@@ -66,7 +66,7 @@ System.out.println("starting trapezoid");
 
   @Override
   public boolean isFinished() {
+    return (Math.abs(arm.getElbowAbsolutePosition() - this.elbowTarget) < 2) && (Math.abs(arm.getShoulderAbsolutePosition() - this.shoulderTarget) < 2);
     //return Math.abs(arm.shoulderPIDcontroller.getPositionError()) < 2 && Math.abs(arm.elbowPIDcontroller.getPositionError()) < 2;
-    return false;
   }
 }
