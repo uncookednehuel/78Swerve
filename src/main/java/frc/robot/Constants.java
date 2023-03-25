@@ -178,7 +178,7 @@ public final class Constants {
     // #endregion
 
     // #region AUTONOMOUS
-    public static final PathConstraints PATH_CONSTRAINTS = new PathConstraints(1, 1);
+    public static final PathConstraints PATH_CONSTRAINTS = new PathConstraints(6, 2.5);
     public static final double PATH_ROT_MAX_VEL = 6.28; // 6.28 is 1 rotation (it is 2xPI but I don't know why exactly)
     public static final double PATH_ROT_MAX_ACC = 3.14; // 3.14 is half a rotation
     public static final double X_ERROR_VEL = 1; // I don't know what "additional meter per second in the x direction for

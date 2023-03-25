@@ -378,7 +378,7 @@ public class RobotContainer {
           new WaitCommand(0.2),
           PathFunctions.resetOdometry(m_chassis, red_Two_CubeH_Bravo_Cone_E_PartOne),
           new ParallelCommandGroup(
-            new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
+            new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0),
             new SetArmEnd(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
             autoBuilder.followPathWithEvents(red_Two_CubeH_Bravo_Cone_E_PartOne)
           ),
@@ -409,7 +409,7 @@ public class RobotContainer {
         new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLD_SPEED),
         new SetArm(m_arm, Constants.ELBOW_MID_DIAG_TELEOP, Constants.SHOULDER_MID_DIAG_TELEOP),
         new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.3),
-        new WaitCommand(0.2),
+        new WaitCommand(0),
         PathFunctions.resetOdometry(m_chassis, blue_Seven_CubeH_Foxtrot_Cone_E_PartOne),
         new ParallelCommandGroup(
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
@@ -417,14 +417,14 @@ public class RobotContainer {
           autoBuilder.followPathWithEvents(blue_Seven_CubeH_Foxtrot_Cone_E_PartOne)
          ),
         new TraverseChargeStation(m_chassis, Constants.CHARGE_SPEED),
-        new WaitCommand(0.2),
+        new WaitCommand(0),
         PathFunctions.resetOdometry(m_chassis, blue_Seven_CubeH_Foxtrot_Cone_E_PartTwo),
         new ParallelCommandGroup(
-          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0.3),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0.3),
           new SetArmEnd(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR),
           autoBuilder.followPathWithEvents(blue_Seven_CubeH_Foxtrot_Cone_E_PartTwo)
          ),
-        new WaitCommand(0.5),
+        new WaitCommand(0),
         new ParallelCommandGroup(
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
           new SetArmEnd(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
