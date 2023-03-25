@@ -60,7 +60,7 @@ public class RobotContainer {
   static enum AUTOS {
     EMPTY, SIX_TAXI, SEVEN_CHARGE, SIX_CONE_TAXI, CONE_TAXI_CHARGE,
     CONE_PICKUP_CONE, CUBE_MID_TAXI_CHARGE, CONE_TAXI_EIGHT, CONE_PICKUP_CONE_EIGHT, CUBE_HIGH_TAXI_CHARGE, Red_Two_CubeH_Bravo_Cone_Engage,
-    Blue_Seven_CubeH_Foxtrot_Cone_Engage,
+    Blue_Seven_CubeH_Foxtrot_Cone_Engage, Blue_Six_CubeH_Echo_Cone_Six_Four, Blue_Seven_CubeH_Golf_Cone_Engage, Blue_8_CubeH_Hotel_Cone_Eight_Four,
     TEST, TEST_2};
   public SendableChooser<AUTOS> firstAutoCmd = new SendableChooser<>();
   // private SendableChooser<Command> secondAutoCmd = new SendableChooser();
@@ -152,7 +152,9 @@ public class RobotContainer {
     firstAutoCmd.addOption("Test2", AUTOS.TEST_2);
     firstAutoCmd.addOption("Red Two CubeHi Bravo Cone Engage", AUTOS.Red_Two_CubeH_Bravo_Cone_Engage);
     firstAutoCmd.addOption("Blue 7 CubeHi Foxtrot Cone Engage", AUTOS.Blue_Seven_CubeH_Foxtrot_Cone_Engage);
-    
+    firstAutoCmd.addOption("Blue 6 CubeHi Echo Cone 6.4", AUTOS.Blue_Six_CubeH_Echo_Cone_Six_Four);
+    firstAutoCmd.addOption("Blue 7 CubeHi Golf Cone Engage", AUTOS.Blue_Seven_CubeH_Golf_Cone_Engage);
+    firstAutoCmd.addOption("Blue 8 CubeHi Hotel Cone 8.4", AUTOS.Blue_8_CubeH_Hotel_Cone_Eight_Four);
 
     SmartDashboard.putData("Auto Selector", firstAutoCmd);
     // #endregion
@@ -375,7 +377,7 @@ public class RobotContainer {
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLD_SPEED),
           new SetArm(m_arm, Constants.ELBOW_MID_DIAG_TELEOP, Constants.SHOULDER_MID_DIAG_TELEOP),
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.3),
-          new WaitCommand(0.2),
+          new WaitCommand(0),
           PathFunctions.resetOdometry(m_chassis, red_Two_CubeH_Bravo_Cone_E_PartOne),
           new ParallelCommandGroup(
             new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0),
@@ -383,14 +385,14 @@ public class RobotContainer {
             autoBuilder.followPathWithEvents(red_Two_CubeH_Bravo_Cone_E_PartOne)
           ),
           new TraverseChargeStation(m_chassis, Constants.CHARGE_SPEED),
-          new WaitCommand(0.2),
+          new WaitCommand(0),
           PathFunctions.resetOdometry(m_chassis, red_Two_CubeH_Bravo_Cone_E_PartTwo),
           new ParallelCommandGroup(
-            new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0.3),
+            new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0.3),
             new SetArmEnd(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR),
             autoBuilder.followPathWithEvents(red_Two_CubeH_Bravo_Cone_E_PartTwo)
           ),
-          new WaitCommand(0.5),
+          new WaitCommand(0),
           new ParallelCommandGroup(
             new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
             new SetArmEnd(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
@@ -433,7 +435,96 @@ public class RobotContainer {
         new AutoChargeStation(m_chassis, -Constants.CHARGE_SPEED)
       );
       break;
+      }
 
+      case Blue_Seven_CubeH_Golf_Cone_Engage: {
+        PathPlannerTrajectory blue_Seven_CubeH_Golf_Cone_E_PartOne = PathFunctions.createTrajectory("Blue-7-CubeHi-Golf-Cone-Engage(1)");
+        PathPlannerTrajectory blue_Seven_CubeH_Golf_Cone_E_PartTwo = PathFunctions.createTrajectory("Blue-7-CubeHi-Golf-Cone-Engage(2)");
+        PathPlannerTrajectory blue_Seven_CubeH_Golf_Cone_E_PartThree = PathFunctions.createTrajectory("Blue-7-CubeHi-Golf-Cone-Engage(3)");
+        autoCommand = new SequentialCommandGroup(
+        new InstantCommand(() -> m_chassis.resetPose(new Pose2d(0, 0, Rotation2d.fromDegrees(180)))),
+        new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLD_SPEED),
+        new SetArm(m_arm, Constants.ELBOW_MID_DIAG_TELEOP, Constants.SHOULDER_MID_DIAG_TELEOP),
+        new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.3),
+        new WaitCommand(0),
+        PathFunctions.resetOdometry(m_chassis, blue_Seven_CubeH_Golf_Cone_E_PartOne),
+        new ParallelCommandGroup(
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
+          new SetArmEnd(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
+          autoBuilder.followPathWithEvents(blue_Seven_CubeH_Golf_Cone_E_PartOne)
+         ),
+        new TraverseChargeStation(m_chassis, Constants.CHARGE_SPEED),
+        new WaitCommand(0),
+        PathFunctions.resetOdometry(m_chassis, blue_Seven_CubeH_Golf_Cone_E_PartTwo),
+        new ParallelCommandGroup(
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0.3),
+          new SetArmEnd(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR),
+          autoBuilder.followPathWithEvents(blue_Seven_CubeH_Golf_Cone_E_PartTwo)
+         ),
+        new WaitCommand(0),
+        new ParallelCommandGroup(
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
+          new SetArmEnd(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
+          autoBuilder.followPathWithEvents(blue_Seven_CubeH_Golf_Cone_E_PartThree)
+         ),
+        new AutoChargeStation(m_chassis, -Constants.CHARGE_SPEED)
+      );
+      break;
+      }
+
+      case Blue_Six_CubeH_Echo_Cone_Six_Four: {
+        PathPlannerTrajectory Blue_Six_CubeH_Echo_Cone_Six_Four_PartOne = PathFunctions.createTrajectory("Blue_Six_CubeH_Echo_Cone_Six_Four(1)");
+        PathPlannerTrajectory Blue_Six_CubeH_Echo_Cone_Six_Four_PartTwo = PathFunctions.createTrajectory("Blue_Six_CubeH_Echo_Cone_Six_Four(2)");
+        autoCommand = new SequentialCommandGroup(
+          new InstantCommand(() -> m_chassis.resetPose(new Pose2d(0, 0, Rotation2d.fromDegrees(180)))),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLD_SPEED),
+          new SetArm(m_arm, Constants.ELBOW_MID_DIAG_TELEOP, Constants.SHOULDER_MID_DIAG_TELEOP),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.3),
+          new WaitCommand(0),
+          PathFunctions.resetOdometry(m_chassis, Blue_Six_CubeH_Echo_Cone_Six_Four_PartOne),
+          new ParallelCommandGroup(
+            new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0),
+            new SetArm(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR),
+            autoBuilder.followPathWithEvents(Blue_Six_CubeH_Echo_Cone_Six_Four_PartOne)
+          ),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0.3),
+          new WaitCommand(0.5),
+          PathFunctions.resetOdometry(m_chassis, Blue_Six_CubeH_Echo_Cone_Six_Four_PartTwo),
+          new ParallelCommandGroup(
+            new SetArm(m_arm, Constants.ELBOW_MID_DIAG_TELEOP, Constants.SHOULDER_MID_DIAG_TELEOP),
+            new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
+            autoBuilder.followPathWithEvents(Blue_Six_CubeH_Echo_Cone_Six_Four_PartTwo)
+          ),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0)
+      );
+      break;
+      }
+      case Blue_8_CubeH_Hotel_Cone_Eight_Four: {
+        PathPlannerTrajectory Blue_Eight_CubeHi_Hotel_Cone_Six_Four_PartOne = PathFunctions.createTrajectory("Blue-8-CubeHi-Hotel-Cone-Eight-Four(1)");
+        PathPlannerTrajectory Blue_Eight_CubeHi_Hotel_Cone_Six_Four_PartTwo = PathFunctions.createTrajectory("Blue-8-CubeHi-Hotel-Cone-Eight-Four(2)");
+        autoCommand = new SequentialCommandGroup(
+          new InstantCommand(() -> m_chassis.resetPose(new Pose2d(0, 0, Rotation2d.fromDegrees(180)))),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, Constants.HOLD_SPEED),
+          new SetArm(m_arm, Constants.ELBOW_MID_DIAG_TELEOP, Constants.SHOULDER_MID_DIAG_TELEOP),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, -0.3),
+          new WaitCommand(0),
+          PathFunctions.resetOdometry(m_chassis, Blue_Eight_CubeHi_Hotel_Cone_Six_Four_PartOne),
+          new ParallelCommandGroup(
+            new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0),
+            new SetArm(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR),
+            autoBuilder.followPathWithEvents(Blue_Eight_CubeHi_Hotel_Cone_Six_Four_PartOne)
+          ),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0.3),
+          new WaitCommand(0.5),
+          PathFunctions.resetOdometry(m_chassis, Blue_Eight_CubeHi_Hotel_Cone_Six_Four_PartTwo),
+          new ParallelCommandGroup(
+            new SetArm(m_arm, Constants.ELBOW_MID_DIAG_TELEOP, Constants.SHOULDER_MID_DIAG_TELEOP),
+            new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, -0.1),
+            autoBuilder.followPathWithEvents(Blue_Eight_CubeHi_Hotel_Cone_Six_Four_PartTwo)
+          ),
+          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0)
+        );
+        break;
       }
 
       case CUBE_HIGH_TAXI_CHARGE: {
