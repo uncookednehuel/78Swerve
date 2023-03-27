@@ -127,6 +127,11 @@ public class RobotContainer {
       new SetArm(m_arm, Constants.ELBOW_MID_DIAG_AUTO_CONE, Constants.SHOULDER_MID_DIAG_AUTO_CONE)
     )
       );
+
+    m_eventMap.put("StowAgain", new ParallelCommandGroup(
+      new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW)
+    )
+      );
     // m_eventMap.put("armPickupCone", new ParallelCommandGroup(
     //   new SetArm(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR),
     //   new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0.2))
@@ -531,8 +536,9 @@ public class RobotContainer {
             new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
             new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
             autoBuilder.followPathWithEvents(Blue_Eight_CubeHi_Hotel_Cone_Six_Four_PartTwo)
-          ),
-          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0)
+          )
+          //,
+          //new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0)
         );
         break;
       }
