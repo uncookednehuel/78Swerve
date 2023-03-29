@@ -39,8 +39,7 @@ public class SetArm extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return (Math.abs(arm.getElbowAbsolutePosition() - this.elbowTarget) < 2) && (Math.abs(arm.getShoulderAbsolutePosition() - this.shoulderTarget) < 2);
-    // || arm.elbowTarget != this.elbowTarget || arm.shoulderTarget != this.shoulderTarget; // THIS COULD BE THE SOLUTION
-    // return Math.abs(arm.shoulderPIDcontroller.getPositionError()) < 2 && Math.abs(arm.elbowPIDcontroller.getPositionError()) < 2;
+    return (Math.abs(arm.getElbowAbsolutePosition() - this.elbowTarget) < 2) && (Math.abs(arm.getShoulderAbsolutePosition() - this.shoulderTarget) < 2)
+    || arm.elbowTarget != this.elbowTarget || arm.shoulderTarget != this.shoulderTarget;
   }
 }
