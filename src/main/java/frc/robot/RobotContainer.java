@@ -61,7 +61,7 @@ public class RobotContainer {
     EMPTY, SIX_TAXI, SEVEN_CHARGE, SIX_CONE_TAXI, CONE_TAXI_CHARGE,
     CONE_PICKUP_CONE, CUBE_MID_TAXI_CHARGE, CONE_TAXI_EIGHT, CONE_PICKUP_CONE_EIGHT, CUBE_HIGH_TAXI_CHARGE, Red_Two_CubeH_Bravo_Cone_Engage,
     Blue_Seven_CubeH_Foxtrot_Cone_Engage, Blue_Six_CubeH_Echo_Cone_Six_Four, Blue_Seven_CubeH_Golf_Cone_Engage, Blue_8_CubeH_Hotel_Cone_Eight_Four,
-    TEST, TEST_2};
+    TEST, TEST_2, Blue_6_testPath};
   public SendableChooser<AUTOS> firstAutoCmd = new SendableChooser<>();
   // private SendableChooser<Command> secondAutoCmd = new SendableChooser();
   // private SendableChooser<Command> thirdAutoCmd = new SendableChooser();
@@ -142,8 +142,8 @@ public class RobotContainer {
     autoBuilder = new SwerveAutoBuilder(
         m_chassis::getFusedPose,
         m_chassis::resetPose,
-        new PIDConstants(5.0, 0.0, 0.0),
         new PIDConstants(0.5, 0.0, 0.0),
+        new PIDConstants(3.25, 0.0, 0.0),
         m_chassis::setSpeeds,
         m_eventMap,
         false, // BE AWARE OF AUTOMATIC MIRRORING, MAY CAUSE TRACKING PROBLEMS
@@ -169,6 +169,7 @@ public class RobotContainer {
     firstAutoCmd.addOption("Blue 6 CubeHi Echo Cone 6.4", AUTOS.Blue_Six_CubeH_Echo_Cone_Six_Four);
     firstAutoCmd.addOption("Blue 7 CubeHi Golf Cone Engage", AUTOS.Blue_Seven_CubeH_Golf_Cone_Engage);
     firstAutoCmd.addOption("Blue 8 CubeHi Hotel Cone 8.4", AUTOS.Blue_8_CubeH_Hotel_Cone_Eight_Four);
+    firstAutoCmd.addOption("blue 6 test", AUTOS.Blue_6_testPath);
 
     SmartDashboard.putData("Auto Selector", firstAutoCmd);
     // #endregion
@@ -512,6 +513,18 @@ public class RobotContainer {
           new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0)
       );
       break;
+      }
+      case Blue_6_testPath: {
+        PathPlannerTrajectory Blue_Six_testPath = PathFunctions.createTrajectory("blue 6 test single path");
+        PathPlannerTrajectory Blue_Six_testPath_two = PathFunctions.createTrajectory("blue 6 test single path(2)");
+
+        autoCommand = new SequentialCommandGroup(
+          new SetArmEnd(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW),
+          PathFunctions.resetOdometry(m_chassis, Blue_Six_testPath),
+          autoBuilder.followPathWithEvents(Blue_Six_testPath)
+
+        );
+        break;
       }
       case Blue_8_CubeH_Hotel_Cone_Eight_Four: {
         PathPlannerTrajectory Blue_Eight_CubeHi_Hotel_Cone_Six_Four_PartOne = PathFunctions.createTrajectory("Blue-8-CubeHi-Hotel-Cone-Eight-Four(1)");
