@@ -48,7 +48,7 @@ System.out.println("starting trapezoid");
     elbowProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(185,80),
     elbow_goal,
     elbow_setpoint);
-    shoulderProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(165, 80), 
+    shoulderProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(165, 70), 
     shoulder_goal,
     shoulder_setpoint);
     elbow_setpoint = elbowProfile.calculate(0.05);

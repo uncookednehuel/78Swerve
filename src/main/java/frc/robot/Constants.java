@@ -221,7 +221,7 @@ public final class Constants {
     public static double ELBOW_MID_DIAG_AUTO_CONE = 138.7; // teleop but shoulder is slightly less
     public static double SHOULDER_MID_DIAG_AUTO_CONE = 286;
 
-    public static double ELBOW_STOW = 22;
+    public static double ELBOW_STOW = 24;
     public static double SHOULDER_STOW = 329;
 
 

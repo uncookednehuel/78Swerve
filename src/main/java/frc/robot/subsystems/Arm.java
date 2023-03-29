@@ -37,8 +37,8 @@ public class Arm extends SubsystemBase {
     elbowNeo = new CANSparkMax(Constants.ELBOW_NEO, MotorType.kBrushless);
     shoulderEncoder = shoulderNeo.getAbsoluteEncoder(Type.kDutyCycle);
     elbowEncoder = elbowNeo.getAbsoluteEncoder(Type.kDutyCycle);
-    elbowPIDcontroller = new PIDController(0.01, 0, 0);
-    shoulderPIDcontroller = new PIDController(0.03, 0, 0);
+    elbowPIDcontroller = new PIDController(0.018, 0, 0);
+    shoulderPIDcontroller = new PIDController(0.02, 0, 0);
     target = 0;
 
     shoulderPIDcontroller.disableContinuousInput();
