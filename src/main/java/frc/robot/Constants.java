@@ -205,19 +205,19 @@ public final class Constants {
     public static int ELBOW_ENCODER = 1;
 
     //Constants for Arm Presets and such
-    public static double ELBOW_SHELF = 225.14;
-    public static double SHOULDER_SHELF = 216.35;
+    public static double ELBOW_SHELF = 210;
+    public static double SHOULDER_SHELF = 220;
 
-    public static double ELBOW_FLOOR = 108;
-    public static double SHOULDER_FLOOR = 332;
+    public static double ELBOW_FLOOR = 115;
+    public static double SHOULDER_FLOOR = 325;
 
-    public static double ELBOW_MID = 198.26;
+    public static double ELBOW_MID = 230;
     public static double SHOULDER_MID = 264.8;
 
-    public static double ELBOW_MID_DIAG_TELEOP = 112.04;
-    public static double SHOULDER_MID_DIAG_TELEOP = 281.32;
-    public static double ELBOW_MID_DIAG_AUTO_CUBE = 73.41;
-    public static double SHOULDER_MID_DIAG_AUTO_CUBE = 314.35;
+    public static double ELBOW_MID_DIAG_TELEOP = 120;
+    public static double SHOULDER_MID_DIAG_TELEOP = 268;
+    public static double ELBOW_MID_DIAG_AUTO_CUBE = 80;
+    public static double SHOULDER_MID_DIAG_AUTO_CUBE = 308;
     public static double ELBOW_MID_DIAG_AUTO_CONE = 138.7; // teleop but shoulder is slightly less
     public static double SHOULDER_MID_DIAG_AUTO_CONE = 286;
 
