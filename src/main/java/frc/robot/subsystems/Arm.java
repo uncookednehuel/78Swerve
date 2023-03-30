@@ -9,7 +9,9 @@ import java.sql.Time;
 import org.opencv.highgui.HighGui;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -21,8 +23,8 @@ import frc.robot.Constants;
 
 public class Arm extends SubsystemBase {
 
-  private DutyCycleEncoder shoulderEncoder;
-  private DutyCycleEncoder elbowEncoder;
+  private SparkMaxAbsoluteEncoder shoulderEncoder;
+  private SparkMaxAbsoluteEncoder elbowEncoder;
   private CANSparkMax shoulderNeo;
   private CANSparkMax elbowNeo;
   public PIDController elbowPIDcontroller;
@@ -41,10 +43,12 @@ public class Arm extends SubsystemBase {
   public Arm() {
     shoulderNeo = new CANSparkMax(Constants.SHOULDER_NEO, MotorType.kBrushless);
     elbowNeo = new CANSparkMax(Constants.ELBOW_NEO, MotorType.kBrushless);
-    shoulderEncoder = new DutyCycleEncoder(Constants.SHOULDER_ENCODER);
-    elbowEncoder = new DutyCycleEncoder(Constants.ELBOW_ENCODER);
-    elbowPIDcontroller = new PIDController(0.03, 0, 0);
-    shoulderPIDcontroller = new PIDController(0.03, 0, 0);
+
+    shoulderEncoder = shoulderNeo.getAbsoluteEncoder(Type.kDutyCycle);
+    elbowEncoder = elbowNeo.getAbsoluteEncoder(Type.kDutyCycle);
+    elbowPIDcontroller = new PIDController(0.018, 0, 0);
+    shoulderPIDcontroller = new PIDController(0.02, 0, 0);
+    target = 0;
 
     shoulderPIDcontroller.disableContinuousInput();
     shoulderPIDcontroller.setTolerance(2);
@@ -84,7 +88,7 @@ public void setElbowSpeed(double motorPercentage){
  * @return double containing absolute position of shoulder
  */
 public double getShoulderAbsolutePosition(){
-  return (shoulderEncoder.getAbsolutePosition() * 360) - Constants.SHOULDER_ENCODER_OFFSET;
+  return (shoulderEncoder.getPosition() * 360) - Constants.SHOULDER_ENCODER_OFFSET;
 }
 
 /**
@@ -92,7 +96,7 @@ public double getShoulderAbsolutePosition(){
  * @return double containing absolute position of elbow
  */
 public double getElbowAbsolutePosition(){
-  return (elbowEncoder.getAbsolutePosition() * 360) - Constants.ELBOW_ENCODER_OFFSET;
+  return (elbowEncoder.getPosition() * 360) - Constants.ELBOW_ENCODER_OFFSET;
 }
 
 /**

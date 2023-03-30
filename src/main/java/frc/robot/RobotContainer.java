@@ -243,6 +243,7 @@ public class RobotContainer {
     //Manip Control Button Map REV 2 
   //Basically, If left bumper is held down(a constant state of True), and another button(A,B,X,Y) is pressed it will have cube Functions, scoring, intaking, and postioning, if a bumper is not pressed then it has cone functions(Else statement)
     //CONE BUTTONS 
+
     new Trigger(m_manipController::getAButton).onTrue((new SetArm(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR)).alongWith(new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0.4))).onFalse((new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW)).alongWith(new SetIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), 0)));
     new Trigger(m_manipController::getBButton).onTrue((new SetArm(m_arm, Constants.ELBOW_SHELF, Constants.SHOULDER_SHELF)).alongWith(new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0.4))).onFalse((new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW)).alongWith(new SetIntake(m_Dave_Intake, m_Dave_Intake.getSolenoid(), 0)));
     new Trigger(m_manipController::getXButton).onTrue((new SetArm(m_arm, Constants.ELBOW_FLOOR, Constants.SHOULDER_FLOOR))).onFalse(new SetArm(m_arm, Constants.ELBOW_STOW, Constants.SHOULDER_STOW));
