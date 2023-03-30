@@ -48,7 +48,6 @@ public class Arm extends SubsystemBase {
     elbowEncoder = elbowNeo.getAbsoluteEncoder(Type.kDutyCycle);
     elbowPIDcontroller = new PIDController(0.018, 0, 0);
     shoulderPIDcontroller = new PIDController(0.02, 0, 0);
-    target = 0;
 
     shoulderPIDcontroller.disableContinuousInput();
     shoulderPIDcontroller.setTolerance(2);
@@ -56,8 +55,8 @@ public class Arm extends SubsystemBase {
     elbowPIDcontroller.setTolerance(2);
     shoulderLimitSwitch = new DigitalInput(9);
 
-    lastElbowEncPos = elbowEncoder.getAbsolutePosition();
-    lastShoulderEncPos = shoulderEncoder.getAbsolutePosition();
+    lastElbowEncPos = elbowEncoder.getPosition();
+    lastShoulderEncPos = shoulderEncoder.getPosition();
     elbowVel = 0;
     shoulderVel = 0;
   }
@@ -104,7 +103,7 @@ public double getElbowAbsolutePosition(){
  * @return double containing absolute position of shoulder
  */
 public double getShoulderVel(){
-  return (shoulderEncoder.getAbsolutePosition() * 360) - Constants.SHOULDER_ENCODER_OFFSET;
+  return (shoulderEncoder.getPosition() * 360) - Constants.SHOULDER_ENCODER_OFFSET;
 }
 
 /**
@@ -112,7 +111,7 @@ public double getShoulderVel(){
  * @return double containing absolute position of elbow
  */
 public double getElbowVel(){
-  return (elbowEncoder.getAbsolutePosition() * 360) - Constants.ELBOW_ENCODER_OFFSET;
+  return (elbowEncoder.getPosition() * 360) - Constants.ELBOW_ENCODER_OFFSET;
 }
 
   @Override
@@ -125,10 +124,10 @@ public double getElbowVel(){
     SmartDashboard.putNumber("shoulderError", shoulderPIDcontroller.getPositionError());
     SmartDashboard.putNumber("elbowError", elbowPIDcontroller.getPositionError());
 
-    elbowVel = (elbowEncoder.getAbsolutePosition() - lastElbowEncPos) / ((Timer.getFPGATimestamp() - lastReadTime));
-    shoulderVel = (shoulderEncoder.getAbsolutePosition() - lastShoulderEncPos) / ((Timer.getFPGATimestamp() - lastReadTime));
-    lastElbowEncPos = elbowEncoder.getAbsolutePosition();
-    lastShoulderEncPos = shoulderEncoder.getAbsolutePosition();
+    elbowVel = (elbowEncoder.getPosition() - lastElbowEncPos) / ((Timer.getFPGATimestamp() - lastReadTime));
+    shoulderVel = (shoulderEncoder.getPosition() - lastShoulderEncPos) / ((Timer.getFPGATimestamp() - lastReadTime));
+    lastElbowEncPos = elbowEncoder.getPosition();
+    lastShoulderEncPos = shoulderEncoder.getPosition();
     lastReadTime = Timer.getFPGATimestamp();
   }
 
