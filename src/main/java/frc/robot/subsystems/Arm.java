@@ -46,7 +46,7 @@ public class Arm extends SubsystemBase {
 
     shoulderEncoder = shoulderNeo.getAbsoluteEncoder(Type.kDutyCycle);
     elbowEncoder = elbowNeo.getAbsoluteEncoder(Type.kDutyCycle);
-    elbowPIDcontroller = new PIDController(0.03, 0, 0);
+    elbowPIDcontroller = new PIDController(0.02, 0, 0);
     shoulderPIDcontroller = new PIDController(0.02, 0, 0);
 
     shoulderPIDcontroller.disableContinuousInput();
@@ -121,8 +121,8 @@ public double getElbowVel(){
     SmartDashboard.putNumber("elbowEncoder", getElbowAbsolutePosition());
     SmartDashboard.putNumber("targetShoulder", shoulderTarget);
     SmartDashboard.putNumber("targetElbow", elbowTarget);
-    SmartDashboard.putNumber("shoulderError", shoulderPIDcontroller.getPositionError());
-    SmartDashboard.putNumber("elbowError", elbowPIDcontroller.getPositionError());
+    SmartDashboard.putNumber("shoulderError", shoulderPIDcontroller.getVelocityError());
+    SmartDashboard.putNumber("elbowError", elbowPIDcontroller.getVelocityError());
 
     elbowVel = (elbowEncoder.getPosition() - lastElbowEncPos) / ((Timer.getFPGATimestamp() - lastReadTime));
     shoulderVel = (shoulderEncoder.getPosition() - lastShoulderEncPos) / ((Timer.getFPGATimestamp() - lastReadTime));
