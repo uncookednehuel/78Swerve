@@ -48,14 +48,14 @@ public class SetArmPID extends CommandBase {
     calcShoulderGoal = shoulderProfile.calculate(Timer.getFPGATimestamp() - arm.lastTargetChangeTimestamp).position;
     SmartDashboard.putNumber("TrapElbowGoal", elbowProfile.calculate(Timer.getFPGATimestamp() - arm.lastTargetChangeTimestamp).velocity);
     SmartDashboard.putNumber("TrapShoulderGoal", shoulderProfile.calculate(Timer.getFPGATimestamp() - arm.lastTargetChangeTimestamp).velocity);
-    double shoulderSpeed = arm.shoulderPIDcontroller.calculate(arm.getShoulderAbsolutePosition(), calcShoulderGoal); 
+    double shoulderSpeed = arm.shoulderPIDcontroller.calculate(arm.getShoulderAbsolutePosition(), arm.shoulderTarget); 
 
     // if (shoulderSpeed < 0){
     //   shoulderSpeed = shoulderSpeed * 0.15;
     // }
     arm.setShoulderSpeed(arm.isLimitShoulder() && shoulderSpeed < 0 ? 0 : shoulderSpeed * -1);
     
-    double elbowSpeed = arm.elbowPIDcontroller.calculate(arm.getElbowAbsolutePosition(), calcElbowGoal);
+    double elbowSpeed = arm.elbowPIDcontroller.calculate(arm.getElbowAbsolutePosition(), arm.elbowTarget);
     // if (elbowSpeed > 0){
     //   elbowSpeed = elbowSpeed * 0.55;
     // }
