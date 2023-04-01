@@ -509,8 +509,8 @@ public class RobotContainer {
             new SetArm(m_arm, Constants.ELBOW_MID_DIAG_TELEOP, Constants.SHOULDER_MID_DIAG_TELEOP),
             new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kForward, 0),
             autoBuilder.followPathWithEvents(Blue_Six_CubeH_Echo_Cone_Six_Four_PartTwo)
-          ),
-          new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0)
+          )
+          //new SetIntake(m_Dave_Intake, DoubleSolenoid.Value.kReverse, 0)
       );
       break;
       }
@@ -526,6 +526,7 @@ public class RobotContainer {
         );
         break;
       }
+      //Hotel or red hotel goes over Cabel bump, grabs a peice and gets ready to score. 
       case Blue_8_CubeH_Hotel_Cone_Eight_Four: {
         PathPlannerTrajectory Blue_Eight_CubeHi_Hotel_Cone_Six_Four_PartOne = PathFunctions.createTrajectory("Blue-8-CubeHi-Hotel-Cone-Eight-Four(1)");
         PathPlannerTrajectory Blue_Eight_CubeHi_Hotel_Cone_Six_Four_PartTwo = PathFunctions.createTrajectory("Blue-8-CubeHi-Hotel-Cone-Eight-Four(2)");
