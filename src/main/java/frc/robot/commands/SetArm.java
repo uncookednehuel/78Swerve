@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -13,8 +15,7 @@ public class SetArm extends CommandBase {
   private double elbowTarget;
   private double shoulderTarget;
   private Arm arm;
-  
-  
+
   /** Creates a new RunArmToTarget. */
   public SetArm(Arm arm, double elbowTarget, double shoulderTarget) {
     this.arm = arm;
@@ -23,13 +24,11 @@ public class SetArm extends CommandBase {
   }
 
   @Override
-  public void initialize() {
+  public void initialize() { 
     arm.elbowTarget = elbowTarget;
     arm.shoulderTarget = shoulderTarget;
+    arm.lastTargetChangeTimestamp = Timer.getFPGATimestamp();
   }
-
-  @Override
-  public void execute() { }
 
   @Override
   public void end(boolean interrupted) {
@@ -40,6 +39,7 @@ public class SetArm extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return Math.abs(arm.shoulderPIDcontroller.getPositionError()) < 2 && Math.abs(arm.elbowPIDcontroller.getPositionError()) < 2;
+    return (Math.abs(arm.getElbowAbsolutePosition() - this.elbowTarget) < 2) && (Math.abs(arm.getShoulderAbsolutePosition() - this.shoulderTarget) < 2)
+    || arm.elbowTarget != this.elbowTarget || arm.shoulderTarget != this.shoulderTarget;
   }
 }
